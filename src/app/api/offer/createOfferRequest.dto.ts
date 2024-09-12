@@ -1,17 +1,11 @@
-import {IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Max, Min,} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateOfferRequestDto {
   @IsNotEmpty()
   @IsString()
-  topic: string;
+  description: string;
 
   @IsNotEmpty()
-  @IsUUID()
-  clientId: string;
-
-  @IsOptional()
   @IsNumber()
-  @Min(1800)
-  @Max(172800)
-  expirationSeconds?: number;
+  price: number;
 }

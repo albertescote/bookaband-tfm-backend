@@ -9,21 +9,21 @@ import {
   Put,
   Request,
   UseGuards,
-} from '@nestjs/common';
-import { OfferService } from '../../../context/offer/service/offer.service';
-import { CreateOfferResponseDto } from './createOfferResponse.dto';
-import { UpdateOfferRequestDto } from './updateOfferRequest.dto';
-import { CreateOfferRequestDto } from './createOfferRequest.dto';
-import { OfferResponseDto } from './offerResponse.dto';
-import { IdParamDto } from './idParam.dto';
-import { UserAuthInfo } from '../../../context/shared/domain/userAuthInfo';
-import { JwtCustomGuard } from '../../../context/auth/guards/jwt-custom.guard';
+} from "@nestjs/common";
+import { OfferService } from "../../../context/offer/service/offer.service";
+import { CreateOfferResponseDto } from "./createOfferResponse.dto";
+import { UpdateOfferRequestDto } from "./updateOfferRequest.dto";
+import { CreateOfferRequestDto } from "./createOfferRequest.dto";
+import { OfferResponseDto } from "./offerResponse.dto";
+import { IdParamDto } from "./idParam.dto";
+import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
+import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 
-@Controller('offer')
+@Controller("offer")
 export class OfferController {
   constructor(private readonly offerService: OfferService) {}
 
-  @Post('/')
+  @Post("/")
   @UseGuards(JwtCustomGuard)
   @HttpCode(201)
   async create(
@@ -33,7 +33,7 @@ export class OfferController {
     return await this.offerService.create(body, req.user);
   }
 
-  @Get('/:id')
+  @Get("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
   getById(
@@ -43,14 +43,14 @@ export class OfferController {
     return this.offerService.getById(idParamDto.id, req.user);
   }
 
-  @Get('/')
+  @Get("/")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  getAll(@Request() req: { user: UserAuthInfo }): OfferResponseDto[] {
-    return this.offerService.getAll(req.user);
+  getAll(): OfferResponseDto[] {
+    return this.offerService.getAll();
   }
 
-  @Put('/:id')
+  @Put("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
   async update(
@@ -61,7 +61,7 @@ export class OfferController {
     return await this.offerService.update(idParamDto.id, body, req.user);
   }
 
-  @Delete('/:id')
+  @Delete("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(204)
   delete(

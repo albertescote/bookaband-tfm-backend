@@ -1,5 +1,5 @@
 export interface OfferResponseDto {
   id: string;
-  topic: string;
-  clientId: string;
+  description: string;
+  price: number;
 }

@@ -1,36 +1,37 @@
 import OfferId from './offerId';
 import UserId from '../../shared/domain/userId';
+import OfferPrice from "./offerPrice";
 
 export interface OfferPrimitives {
   id: string;
-  topic: string;
+  description: string;
   ownerId: string;
-  clientId: string;
+  price: number;
 }
 
 export default class Offer {
   constructor(
     private id: OfferId,
-    private topic: string,
+    private description: string,
     private ownerId: UserId,
-    private clientId: UserId,
+    private price: OfferPrice,
   ) {}
 
   static fromPrimitives(offer: OfferPrimitives): Offer {
     return new Offer(
       new OfferId(offer.id),
-      offer.topic,
+      offer.description,
       new UserId(offer.ownerId),
-      new UserId(offer.clientId),
+      new OfferPrice(offer.price),
     );
   }
 
   toPrimitives(): OfferPrimitives {
     return {
       id: this.id.toPrimitive(),
-      topic: this.topic,
+      description: this.description,
       ownerId: this.ownerId.toPrimitive(),
-      clientId: this.clientId.toPrimitive(),
+      price: this.price.toPrimitive(),
     };
   }
 }

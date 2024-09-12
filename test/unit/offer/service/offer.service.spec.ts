@@ -1,30 +1,18 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {OfferService} from '../../../../src/context/offer/service/offer.service';
-import {OfferRepository} from '../../../../src/context/offer/infrastructure/offerRepository';
-import RsaSigner from '../../../../src/context/shared/infrastructure/rsaSigner';
-import {ModuleConnectors} from '../../../../src/context/shared/infrastructure/moduleConnectors';
-import {WrongPermissionsException} from '../../../../src/context/offer/exceptions/wrongPermissionsException';
-import {
-  NotAbleToExecuteOfferDbTransactionException
-} from '../../../../src/context/offer/exceptions/notAbleToExecuteOfferDbTransactionException';
-import UserId from '../../../../src/context/shared/domain/userId';
-import OfferId from '../../../../src/context/offer/domain/offerId';
-import {ZOOM_MEETING_SDK_KEY, ZOOM_MEETING_SDK_SECRET,} from '../../../../src/context/offer/config';
-import {SupportedAlgorithms} from '../../../../src/context/offer/domain/supportedAlgorithms';
-import {OfferNotFoundException} from '../../../../src/context/offer/exceptions/offerNotFoundException';
-import Offer from '../../../../src/context/offer/domain/offer';
-import {Role} from '../../../../src/context/shared/domain/role';
-import User from '../../../../src/context/shared/domain/user';
-import {InvalidClientIdException} from '../../../../src/context/offer/exceptions/invalidClientIdException';
-import {
-  InvalidRoleForRequestedClientException
-} from '../../../../src/context/offer/exceptions/invalidRoleForRequestedClientException';
+import { Test, TestingModule } from "@nestjs/testing";
+import { OfferService } from "../../../../src/context/offer/service/offer.service";
+import { OfferRepository } from "../../../../src/context/offer/infrastructure/offerRepository";
+import { WrongPermissionsException } from "../../../../src/context/offer/exceptions/wrongPermissionsException";
+import { NotAbleToExecuteOfferDbTransactionException } from "../../../../src/context/offer/exceptions/notAbleToExecuteOfferDbTransactionException";
+import UserId from "../../../../src/context/shared/domain/userId";
+import OfferId from "../../../../src/context/offer/domain/offerId";
+import { OfferNotFoundException } from "../../../../src/context/offer/exceptions/offerNotFoundException";
+import Offer from "../../../../src/context/offer/domain/offer";
+import { Role } from "../../../../src/context/shared/domain/role";
+import OfferPrice from "../../../../src/context/offer/domain/offerPrice";
 
-describe('OfferService', () => {
+describe("OfferService", () => {
   let service: OfferService;
   let offerRepository: OfferRepository;
-  let rsaSigner: RsaSigner;
-  let moduleConnectors: ModuleConnectors;
   const userId = UserId.generate().toPrimitive();
   const offerId = OfferId.generate().toPrimitive();
 
@@ -42,181 +30,74 @@ describe('OfferService', () => {
             deleteOffer: jest.fn(),
           },
         },
-        {
-          provide: RsaSigner,
-          useValue: {
-            sign: jest.fn(),
-          },
-        },
-        {
-          provide: ModuleConnectors,
-          useValue: {
-            obtainUserInformation: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
     service = module.get<OfferService>(OfferService);
     offerRepository = module.get<OfferRepository>(OfferRepository);
-    rsaSigner = module.get<RsaSigner>(RsaSigner);
-    moduleConnectors = module.get<ModuleConnectors>(ModuleConnectors);
   });
 
-  describe('for create offer method', () => {
-    it('should create a offer successfully', async () => {
+  describe("for create offer method", () => {
+    it("should create a offer successfully", async () => {
       const request = {
-        topic: 'Test Offer',
-        clientId: UserId.generate().toPrimitive(),
-        expirationSeconds: 3600,
+        description: "Test Offer",
+        price: 3600,
       };
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
-      const owner = { getRole: () => 'Musician' };
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(owner);
-      const client = new User(
-        new UserId(request.clientId),
-        'John',
-        'Doe',
-        'client@example.com',
-        '123456789',
-        Role.Client,
-      );
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(client);
       const offerResponse = {
         id: OfferId.generate().toPrimitive(),
-        topic: 'Test Offer',
-        signature: 'mockedSignature',
+        description: "Test Offer",
+        price: 3600,
         ownerId: userId,
       };
       (offerRepository.addOffer as jest.Mock).mockReturnValueOnce({
         toPrimitives: () => offerResponse,
       });
-      (rsaSigner.sign as jest.Mock).mockReturnValueOnce('mockedSignature');
 
       const result = await service.create(request, userAuthInfo);
-
-      expect(moduleConnectors.obtainUserInformation).toHaveBeenNthCalledWith(
-        1,
-        userAuthInfo.id,
-      );
-      expect(moduleConnectors.obtainUserInformation).toHaveBeenNthCalledWith(
-        2,
-        request.clientId,
-      );
       expect(offerRepository.addOffer).toHaveBeenCalledWith(
         new Offer(
           expect.any(OfferId),
-          'Test Offer',
+          "Test Offer",
           new UserId(userId),
-          new UserId(request.clientId),
+          new OfferPrice(3600),
         ),
       );
-      expect(rsaSigner.sign).toHaveBeenCalledWith({
-        alg: SupportedAlgorithms.HS256,
-        header: { alg: SupportedAlgorithms.HS256, typ: 'JWT' },
-        payload: {
-          app_key: ZOOM_MEETING_SDK_KEY,
-          exp: expect.any(Number) as number,
-          iat: expect.any(Number) as number,
-          role_type: 1,
-          tpc: 'Test Offer',
-          version: 1,
-        },
-        secret: ZOOM_MEETING_SDK_SECRET,
+      expect(result).toEqual({
+        id: offerResponse.id,
+        description: "Test Offer",
+        price: 3600,
       });
-      expect(result).toEqual(offerResponse);
     });
-    it('should throw WrongPermissionsException if user is not a musician', async () => {
+    it("should throw WrongPermissionsException if user is not a musician", async () => {
       const request = {
-        topic: 'Test Offer',
-        clientId: UserId.generate().toPrimitive(),
+        description: "Test Offer",
+        price: 500,
       };
       const userAuthInfo = {
-        email: 'client@example.com',
+        email: "client@example.com",
         id: userId,
         role: Role.Client,
       };
-      const user = { getRole: () => 'Client' };
-
-      (moduleConnectors.obtainUserInformation as jest.Mock).mockResolvedValue(
-        user,
-      );
 
       await expect(
         async () => await service.create(request, userAuthInfo),
       ).rejects.toThrow(WrongPermissionsException);
     });
-    it('should throw InvalidClientIdException if the client does not exists', async () => {
+    it("should throw NotAbleToExecuteOfferDbTransactionException if offer addition fails", async () => {
       const request = {
-        topic: 'Test Offer',
-        clientId: UserId.generate().toPrimitive(),
+        description: "Test Offer",
+        price: 500,
       };
       const userAuthInfo = {
-        email: 'client@example.com',
+        email: "musician@example.com",
         id: userId,
-        role: Role.Client,
+        role: Role.Musician,
       };
-      const owner = { getRole: () => 'Musician' };
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(owner);
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(undefined);
-
-      await expect(
-        async () => await service.create(request, userAuthInfo),
-      ).rejects.toThrow(InvalidClientIdException);
-    });
-    it('should throw InvalidRoleForRequestedClientException if the client does not have the role of client', async () => {
-      const request = {
-        topic: 'Test Offer',
-        clientId: UserId.generate().toPrimitive(),
-      };
-      const userAuthInfo = {
-        email: 'client@example.com',
-        id: userId,
-        role: Role.Client,
-      };
-      const owner = { getRole: () => 'Musician' };
-      (moduleConnectors.obtainUserInformation as jest.Mock).mockResolvedValue(
-        owner,
-      );
-      const client = { getRole: () => 'Musician' };
-      (moduleConnectors.obtainUserInformation as jest.Mock).mockResolvedValue(
-        client,
-      );
-
-      await expect(
-        async () => await service.create(request, userAuthInfo),
-      ).rejects.toThrow(InvalidRoleForRequestedClientException);
-    });
-    it('should throw NotAbleToExecuteOfferDbTransactionException if offer addition fails', async () => {
-      const request = {
-        topic: 'Test Offer',
-        clientId: UserId.generate().toPrimitive(),
-      };
-      const userAuthInfo = {
-        email: 'musician@example.com',
-        id: userId,
-        role: Role.Musician.toString(),
-      };
-      const owner = { getRole: () => 'Musician' };
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(owner);
-      const client = { getRole: () => 'Client' };
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(client);
       (offerRepository.addOffer as jest.Mock).mockReturnValueOnce(null);
 
       await expect(
@@ -224,18 +105,18 @@ describe('OfferService', () => {
       ).rejects.toThrow(NotAbleToExecuteOfferDbTransactionException);
     });
   });
-  describe('for getById offer method', () => {
-    it('should return offer by ID to the owner', () => {
+  describe("for getById offer method", () => {
+    it("should return offer by ID to the owner", () => {
       const offerResponse = {
         id: offerId,
-        topic: 'Test Offer',
+        description: "Test Offer",
+        price: 500,
         ownerId: userId,
-        clientId: UserId.generate().toPrimitive(),
       };
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
-        role: Role.Musician.toString(),
+        role: Role.Musician,
       };
 
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
@@ -249,34 +130,10 @@ describe('OfferService', () => {
       );
       expect(result).toEqual(offerResponse);
     });
-    it('should return offer by ID to the client', () => {
-      const offerResponse = {
-        id: offerId,
-        topic: 'Test Offer',
-        ownerId: userId,
-        clientId: UserId.generate().toPrimitive(),
-      };
-      const userAuthInfo = {
-        email: 'musician@example.com',
-        id: offerResponse.clientId,
-        role: Role.Musician.toString(),
-      };
-
-      (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
-        toPrimitives: () => offerResponse,
-      });
-
-      const result = service.getById(offerId, userAuthInfo);
-
-      expect(offerRepository.getOfferById).toHaveBeenCalledWith(
-        new OfferId(offerId),
-      );
-      expect(result).toEqual(offerResponse);
-    });
-    it('should throw OfferNotFoundException if offer does not exist', () => {
+    it("should throw OfferNotFoundException if offer does not exist", () => {
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce(null);
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
@@ -285,18 +142,18 @@ describe('OfferService', () => {
         OfferNotFoundException,
       );
     });
-    it('should throw WrongPermissionsException the requester is not the owner nor the client', () => {
+    it("should throw WrongPermissionsException the requester is not the owner nor the client", () => {
       const offerResponse = {
         id: offerId,
-        topic: 'Test Offer',
+        description: "Test Offer",
+        price: 500,
         ownerId: UserId.generate().toPrimitive(),
-        clientId: UserId.generate().toPrimitive(),
       };
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
         toPrimitives: () => offerResponse,
       });
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
@@ -306,67 +163,67 @@ describe('OfferService', () => {
       );
     });
   });
-  describe('for getAll offer methods', () => {
-    it('should return all offers', () => {
+  describe("for getAll offer methods", () => {
+    it("should return all offers", () => {
       const offers = [
         {
           id: offerId,
-          topic: 'Offer 1',
+          description: "Offer 1",
           ownerId: userId,
-          clientId: UserId.generate().toPrimitive(),
+          price: 500,
         },
         {
           id: OfferId.generate().toPrimitive(),
-          topic: 'Offer 2',
+          description: "Offer 2",
           ownerId: userId,
-          clientId: UserId.generate().toPrimitive(),
+          price: 1200,
         },
       ];
       (offerRepository.getAllOffers as jest.Mock).mockReturnValueOnce(
         offers.map((offer) => ({ toPrimitives: () => offer })),
       );
-      const userAuthInfo = {
-        email: 'musician@example.com',
-        id: userId,
-        role: Role.Musician.toString(),
-      };
 
-      const result = service.getAll(userAuthInfo);
+      const result = service.getAll();
 
       expect(offerRepository.getAllOffers).toHaveBeenCalled();
-      expect(result).toEqual(offers);
+      expect(result).toEqual([
+        {
+          id: offers[0].id,
+          description: "Offer 1",
+          price: 500,
+        },
+        {
+          id: offers[1].id,
+          description: "Offer 2",
+          price: 1200,
+        },
+      ]);
     });
-    it('should return an empty array if no offers are found', () => {
+    it("should return an empty array if no offers are found", () => {
       (offerRepository.getAllOffers as jest.Mock).mockReturnValueOnce([]);
-      const userAuthInfo = {
-        email: 'musician@example.com',
-        id: userId,
-        role: Role.Musician.toString(),
-      };
 
-      const result = service.getAll(userAuthInfo);
+      const result = service.getAll();
 
       expect(offerRepository.getAllOffers).toHaveBeenCalled();
       expect(result).toEqual([]);
     });
   });
-  describe('for update offer method', () => {
-    it('should update offer successfully', async () => {
+  describe("for update offer method", () => {
+    it("should update offer successfully", async () => {
       const request = {
-        topic: 'Updated Offer',
-        clientId: UserId.generate().toPrimitive(),
-        expirationSeconds: 3600,
+        description: "Updated Offer",
+        price: 3600,
       };
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
       const oldOffer = {
         id: offerId,
-        topic: 'Old Offer',
+        description: "Old Offer",
         ownerId: userId,
-        clientId: UserId.generate().toPrimitive(),
+        price: 400,
       };
       const updatedOffer = {
         id: offerId,
@@ -376,17 +233,6 @@ describe('OfferService', () => {
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
         toPrimitives: () => oldOffer,
       });
-      const client = new User(
-        new UserId(request.clientId),
-        'John',
-        'Doe',
-        'client@example.com',
-        '123456789',
-        Role.Client,
-      );
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(client);
       (offerRepository.updateOffer as jest.Mock).mockReturnValueOnce({
         toPrimitives: () => updatedOffer,
       });
@@ -400,15 +246,19 @@ describe('OfferService', () => {
         new OfferId(offerId),
         Offer.fromPrimitives(updatedOffer),
       );
-      expect(result).toEqual(updatedOffer);
+      expect(result).toEqual({
+        id: offerId,
+        description: "Updated Offer",
+        price: 3600,
+      });
     });
-    it('should throw OfferNotFoundException if offer does not exist', async () => {
+    it("should throw OfferNotFoundException if offer does not exist", async () => {
       const request = {
-        topic: 'Updated Offer',
-        clientId: UserId.generate().toPrimitive(),
+        description: "Updated Offer",
+        price: 500,
       };
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
@@ -419,21 +269,21 @@ describe('OfferService', () => {
         async () => await service.update(offerId, request, userAuthInfo),
       ).rejects.toThrow(OfferNotFoundException);
     });
-    it('should throw WrongPermissionsException if user does not have permission to update', async () => {
+    it("should throw WrongPermissionsException if user does not have permission to update", async () => {
       const request = {
-        topic: 'Updated Offer',
-        clientId: UserId.generate().toPrimitive(),
+        description: "Updated Offer",
+        price: 500,
       };
       const userAuthInfo = {
-        email: 'client@example.com',
+        email: "client@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
       const oldOffer = {
         id: offerId,
-        topic: 'Old Offer',
+        description: "Old Offer",
         ownerId: UserId.generate().toPrimitive(),
-        clientId: UserId.generate().toPrimitive(),
+        price: 500,
       };
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
         toPrimitives: () => oldOffer,
@@ -443,87 +293,22 @@ describe('OfferService', () => {
         async () => await service.update(offerId, request, userAuthInfo),
       ).rejects.toThrow(WrongPermissionsException);
     });
-    it('should throw InvalidClientIdException if the client does not exists', async () => {
+    it("should throw NotAbleToExecuteOfferDbTransactionException if update fails", async () => {
       const request = {
-        topic: 'Test Offer',
-        clientId: UserId.generate().toPrimitive(),
+        description: "Updated Offer",
+        price: 500,
       };
       const userAuthInfo = {
-        email: 'client@example.com',
-        id: userId,
-        role: Role.Client,
-      };
-      const oldOffer = {
-        id: offerId,
-        topic: 'Old Offer',
-        ownerId: userId,
-        clientId: UserId.generate().toPrimitive(),
-      };
-      (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
-        toPrimitives: () => oldOffer,
-      });
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(undefined);
-
-      await expect(
-        async () => await service.update(offerId, request, userAuthInfo),
-      ).rejects.toThrow(InvalidClientIdException);
-    });
-    it('should throw InvalidRoleForRequestedClientException if the client does not have the role of client', async () => {
-      const request = {
-        topic: 'Test Offer',
-        clientId: UserId.generate().toPrimitive(),
-      };
-      const userAuthInfo = {
-        email: 'client@example.com',
-        id: userId,
-        role: Role.Client,
-      };
-      const oldOffer = {
-        id: offerId,
-        topic: 'Old Offer',
-        ownerId: userId,
-        clientId: UserId.generate().toPrimitive(),
-      };
-      (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
-        toPrimitives: () => oldOffer,
-      });
-      const client = { getRole: () => 'Musician' };
-      (moduleConnectors.obtainUserInformation as jest.Mock).mockResolvedValue(
-        client,
-      );
-
-      await expect(
-        async () => await service.update(offerId, request, userAuthInfo),
-      ).rejects.toThrow(InvalidRoleForRequestedClientException);
-    });
-    it('should throw NotAbleToExecuteOfferDbTransactionException if update fails', async () => {
-      const request = {
-        topic: 'Updated Offer',
-        clientId: UserId.generate().toPrimitive(),
-      };
-      const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
       const oldOffer = {
         id: offerId,
-        topic: 'Old Offer',
+        description: "Old Offer",
         ownerId: userId,
+        price: 200,
       };
-      const client = new User(
-        new UserId(request.clientId),
-        'John',
-        'Doe',
-        'client@example.com',
-        '123456789',
-        Role.Client,
-      );
-      (
-        moduleConnectors.obtainUserInformation as jest.Mock
-      ).mockResolvedValueOnce(client);
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
         toPrimitives: () => oldOffer,
       });
@@ -534,17 +319,18 @@ describe('OfferService', () => {
       ).rejects.toThrow(NotAbleToExecuteOfferDbTransactionException);
     });
   });
-  describe('for delete offer method', () => {
-    it('should delete offer successfully', () => {
+  describe("for delete offer method", () => {
+    it("should delete offer successfully", () => {
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
       const oldOffer = {
         id: offerId,
-        topic: 'Old Offer',
+        description: "Old Offer",
         ownerId: userId,
+        price: 500,
       };
 
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
@@ -560,9 +346,9 @@ describe('OfferService', () => {
         new OfferId(offerId),
       );
     });
-    it('should throw OfferNotFoundException if offer does not exist', () => {
+    it("should throw OfferNotFoundException if offer does not exist", () => {
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
@@ -572,16 +358,17 @@ describe('OfferService', () => {
         OfferNotFoundException,
       );
     });
-    it('should throw WrongPermissionsException if user does not have permission to delete', () => {
+    it("should throw WrongPermissionsException if user does not have permission to delete", () => {
       const userAuthInfo = {
-        email: 'client@example.com',
+        email: "client@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
       const oldOffer = {
         id: offerId,
-        topic: 'Old Offer',
+        description: "Old Offer",
         ownerId: UserId.generate().toPrimitive(),
+        price: 500,
       };
 
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({
@@ -592,16 +379,17 @@ describe('OfferService', () => {
         WrongPermissionsException,
       );
     });
-    it('should throw NotAbleToExecuteOfferDbTransactionException if delete fails', () => {
+    it("should throw NotAbleToExecuteOfferDbTransactionException if delete fails", () => {
       const userAuthInfo = {
-        email: 'musician@example.com',
+        email: "musician@example.com",
         id: userId,
         role: Role.Musician.toString(),
       };
       const oldOffer = {
         id: offerId,
-        topic: 'Old Offer',
+        description: "Old Offer",
         ownerId: userId,
+        price: 500,
       };
 
       (offerRepository.getOfferById as jest.Mock).mockReturnValueOnce({

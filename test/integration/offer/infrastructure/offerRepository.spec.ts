@@ -1,19 +1,20 @@
-import {OfferRepository} from '../../../../src/context/offer/infrastructure/offerRepository';
-import Offer from '../../../../src/context/offer/domain/offer';
-import OfferId from '../../../../src/context/offer/domain/offerId';
-import UserId from '../../../../src/context/shared/domain/userId';
+import { OfferRepository } from "../../../../src/context/offer/infrastructure/offerRepository";
+import Offer from "../../../../src/context/offer/domain/offer";
+import OfferId from "../../../../src/context/offer/domain/offerId";
+import UserId from "../../../../src/context/shared/domain/userId";
+import OfferPrice from "../../../../src/context/offer/domain/offerPrice";
 
-describe('Offer Repository should', () => {
+describe("Offer Repository should", () => {
   const offerRepository = new OfferRepository();
 
-  it('CRUD for offer object', () => {
+  it("CRUD for offer object", () => {
     const ownerId = UserId.generate();
     const clientId = UserId.generate();
     const newOffer: Offer = new Offer(
       OfferId.generate(),
-      'topic',
+      "description",
       ownerId,
-      clientId,
+      new OfferPrice(500),
     );
 
     const addedOffer = offerRepository.addOffer(newOffer);
@@ -25,9 +26,9 @@ describe('Offer Repository should', () => {
 
     const newUpdatedOffer = new Offer(
       OfferId.generate(),
-      'topic-2',
+      "description-2",
       ownerId,
-      clientId,
+      new OfferPrice(700),
     );
     const updatedOffer = offerRepository.updateOffer(
       new OfferId(addedOffer.toPrimitives().id),
