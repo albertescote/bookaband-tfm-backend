@@ -8,12 +8,12 @@ describe('Offer Repository should', () => {
 
   it('CRUD for offer object', () => {
     const ownerId = UserId.generate();
-    const studentId = UserId.generate();
+    const clientId = UserId.generate();
     const newOffer: Offer = new Offer(
       OfferId.generate(),
       'topic',
       ownerId,
-      studentId,
+      clientId,
     );
 
     const addedOffer = offerRepository.addOffer(newOffer);
@@ -27,7 +27,7 @@ describe('Offer Repository should', () => {
       OfferId.generate(),
       'topic-2',
       ownerId,
-      studentId,
+      clientId,
     );
     const updatedOffer = offerRepository.updateOffer(
       new OfferId(addedOffer.toPrimitives().id),

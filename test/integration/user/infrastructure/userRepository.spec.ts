@@ -1,7 +1,7 @@
-import { UserRepository } from '../../../../src/context/user/infrastructure/userRepository';
+import {UserRepository} from '../../../../src/context/user/infrastructure/userRepository';
 import User from '../../../../src/context/shared/domain/user';
 import UserId from '../../../../src/context/shared/domain/userId';
-import { Role } from '../../../../src/context/shared/domain/role';
+import {Role} from '../../../../src/context/shared/domain/role';
 
 describe('User Repository should', () => {
   const userRepository = new UserRepository();
@@ -13,7 +13,7 @@ describe('User Repository should', () => {
       'Doe',
       'email@example.com',
       '1234',
-      Role.Teacher,
+      Role.Musician,
     );
 
     const addedUser = userRepository.addUser(newUser);
@@ -29,7 +29,7 @@ describe('User Repository should', () => {
       'Doe',
       'email@example.com',
       '1234',
-      Role.Student,
+      Role.Client,
     );
     const updatedUser = userRepository.updateUser(
       new UserId(addedUser.toPrimitives().id),

@@ -1,20 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ModuleConnectors } from '../../../../src/context/shared/infrastructure/moduleConnectors';
-import { AuthService } from '../../../../src/context/auth/service/auth.service';
-import { PasswordService } from '../../../../src/context/shared/utils/password.service';
+import {Test, TestingModule} from '@nestjs/testing';
+import {ModuleConnectors} from '../../../../src/context/shared/infrastructure/moduleConnectors';
+import {AuthService} from '../../../../src/context/auth/service/auth.service';
+import {PasswordService} from '../../../../src/context/shared/utils/password.service';
 import UserInfoDto from '../../../../src/context/auth/domain/userInfoDto';
-import { InvalidEmailException } from '../../../../src/context/auth/exceptions/invalidEmailException';
-import { InvalidPasswordException } from '../../../../src/context/auth/exceptions/invalidPasswordException';
+import {InvalidEmailException} from '../../../../src/context/auth/exceptions/invalidEmailException';
+import {InvalidPasswordException} from '../../../../src/context/auth/exceptions/invalidPasswordException';
 import UserId from '../../../../src/context/shared/domain/userId';
-import {
-  TOKEN_EXPIRES_IN_SECONDS,
-  TOKEN_ISSUER,
-  TOKEN_TYPE,
-} from '../../../../src/context/auth/config';
+import {TOKEN_EXPIRES_IN_SECONDS, TOKEN_ISSUER, TOKEN_TYPE,} from '../../../../src/context/auth/config';
 import ms from 'ms';
-import { JoseWrapper } from '../../../../src/context/shared/infrastructure/joseWrapper';
-import { mock } from 'jest-mock-extended';
-import { Role } from '../../../../src/context/shared/domain/role';
+import {JoseWrapper} from '../../../../src/context/shared/infrastructure/joseWrapper';
+import {mock} from 'jest-mock-extended';
+import {Role} from '../../../../src/context/shared/domain/role';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -61,7 +57,7 @@ describe('AuthService', () => {
         firstName: 'John',
         familyName: 'Doe',
         password: 'hashedPassword',
-        role: 'Teacher',
+        role: 'Musician',
       }),
     };
 
@@ -104,7 +100,7 @@ describe('AuthService', () => {
         firstName: 'John',
         familyName: 'Doe',
         password: 'hashedPassword',
-        role: 'Teacher',
+        role: 'Musician',
       }),
     };
 
@@ -123,7 +119,7 @@ describe('AuthService', () => {
       email: 'user@example.com',
       firstName: 'John',
       familyName: 'Doe',
-      role: 'Teacher',
+      role: 'Musician',
     };
     const expectedAccessToken = 'access_token';
 
@@ -136,7 +132,7 @@ describe('AuthService', () => {
     expect(joseWrapper.signJwt).toHaveBeenCalledWith(
       {
         email: user.email,
-        role: Role.Teacher.toString(),
+        role: Role.Musician.toString(),
         sub: user.id,
       },
       TOKEN_ISSUER,

@@ -5,7 +5,7 @@ export interface OfferPrimitives {
   id: string;
   topic: string;
   ownerId: string;
-  studentId: string;
+  clientId: string;
 }
 
 export default class Offer {
@@ -13,7 +13,7 @@ export default class Offer {
     private id: OfferId,
     private topic: string,
     private ownerId: UserId,
-    private studentId: UserId,
+    private clientId: UserId,
   ) {}
 
   static fromPrimitives(offer: OfferPrimitives): Offer {
@@ -21,7 +21,7 @@ export default class Offer {
       new OfferId(offer.id),
       offer.topic,
       new UserId(offer.ownerId),
-      new UserId(offer.studentId),
+      new UserId(offer.clientId),
     );
   }
 
@@ -30,7 +30,7 @@ export default class Offer {
       id: this.id.toPrimitive(),
       topic: this.topic,
       ownerId: this.ownerId.toPrimitive(),
-      studentId: this.studentId.toPrimitive(),
+      clientId: this.clientId.toPrimitive(),
     };
   }
 }

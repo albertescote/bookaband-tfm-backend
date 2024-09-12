@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {IsNotEmpty, IsString, IsUUID} from 'class-validator';
 
 export class UpdateOfferRequestDto {
   @IsNotEmpty()
@@ -7,5 +7,5 @@ export class UpdateOfferRequestDto {
 
   @IsNotEmpty()
   @IsUUID()
-  studentId: string;
+  clientId: string;
 }

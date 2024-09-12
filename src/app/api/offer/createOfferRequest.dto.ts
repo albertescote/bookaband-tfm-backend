@@ -1,12 +1,4 @@
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Max,
-  Min,
-} from 'class-validator';
+import {IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Max, Min,} from 'class-validator';
 
 export class CreateOfferRequestDto {
   @IsNotEmpty()
@@ -15,7 +7,7 @@ export class CreateOfferRequestDto {
 
   @IsNotEmpty()
   @IsUUID()
-  studentId: string;
+  clientId: string;
 
   @IsOptional()
   @IsNumber()

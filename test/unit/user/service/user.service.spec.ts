@@ -1,16 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from '../../../../src/context/user/service/user.service';
-import { UserRepository } from '../../../../src/context/user/infrastructure/userRepository';
-import { PasswordService } from '../../../../src/context/shared/utils/password.service';
-import { EmailAlreadyExistsException } from '../../../../src/context/user/exception/emailAlreadyExistsException';
-import { NotAbleToExecuteUserDbTransactionException } from '../../../../src/context/user/exception/notAbleToExecuteUserDbTransactionException';
-import { InvalidRoleException } from '../../../../src/context/shared/exceptions/invalidRoleException';
-import { UserNotFoundException } from '../../../../src/context/user/exception/userNotFoundException';
+import {Test, TestingModule} from '@nestjs/testing';
+import {UserService} from '../../../../src/context/user/service/user.service';
+import {UserRepository} from '../../../../src/context/user/infrastructure/userRepository';
+import {PasswordService} from '../../../../src/context/shared/utils/password.service';
+import {EmailAlreadyExistsException} from '../../../../src/context/user/exception/emailAlreadyExistsException';
+import {
+  NotAbleToExecuteUserDbTransactionException
+} from '../../../../src/context/user/exception/notAbleToExecuteUserDbTransactionException';
+import {InvalidRoleException} from '../../../../src/context/shared/exceptions/invalidRoleException';
+import {UserNotFoundException} from '../../../../src/context/user/exception/userNotFoundException';
 import UserId from '../../../../src/context/shared/domain/userId';
-import { WrongPermissionsException } from '../../../../src/context/user/exception/wrongPermissionsException';
-import { UserQuery } from '../../../../src/context/user/service/user.query';
+import {WrongPermissionsException} from '../../../../src/context/user/exception/wrongPermissionsException';
+import {UserQuery} from '../../../../src/context/user/service/user.query';
 import User from '../../../../src/context/shared/domain/user';
-import { Role } from '../../../../src/context/shared/domain/role';
+import {Role} from '../../../../src/context/shared/domain/role';
 
 describe('UserService', () => {
   let service: UserService;
@@ -52,7 +54,7 @@ describe('UserService', () => {
       familyName: 'Doe',
       email: 'john.doe@example.com',
       password: 'password123',
-      role: 'Teacher',
+      role: 'Musician',
     };
 
     const encryptedPassword = 'hashedPassword';
@@ -61,7 +63,7 @@ describe('UserService', () => {
       firstName: 'John',
       familyName: 'Doe',
       email: 'john.doe@example.com',
-      role: 'Teacher',
+      role: 'Musician',
     };
 
     (passwordService.hashPassword as jest.Mock).mockResolvedValue(
@@ -81,7 +83,7 @@ describe('UserService', () => {
         'Doe',
         'john.doe@example.com',
         'hashedPassword',
-        Role.Teacher,
+        Role.Musician,
       ),
     );
     expect(result).toEqual(userResponse);
@@ -103,7 +105,7 @@ describe('UserService', () => {
       familyName: 'Doe',
       email: 'john.doe@example.com',
       password: 'password123',
-      role: 'Teacher',
+      role: 'Musician',
     };
 
     (userRepository.getUserByEmail as jest.Mock).mockReturnValueOnce({
@@ -111,7 +113,7 @@ describe('UserService', () => {
       familyName: 'Doe',
       email: 'john.doe@example.com',
       password: 'password123',
-      role: 'Teacher',
+      role: 'Musician',
     });
 
     await expect(service.create(request)).rejects.toThrow(
@@ -124,7 +126,7 @@ describe('UserService', () => {
       familyName: 'Doe',
       email: 'john.doe@example.com',
       password: 'password123',
-      role: 'Teacher',
+      role: 'Musician',
     };
 
     (userRepository.addUser as jest.Mock).mockReturnValueOnce(null);
@@ -140,7 +142,7 @@ describe('UserService', () => {
       firstName: 'John',
       familyName: 'Doe',
       email: 'john.doe@example.com',
-      role: 'Teacher',
+      role: 'Musician',
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce({
@@ -166,14 +168,14 @@ describe('UserService', () => {
         firstName: 'John',
         familyName: 'Doe',
         email: 'john.doe@example.com',
-        role: 'Teacher',
+        role: 'Musician',
       },
       {
         id: UserId.generate().toPrimitive(),
         firstName: 'Jane',
         familyName: 'Doe',
         email: 'jane.doe@example.com',
-        role: 'Student',
+        role: 'Client',
       },
     ];
 
@@ -200,12 +202,12 @@ describe('UserService', () => {
       firstName: 'John',
       familyName: 'Doe',
       email: 'john.doe@example.com',
-      role: 'Student',
+      role: 'Client',
     };
     const userAuthInfo = {
       id: userId,
       email: request.email,
-      role: Role.Student.toString(),
+      role: Role.Client.toString(),
     };
 
     const oldUser = {
@@ -214,7 +216,7 @@ describe('UserService', () => {
         firstName: 'Old John',
         familyName: 'Old Doe',
         email: 'old.john.doe@example.com',
-        role: 'Teacher',
+        role: 'Musician',
       }),
     };
 
@@ -234,7 +236,7 @@ describe('UserService', () => {
         'Doe',
         'john.doe@example.com',
         undefined,
-        Role.Student,
+        Role.Client,
       ),
     );
     expect(result).toEqual(expect.objectContaining(request));
@@ -245,12 +247,12 @@ describe('UserService', () => {
       firstName: 'John',
       familyName: 'Doe',
       email: 'john.doe@example.com',
-      role: 'Student',
+      role: 'Client',
     };
     const userAuthInfo = {
       id: userId,
       email: request.email,
-      role: Role.Student.toString(),
+      role: Role.Client.toString(),
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(null);
@@ -265,12 +267,12 @@ describe('UserService', () => {
       firstName: 'John',
       familyName: 'Doe',
       email: 'john.doe@example.com',
-      role: 'Student',
+      role: 'Client',
     };
     const userAuthInfo = {
       id: UserId.generate().toPrimitive(),
       email: request.email,
-      role: Role.Student.toString(),
+      role: Role.Client.toString(),
     }; // User does not have permission
 
     const oldUser = {
@@ -279,7 +281,7 @@ describe('UserService', () => {
         firstName: 'Old John',
         familyName: 'Old Doe',
         email: 'old.john.doe@example.com',
-        role: 'Teacher',
+        role: 'Musician',
       }),
     };
 
@@ -295,12 +297,12 @@ describe('UserService', () => {
       firstName: 'John',
       familyName: 'Doe',
       email: 'john.doe@example.com',
-      role: 'Student',
+      role: 'Client',
     };
     const userAuthInfo = {
       id: userId,
       email: request.email,
-      role: Role.Student.toString(),
+      role: Role.Client.toString(),
     };
 
     const oldUser = {
@@ -309,7 +311,7 @@ describe('UserService', () => {
         firstName: 'Old John',
         familyName: 'Old Doe',
         email: 'old.john.doe@example.com',
-        role: 'Teacher',
+        role: 'Musician',
       }),
     };
 
@@ -325,7 +327,7 @@ describe('UserService', () => {
     const userAuthInfo = {
       id: userId,
       email: 'old.john.doe@example.com',
-      role: Role.Teacher.toString(),
+      role: Role.Musician.toString(),
     };
 
     const oldUser = {
@@ -334,7 +336,7 @@ describe('UserService', () => {
         firstName: 'Old John',
         familyName: 'Old Doe',
         email: 'old.john.doe@example.com',
-        role: 'Teacher',
+        role: 'Musician',
       }),
     };
 
@@ -350,7 +352,7 @@ describe('UserService', () => {
     const userAuthInfo = {
       id: userId,
       email: 'john.doe@example.com',
-      role: Role.Teacher.toString(),
+      role: Role.Musician.toString(),
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(null);
@@ -364,7 +366,7 @@ describe('UserService', () => {
     const userAuthInfo = {
       id: UserId.generate().toPrimitive(),
       email: 'wrong-email@example.com',
-      role: Role.Teacher.toString(),
+      role: Role.Musician.toString(),
     }; // User does not have permission
 
     const oldUser = {
@@ -373,7 +375,7 @@ describe('UserService', () => {
         firstName: 'Old John',
         familyName: 'Old Doe',
         email: 'old.john.doe@example.com',
-        role: 'Teacher',
+        role: 'Musician',
       }),
     };
 
@@ -388,7 +390,7 @@ describe('UserService', () => {
     const userAuthInfo = {
       id: userId,
       email: 'old.john.doe@example.com',
-      role: Role.Student.toString(),
+      role: Role.Client.toString(),
     };
 
     const oldUser = {
@@ -397,7 +399,7 @@ describe('UserService', () => {
         firstName: 'Old John',
         familyName: 'Old Doe',
         email: 'old.john.doe@example.com',
-        role: 'Student',
+        role: 'Client',
       }),
     };
 
@@ -416,7 +418,7 @@ describe('UserService', () => {
       firstName: 'John',
       familyName: 'Doe',
       email,
-      role: 'Teacher',
+      role: 'Musician',
     };
 
     (userRepository.getUserByEmail as jest.Mock).mockReturnValueOnce(user);
@@ -434,7 +436,7 @@ describe('UserService', () => {
       firstName: 'John',
       familyName: 'Doe',
       email: 'test@example.com',
-      role: 'Teacher',
+      role: 'Musician',
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(user);
