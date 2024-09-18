@@ -1,14 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ModuleConnectors } from '../../shared/infrastructure/moduleConnectors';
-import { PasswordService } from '../../shared/utils/password.service';
+import {Inject, Injectable} from '@nestjs/common';
+import {ModuleConnectors} from '../../shared/infrastructure/moduleConnectors';
+import {PasswordService} from '../../shared/utils/password.service';
 import UserInfoDto from '../domain/userInfoDto';
-import { TOKEN_EXPIRES_IN_SECONDS, TOKEN_ISSUER, TOKEN_TYPE } from '../config';
+import {TOKEN_EXPIRES_IN_SECONDS, TOKEN_ISSUER, TOKEN_TYPE} from '../config';
 import ms from 'ms';
-import { InvalidEmailException } from '../exceptions/invalidEmailException';
-import { InvalidPasswordException } from '../exceptions/invalidPasswordException';
-import { AccessTokenPayload } from '../domain/accessTokenPayload';
-import { JoseWrapper } from '../../shared/infrastructure/joseWrapper';
-import { InvalidAccessToken } from '../exceptions/invalidAccessToken';
+import {InvalidEmailException} from '../exceptions/invalidEmailException';
+import {InvalidPasswordException} from '../exceptions/invalidPasswordException';
+import {AccessTokenPayload} from '../domain/accessTokenPayload';
+import {JoseWrapper} from '../../shared/infrastructure/joseWrapper';
+import {InvalidAccessToken} from '../exceptions/invalidAccessToken';
+import {InvalidAccessTokenSubject} from "../exceptions/invalidAccessTokenSubject";
 
 export interface LoginResponse {
   access_token: string;
@@ -76,7 +77,7 @@ export class AuthService {
       accessTokenPayload.sub,
     );
     if (!user) {
-      throw new InvalidEmailException(accessTokenPayload.email);
+      throw new InvalidAccessTokenSubject(accessTokenPayload.sub);
     }
     return {
       email: accessTokenPayload.email,

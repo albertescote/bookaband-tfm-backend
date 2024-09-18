@@ -9,22 +9,50 @@ import { NotAbleToExecuteOfferDbTransactionException } from "../exceptions/notAb
 import { Role } from "../../shared/domain/role";
 import UserId from "../../shared/domain/userId";
 import OfferPrice from "../domain/offerPrice";
+import { MusicGenre } from "../domain/musicGenre";
 
 export interface OfferRequest {
-  description: string;
   price: number;
+  bandName: string;
+  genre: MusicGenre;
+  description?: string;
+  imageUrl?: string;
 }
 
 export interface CreateOfferResponse {
   id: string;
-  description: string;
-  price: number;
+  bandName: string;
+  genre: MusicGenre;
+  description?: string;
+  imageUrl?: string;
 }
 
-export interface OfferResponse {
+export interface GetOfferResponse {
   id: string;
-  description: string;
+  ownerId: string;
   price: number;
+  bandName: string;
+  genre: MusicGenre;
+  description?: string;
+  imageUrl?: string;
+}
+
+export interface GetAllOfferResponse {
+  id: string;
+  price: number;
+  bandName: string;
+  genre: MusicGenre;
+  description?: string;
+  imageUrl?: string;
+}
+
+export interface UpdateOfferResponse {
+  id: string;
+  price: number;
+  bandName: string;
+  genre: MusicGenre;
+  description?: string;
+  imageUrl?: string;
 }
 
 @Injectable()
@@ -40,23 +68,23 @@ export class OfferService {
     }
     const offer = new Offer(
       OfferId.generate(),
-      request.description,
       new UserId(userAuthInfo.id),
       new OfferPrice(request.price),
+      request.bandName,
+      request.genre,
+      request.description,
+      request.imageUrl,
     );
     const storedOffer = this.offerRepository.addOffer(offer);
     if (!storedOffer) {
       throw new NotAbleToExecuteOfferDbTransactionException(`store offer`);
     }
     const offerPrimitives = storedOffer.toPrimitives();
-    return {
-      id: offerPrimitives.id,
-      description: offerPrimitives.description,
-      price: offerPrimitives.price,
-    };
+    delete offerPrimitives.ownerId;
+    return offerPrimitives;
   }
 
-  getById(id: string, userAuthInfo: UserAuthInfo): OfferResponse {
+  getById(id: string, userAuthInfo: UserAuthInfo): GetOfferResponse {
     const storedOffer = this.offerRepository.getOfferById(new OfferId(id));
     if (!storedOffer) {
       throw new OfferNotFoundException(id);
@@ -67,14 +95,11 @@ export class OfferService {
     if (storedOffer) return storedOffer.toPrimitives();
   }
 
-  getAll(): OfferResponse[] {
+  getAll(): GetAllOfferResponse[] {
     return this.offerRepository.getAllOffers().map((offer) => {
       const primitives = offer.toPrimitives();
-      return {
-        id: primitives.id,
-        description: primitives.description,
-        price: primitives.price,
-      };
+      delete primitives.ownerId;
+      return primitives;
     });
   }
 
@@ -82,7 +107,7 @@ export class OfferService {
     id: string,
     request: OfferRequest,
     userAuthInfo: UserAuthInfo,
-  ): Promise<OfferResponse> {
+  ): Promise<UpdateOfferResponse> {
     const oldOffer = this.offerRepository.getOfferById(new OfferId(id));
     if (!oldOffer) {
       throw new OfferNotFoundException(id);
@@ -93,9 +118,13 @@ export class OfferService {
     const updatedOffer = this.offerRepository.updateOffer(
       new OfferId(id),
       Offer.fromPrimitives({
-        ...request,
         id,
         ownerId: userAuthInfo.id,
+        price: request.price,
+        bandName: request.bandName,
+        genre: request.genre,
+        description: request.description,
+        imageUrl: request.imageUrl,
       }),
     );
     if (!updatedOffer) {
@@ -104,11 +133,8 @@ export class OfferService {
       );
     }
     const primitives = updatedOffer.toPrimitives();
-    return {
-      id: primitives.id,
-      description: primitives.description,
-      price: primitives.price,
-    };
+    delete primitives.ownerId;
+    return primitives;
   }
 
   deleteById(id: string, userAuthInfo: UserAuthInfo): void {

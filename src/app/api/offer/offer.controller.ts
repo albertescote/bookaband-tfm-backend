@@ -10,16 +10,20 @@ import {
   Request,
   UseGuards,
 } from "@nestjs/common";
-import { OfferService } from "../../../context/offer/service/offer.service";
+import {
+  GetAllOfferResponse,
+  OfferService,
+  UpdateOfferResponse,
+} from "../../../context/offer/service/offer.service";
 import { CreateOfferResponseDto } from "./createOfferResponse.dto";
 import { UpdateOfferRequestDto } from "./updateOfferRequest.dto";
 import { CreateOfferRequestDto } from "./createOfferRequest.dto";
-import { OfferResponseDto } from "./offerResponse.dto";
+import { GetOfferResponseDto } from "./getOfferResponse.dto";
 import { IdParamDto } from "./idParam.dto";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 
-@Controller("offer")
+@Controller("offers")
 export class OfferController {
   constructor(private readonly offerService: OfferService) {}
 
@@ -39,14 +43,13 @@ export class OfferController {
   getById(
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
-  ): OfferResponseDto {
+  ): GetOfferResponseDto {
     return this.offerService.getById(idParamDto.id, req.user);
   }
 
   @Get("/")
-  @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  getAll(): OfferResponseDto[] {
+  getAll(): GetAllOfferResponse[] {
     return this.offerService.getAll();
   }
 
@@ -57,7 +60,7 @@ export class OfferController {
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
     @Body() body: UpdateOfferRequestDto,
-  ): Promise<OfferResponseDto> {
+  ): Promise<UpdateOfferResponse> {
     return await this.offerService.update(idParamDto.id, body, req.user);
   }
 

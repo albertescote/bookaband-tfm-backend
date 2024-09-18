@@ -1,11 +1,12 @@
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+} from "@nestjs/common";
+import { HttpAdapterHost } from "@nestjs/core";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -24,14 +25,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const errorMessage =
       exception instanceof HttpException
         ? exception.message
-        : 'Unknown exception';
+        : "Unknown exception";
 
     const responseBody = {
       statusCode: httpStatus,
       error: errorMessage,
-      timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      timestamp: new Date().toISOString(),
+    } as {
+      statusCode: number;
+      error: string;
+      message?: string | object;
+      path: string;
+      timestamp: string;
     };
+    if (exception instanceof BadRequestException) {
+      responseBody.message = (
+        exception.getResponse() as { message: string | object }
+      ).message;
+    }
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
