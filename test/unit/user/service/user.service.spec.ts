@@ -1,20 +1,18 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {UserService} from '../../../../src/context/user/service/user.service';
-import {UserRepository} from '../../../../src/context/user/infrastructure/userRepository';
-import {PasswordService} from '../../../../src/context/shared/utils/password.service';
-import {EmailAlreadyExistsException} from '../../../../src/context/user/exception/emailAlreadyExistsException';
-import {
-  NotAbleToExecuteUserDbTransactionException
-} from '../../../../src/context/user/exception/notAbleToExecuteUserDbTransactionException';
-import {InvalidRoleException} from '../../../../src/context/shared/exceptions/invalidRoleException';
-import {UserNotFoundException} from '../../../../src/context/user/exception/userNotFoundException';
-import UserId from '../../../../src/context/shared/domain/userId';
-import {WrongPermissionsException} from '../../../../src/context/user/exception/wrongPermissionsException';
-import {UserQuery} from '../../../../src/context/user/service/user.query';
-import User from '../../../../src/context/shared/domain/user';
-import {Role} from '../../../../src/context/shared/domain/role';
+import { Test, TestingModule } from "@nestjs/testing";
+import { UserService } from "../../../../src/context/user/service/user.service";
+import { UserRepository } from "../../../../src/context/user/infrastructure/user.repository";
+import { PasswordService } from "../../../../src/context/shared/utils/password.service";
+import { EmailAlreadyExistsException } from "../../../../src/context/user/exception/emailAlreadyExistsException";
+import { NotAbleToExecuteUserDbTransactionException } from "../../../../src/context/user/exception/notAbleToExecuteUserDbTransactionException";
+import { InvalidRoleException } from "../../../../src/context/shared/exceptions/invalidRoleException";
+import { UserNotFoundException } from "../../../../src/context/user/exception/userNotFoundException";
+import UserId from "../../../../src/context/shared/domain/userId";
+import { WrongPermissionsException } from "../../../../src/context/user/exception/wrongPermissionsException";
+import { UserQuery } from "../../../../src/context/user/service/user.query";
+import User from "../../../../src/context/shared/domain/user";
+import { Role } from "../../../../src/context/shared/domain/role";
 
-describe('UserService', () => {
+describe("UserService", () => {
   let service: UserService;
   let userRepository: UserRepository;
   let passwordService: PasswordService;
@@ -48,22 +46,22 @@ describe('UserService', () => {
     passwordService = module.get<PasswordService>(PasswordService);
   });
 
-  it('should create a new user', async () => {
+  it("should create a new user", async () => {
     const request = {
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      role: 'Musician',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      password: "password123",
+      role: "Musician",
     };
 
-    const encryptedPassword = 'hashedPassword';
+    const encryptedPassword = "hashedPassword";
     const userResponse = {
       id: UserId.generate().toPrimitive(),
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      role: 'Musician',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      role: "Musician",
     };
 
     (passwordService.hashPassword as jest.Mock).mockResolvedValue(
@@ -79,54 +77,54 @@ describe('UserService', () => {
     expect(userRepository.addUser).toHaveBeenCalledWith(
       new User(
         expect.any(UserId),
-        'John',
-        'Doe',
-        'john.doe@example.com',
-        'hashedPassword',
+        "John",
+        "Doe",
+        "john.doe@example.com",
+        "hashedPassword",
         Role.Musician,
       ),
     );
     expect(result).toEqual(userResponse);
   });
-  it('should throw InvalidRoleException for invalid role', async () => {
+  it("should throw InvalidRoleException for invalid role", async () => {
     const request = {
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      role: 'INVALID_ROLE',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      password: "password123",
+      role: "INVALID_ROLE",
     };
 
     await expect(service.create(request)).rejects.toThrow(InvalidRoleException);
   });
-  it('should throw EmailAlreadyExistsException if email already exists', async () => {
+  it("should throw EmailAlreadyExistsException if email already exists", async () => {
     const request = {
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      role: 'Musician',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      password: "password123",
+      role: "Musician",
     };
 
     (userRepository.getUserByEmail as jest.Mock).mockReturnValueOnce({
-      firstName: 'John 2',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      role: 'Musician',
+      firstName: "John 2",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      password: "password123",
+      role: "Musician",
     });
 
     await expect(service.create(request)).rejects.toThrow(
       EmailAlreadyExistsException,
     );
   });
-  it('should throw NotAbleToExecuteUserDbTransactionException if addUser fails', async () => {
+  it("should throw NotAbleToExecuteUserDbTransactionException if addUser fails", async () => {
     const request = {
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      role: 'Musician',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      password: "password123",
+      role: "Musician",
     };
 
     (userRepository.addUser as jest.Mock).mockReturnValueOnce(null);
@@ -135,47 +133,49 @@ describe('UserService', () => {
       NotAbleToExecuteUserDbTransactionException,
     );
   });
-  it('should return user by ID', () => {
+  it("should return user by ID", async () => {
     const userId = UserId.generate().toPrimitive();
     const userResponse = {
       id: userId,
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      role: 'Musician',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      role: "Musician",
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce({
       toPrimitives: () => userResponse,
     });
 
-    const result = service.getById(userId);
+    const result = await service.getById(userId);
 
     expect(userRepository.getUserById).toHaveBeenCalledWith(new UserId(userId));
     expect(result).toEqual(userResponse);
   });
-  it('should throw UserNotFoundException if user does not exist', () => {
+  it("should throw UserNotFoundException if user does not exist", () => {
     const userId = UserId.generate().toPrimitive();
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(null);
 
-    expect(() => service.getById(userId)).toThrow(UserNotFoundException);
+    expect(async () => await service.getById(userId)).toThrow(
+      UserNotFoundException,
+    );
   });
-  it('should return all users', () => {
+  it("should return all users", async () => {
     const users = [
       {
         id: UserId.generate().toPrimitive(),
-        firstName: 'John',
-        familyName: 'Doe',
-        email: 'john.doe@example.com',
-        role: 'Musician',
+        firstName: "John",
+        familyName: "Doe",
+        email: "john.doe@example.com",
+        role: "Musician",
       },
       {
         id: UserId.generate().toPrimitive(),
-        firstName: 'Jane',
-        familyName: 'Doe',
-        email: 'jane.doe@example.com',
-        role: 'Client',
+        firstName: "Jane",
+        familyName: "Doe",
+        email: "jane.doe@example.com",
+        role: "Client",
       },
     ];
 
@@ -183,26 +183,26 @@ describe('UserService', () => {
       users.map((user) => ({ toPrimitives: () => user })),
     );
 
-    const result = service.getAll();
+    const result = await service.getAll();
 
     expect(userRepository.getAllUsers).toHaveBeenCalled();
     expect(result).toEqual(users);
   });
-  it('should return an empty array if no users are found', () => {
+  it("should return an empty array if no users are found", async () => {
     (userRepository.getAllUsers as jest.Mock).mockReturnValueOnce([]);
 
-    const result = service.getAll();
+    const result = await service.getAll();
 
     expect(userRepository.getAllUsers).toHaveBeenCalled();
     expect(result).toEqual([]);
   });
-  it('should update user successfully', () => {
+  it("should update user successfully", async () => {
     const userId = UserId.generate().toPrimitive();
     const request = {
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      role: 'Client',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      role: "Client",
     };
     const userAuthInfo = {
       id: userId,
@@ -213,10 +213,10 @@ describe('UserService', () => {
     const oldUser = {
       toPrimitives: () => ({
         id: userId,
-        firstName: 'Old John',
-        familyName: 'Old Doe',
-        email: 'old.john.doe@example.com',
-        role: 'Musician',
+        firstName: "Old John",
+        familyName: "Old Doe",
+        email: "old.john.doe@example.com",
+        role: "Musician",
       }),
     };
 
@@ -225,29 +225,29 @@ describe('UserService', () => {
       toPrimitives: () => ({ ...oldUser.toPrimitives(), ...request }),
     });
 
-    const result = service.update(userId, request, userAuthInfo);
+    const result = await service.update(userId, request, userAuthInfo);
 
     expect(userRepository.getUserById).toHaveBeenCalledWith(new UserId(userId));
     expect(userRepository.updateUser).toHaveBeenCalledWith(
       new UserId(userId),
       new User(
         expect.any(UserId),
-        'John',
-        'Doe',
-        'john.doe@example.com',
+        "John",
+        "Doe",
+        "john.doe@example.com",
         undefined,
         Role.Client,
       ),
     );
     expect(result).toEqual(expect.objectContaining(request));
   });
-  it('should throw UserNotFoundException if user does not exist', () => {
+  it("should throw UserNotFoundException if user does not exist", () => {
     const userId = UserId.generate().toPrimitive();
     const request = {
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      role: 'Client',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      role: "Client",
     };
     const userAuthInfo = {
       id: userId,
@@ -257,17 +257,17 @@ describe('UserService', () => {
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(null);
 
-    expect(() => service.update(userId, request, userAuthInfo)).toThrow(
-      UserNotFoundException,
-    );
+    expect(
+      async () => await service.update(userId, request, userAuthInfo),
+    ).toThrow(UserNotFoundException);
   });
-  it('should throw WrongPermissionsException if user does not have permission to update', () => {
+  it("should throw WrongPermissionsException if user does not have permission to update", () => {
     const userId = UserId.generate().toPrimitive();
     const request = {
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      role: 'Client',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      role: "Client",
     };
     const userAuthInfo = {
       id: UserId.generate().toPrimitive(),
@@ -278,26 +278,26 @@ describe('UserService', () => {
     const oldUser = {
       toPrimitives: () => ({
         id: userId,
-        firstName: 'Old John',
-        familyName: 'Old Doe',
-        email: 'old.john.doe@example.com',
-        role: 'Musician',
+        firstName: "Old John",
+        familyName: "Old Doe",
+        email: "old.john.doe@example.com",
+        role: "Musician",
       }),
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(oldUser);
 
-    expect(() => service.update(userId, request, userAuthInfo)).toThrow(
-      WrongPermissionsException,
-    );
+    expect(
+      async () => await service.update(userId, request, userAuthInfo),
+    ).toThrow(WrongPermissionsException);
   });
-  it('should throw NotAbleToExecuteUserDbTransactionException if updateUser fails', () => {
+  it("should throw NotAbleToExecuteUserDbTransactionException if updateUser fails", () => {
     const userId = UserId.generate().toPrimitive();
     const request = {
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'john.doe@example.com',
-      role: 'Client',
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
+      role: "Client",
     };
     const userAuthInfo = {
       id: userId,
@@ -308,117 +308,119 @@ describe('UserService', () => {
     const oldUser = {
       toPrimitives: () => ({
         id: userId,
-        firstName: 'Old John',
-        familyName: 'Old Doe',
-        email: 'old.john.doe@example.com',
-        role: 'Musician',
+        firstName: "Old John",
+        familyName: "Old Doe",
+        email: "old.john.doe@example.com",
+        role: "Musician",
       }),
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(oldUser);
     (userRepository.updateUser as jest.Mock).mockReturnValueOnce(null);
 
-    expect(() => service.update(userId, request, userAuthInfo)).toThrow(
-      NotAbleToExecuteUserDbTransactionException,
-    );
+    expect(
+      async () => await service.update(userId, request, userAuthInfo),
+    ).toThrow(NotAbleToExecuteUserDbTransactionException);
   });
-  it('should delete user successfully', () => {
+  it("should delete user successfully", () => {
     const userId = UserId.generate().toPrimitive();
     const userAuthInfo = {
       id: userId,
-      email: 'old.john.doe@example.com',
+      email: "old.john.doe@example.com",
       role: Role.Musician.toString(),
     };
 
     const oldUser = {
       toPrimitives: () => ({
         id: userId,
-        firstName: 'Old John',
-        familyName: 'Old Doe',
-        email: 'old.john.doe@example.com',
-        role: 'Musician',
+        firstName: "Old John",
+        familyName: "Old Doe",
+        email: "old.john.doe@example.com",
+        role: "Musician",
       }),
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(oldUser);
     (userRepository.deleteUser as jest.Mock).mockReturnValueOnce(true);
 
-    expect(() => service.deleteById(userId, userAuthInfo)).not.toThrow();
+    expect(
+      async () => await service.deleteById(userId, userAuthInfo),
+    ).not.toThrow();
     expect(userRepository.getUserById).toHaveBeenCalledWith(new UserId(userId));
     expect(userRepository.deleteUser).toHaveBeenCalledWith(new UserId(userId));
   });
-  it('should throw UserNotFoundException if user does not exist', () => {
+  it("should throw UserNotFoundException if user does not exist", () => {
     const userId = UserId.generate().toPrimitive();
     const userAuthInfo = {
       id: userId,
-      email: 'john.doe@example.com',
+      email: "john.doe@example.com",
       role: Role.Musician.toString(),
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(null);
 
-    expect(() => service.deleteById(userId, userAuthInfo)).toThrow(
+    expect(async () => await service.deleteById(userId, userAuthInfo)).toThrow(
       UserNotFoundException,
     );
   });
-  it('should throw WrongPermissionsException if user does not have permission to delete', () => {
+  it("should throw WrongPermissionsException if user does not have permission to delete", () => {
     const userId = UserId.generate().toPrimitive();
     const userAuthInfo = {
       id: UserId.generate().toPrimitive(),
-      email: 'wrong-email@example.com',
+      email: "wrong-email@example.com",
       role: Role.Musician.toString(),
     }; // User does not have permission
 
     const oldUser = {
       toPrimitives: () => ({
         id: userId,
-        firstName: 'Old John',
-        familyName: 'Old Doe',
-        email: 'old.john.doe@example.com',
-        role: 'Musician',
+        firstName: "Old John",
+        familyName: "Old Doe",
+        email: "old.john.doe@example.com",
+        role: "Musician",
       }),
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(oldUser);
 
-    expect(() => service.deleteById(userId, userAuthInfo)).toThrow(
+    expect(async () => await service.deleteById(userId, userAuthInfo)).toThrow(
       WrongPermissionsException,
     );
   });
-  it('should throw NotAbleToExecuteUserDbTransactionException if deleteUser fails', () => {
+  it("should throw NotAbleToExecuteUserDbTransactionException if deleteUser fails", () => {
     const userId = UserId.generate().toPrimitive();
     const userAuthInfo = {
       id: userId,
-      email: 'old.john.doe@example.com',
+      email: "old.john.doe@example.com",
       role: Role.Client.toString(),
     };
 
     const oldUser = {
       toPrimitives: () => ({
         id: userId,
-        firstName: 'Old John',
-        familyName: 'Old Doe',
-        email: 'old.john.doe@example.com',
-        role: 'Client',
+        firstName: "Old John",
+        familyName: "Old Doe",
+        email: "old.john.doe@example.com",
+        role: "Client",
       }),
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(oldUser);
     (userRepository.deleteUser as jest.Mock).mockReturnValueOnce(false);
 
-    expect(() => service.deleteById(userId, userAuthInfo)).toThrow(
+    expect(async () => await service.deleteById(userId, userAuthInfo)).toThrow(
       NotAbleToExecuteUserDbTransactionException,
     );
   });
-  it('should execute query successfully with id as search parameter', async () => {
-    const email = 'test@example.com';
+  it("should execute query successfully with id as search parameter", async () => {
+    const email = "test@example.com";
     const query: UserQuery = new UserQuery(undefined, email);
     const user = {
       id: UserId.generate().toPrimitive(),
-      firstName: 'John',
-      familyName: 'Doe',
+      firstName: "John",
+      familyName: "Doe",
       email,
-      role: 'Musician',
+      role: "Musician",
     };
 
     (userRepository.getUserByEmail as jest.Mock).mockReturnValueOnce(user);
@@ -428,15 +430,15 @@ describe('UserService', () => {
     expect(userRepository.getUserByEmail).toHaveBeenCalledWith(email);
     expect(result).toEqual(user);
   });
-  it('should execute query successfully with email as search parameter', async () => {
+  it("should execute query successfully with email as search parameter", async () => {
     const userId = UserId.generate();
     const query: UserQuery = new UserQuery(userId.toPrimitive());
     const user = {
       id: userId.toPrimitive(),
-      firstName: 'John',
-      familyName: 'Doe',
-      email: 'test@example.com',
-      role: 'Musician',
+      firstName: "John",
+      familyName: "Doe",
+      email: "test@example.com",
+      role: "Musician",
     };
 
     (userRepository.getUserById as jest.Mock).mockReturnValueOnce(user);

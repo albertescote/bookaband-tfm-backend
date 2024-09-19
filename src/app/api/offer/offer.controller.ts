@@ -40,16 +40,16 @@ export class OfferController {
   @Get("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  getById(
+  async getById(
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
-  ): GetOfferResponseDto {
+  ): Promise<GetOfferResponseDto> {
     return this.offerService.getById(idParamDto.id, req.user);
   }
 
   @Get("/")
   @HttpCode(200)
-  getAll(): GetAllOfferResponse[] {
+  async getAll(): Promise<GetAllOfferResponse[]> {
     return this.offerService.getAll();
   }
 
@@ -67,11 +67,11 @@ export class OfferController {
   @Delete("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(204)
-  delete(
+  async delete(
     @Request() req: { user: UserAuthInfo },
     @Param() idParamDto: IdParamDto,
-  ): void {
-    this.offerService.deleteById(idParamDto.id, req.user);
+  ): Promise<void> {
+    await this.offerService.deleteById(idParamDto.id, req.user);
     return;
   }
 }

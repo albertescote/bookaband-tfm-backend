@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import Offer from "../domain/offer";
 import OfferId from "../domain/offerId";
-import { OfferRepository } from "../infrastructure/offerRepository";
+import { OfferRepository } from "../infrastructure/offer.repository";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import { WrongPermissionsException } from "../exceptions/wrongPermissionsException";
 import { OfferNotFoundException } from "../exceptions/offerNotFoundException";
@@ -75,7 +75,7 @@ export class OfferService {
       request.description,
       request.imageUrl,
     );
-    const storedOffer = this.offerRepository.addOffer(offer);
+    const storedOffer = await this.offerRepository.addOffer(offer);
     if (!storedOffer) {
       throw new NotAbleToExecuteOfferDbTransactionException(`store offer`);
     }
@@ -84,8 +84,13 @@ export class OfferService {
     return offerPrimitives;
   }
 
-  getById(id: string, userAuthInfo: UserAuthInfo): GetOfferResponse {
-    const storedOffer = this.offerRepository.getOfferById(new OfferId(id));
+  async getById(
+    id: string,
+    userAuthInfo: UserAuthInfo,
+  ): Promise<GetOfferResponse> {
+    const storedOffer = await this.offerRepository.getOfferById(
+      new OfferId(id),
+    );
     if (!storedOffer) {
       throw new OfferNotFoundException(id);
     }
@@ -95,8 +100,9 @@ export class OfferService {
     if (storedOffer) return storedOffer.toPrimitives();
   }
 
-  getAll(): GetAllOfferResponse[] {
-    return this.offerRepository.getAllOffers().map((offer) => {
+  async getAll(): Promise<GetAllOfferResponse[]> {
+    const offers = await this.offerRepository.getAllOffers();
+    return offers.map((offer) => {
       const primitives = offer.toPrimitives();
       delete primitives.ownerId;
       return primitives;
@@ -108,14 +114,14 @@ export class OfferService {
     request: OfferRequest,
     userAuthInfo: UserAuthInfo,
   ): Promise<UpdateOfferResponse> {
-    const oldOffer = this.offerRepository.getOfferById(new OfferId(id));
+    const oldOffer = await this.offerRepository.getOfferById(new OfferId(id));
     if (!oldOffer) {
       throw new OfferNotFoundException(id);
     }
     if (oldOffer.toPrimitives().ownerId !== userAuthInfo.id) {
       throw new WrongPermissionsException("update offer");
     }
-    const updatedOffer = this.offerRepository.updateOffer(
+    const updatedOffer = await this.offerRepository.updateOffer(
       new OfferId(id),
       Offer.fromPrimitives({
         id,
@@ -137,15 +143,15 @@ export class OfferService {
     return primitives;
   }
 
-  deleteById(id: string, userAuthInfo: UserAuthInfo): void {
-    const oldOffer = this.offerRepository.getOfferById(new OfferId(id));
+  async deleteById(id: string, userAuthInfo: UserAuthInfo): Promise<void> {
+    const oldOffer = await this.offerRepository.getOfferById(new OfferId(id));
     if (!oldOffer) {
       throw new OfferNotFoundException(id);
     }
     if (oldOffer.toPrimitives().ownerId !== userAuthInfo.id) {
       throw new WrongPermissionsException("delete offer");
     }
-    const deleted = this.offerRepository.deleteOffer(new OfferId(id));
+    const deleted = await this.offerRepository.deleteOffer(new OfferId(id));
     if (!deleted) {
       throw new NotAbleToExecuteOfferDbTransactionException(
         `delete offer (${id})`,

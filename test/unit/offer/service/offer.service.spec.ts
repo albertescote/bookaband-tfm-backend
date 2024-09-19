@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { OfferService } from "../../../../src/context/offer/service/offer.service";
-import { OfferRepository } from "../../../../src/context/offer/infrastructure/offerRepository";
+import { OfferRepository } from "../../../../src/context/offer/infrastructure/offer.repository";
 import { WrongPermissionsException } from "../../../../src/context/offer/exceptions/wrongPermissionsException";
 import { NotAbleToExecuteOfferDbTransactionException } from "../../../../src/context/offer/exceptions/notAbleToExecuteOfferDbTransactionException";
 import UserId from "../../../../src/context/shared/domain/userId";

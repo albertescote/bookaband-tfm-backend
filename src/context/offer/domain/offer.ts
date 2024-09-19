@@ -14,8 +14,8 @@ export interface OfferPrimitives {
 }
 
 export default class Offer {
-  private description: string;
-  private imageUrl: string;
+  private readonly description: string;
+  private readonly imageUrl: string;
   constructor(
     private id: OfferId,
     private ownerId: UserId,

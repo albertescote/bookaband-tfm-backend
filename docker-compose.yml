@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  sqldb-music-manager-local:
+    container_name: sqldb-music-manager-local
+    image: mcr.microsoft.com/azure-sql-edge
+    environment:
+      ACCEPT_EULA: 1
+      SA_PASSWORD: C33#8nstkKjkwQ
+    ports:
+      - "1434:1433"
+    hostname: "sqldb-music-manager-local"
