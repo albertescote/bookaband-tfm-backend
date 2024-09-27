@@ -1,15 +1,14 @@
-import {Inject, Injectable} from '@nestjs/common';
-import {ModuleConnectors} from '../../shared/infrastructure/moduleConnectors';
-import {PasswordService} from '../../shared/utils/password.service';
-import UserInfoDto from '../domain/userInfoDto';
-import {TOKEN_EXPIRES_IN_SECONDS, TOKEN_ISSUER, TOKEN_TYPE} from '../config';
-import ms from 'ms';
-import {InvalidEmailException} from '../exceptions/invalidEmailException';
-import {InvalidPasswordException} from '../exceptions/invalidPasswordException';
-import {AccessTokenPayload} from '../domain/accessTokenPayload';
-import {JoseWrapper} from '../../shared/infrastructure/joseWrapper';
-import {InvalidAccessToken} from '../exceptions/invalidAccessToken';
-import {InvalidAccessTokenSubject} from "../exceptions/invalidAccessTokenSubject";
+import { Inject, Injectable } from "@nestjs/common";
+import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
+import { PasswordService } from "../../shared/utils/password.service";
+import UserInfoDto from "../domain/userInfoDto";
+import { TOKEN_EXPIRES_IN_SECONDS, TOKEN_ISSUER, TOKEN_TYPE } from "../config";
+import { InvalidEmailException } from "../exceptions/invalidEmailException";
+import { InvalidPasswordException } from "../exceptions/invalidPasswordException";
+import { AccessTokenPayload } from "../domain/accessTokenPayload";
+import { JoseWrapper } from "../../shared/infrastructure/joseWrapper";
+import { InvalidAccessToken } from "../exceptions/invalidAccessToken";
+import { InvalidAccessTokenSubject } from "../exceptions/invalidAccessTokenSubject";
 
 export interface LoginResponse {
   access_token: string;
@@ -30,7 +29,7 @@ export class AuthService {
   constructor(
     private moduleConnectors: ModuleConnectors,
     private passwordService: PasswordService,
-    @Inject('JoseWrapperInitialized')
+    @Inject("JoseWrapperInitialized")
     private joseWrapper: JoseWrapper,
   ) {}
 
@@ -62,7 +61,7 @@ export class AuthService {
     return {
       access_token: jwt,
       token_type: TOKEN_TYPE,
-      expires_in: ms(TOKEN_EXPIRES_IN_SECONDS),
+      expires_in: TOKEN_EXPIRES_IN_SECONDS,
     };
   }
 

@@ -5,7 +5,8 @@ import {
   JWK,
   jwtVerify,
   SignJWT,
-} from 'jose';
+} from "jose";
+import { TOKEN_EXPIRES_IN_SECONDS } from "../../auth/config";
 
 export interface JWTValidationResult {
   valid: boolean;
@@ -20,21 +21,21 @@ export interface JwtPayload {
 export class JoseWrapper {
   private readonly privateKey: JWK;
   constructor(privateKey: string) {
-    const jsonString = Buffer.from(privateKey, 'base64').toString('utf-8');
+    const jsonString = Buffer.from(privateKey, "base64").toString("utf-8");
     this.privateKey = JSON.parse(jsonString);
   }
 
-  public static async generateKeys(alg: string = 'ES256'): Promise<string> {
+  public static async generateKeys(alg: string = "ES256"): Promise<string> {
     const key = await exportJWK((await generateKeyPair(alg)).privateKey);
     const jsonString = JSON.stringify(key);
-    return Buffer.from(jsonString).toString('base64');
+    return Buffer.from(jsonString).toString("base64");
   }
 
   public async verifyJwt(jwt: string): Promise<JWTValidationResult> {
     try {
       const result = await jwtVerify(
         jwt,
-        await importJWK(this.privateKey, this.privateKey.alg ?? 'ES256'),
+        await importJWK(this.privateKey, this.privateKey.alg ?? "ES256"),
       );
       return { valid: true, decodedPayload: result.payload };
     } catch (error) {
@@ -44,10 +45,12 @@ export class JoseWrapper {
 
   public async signJwt(payload: JwtPayload, issuer: string): Promise<string> {
     return await new SignJWT(payload)
-      .setProtectedHeader({ alg: this.privateKey.alg ?? 'ES256' })
+      .setProtectedHeader({ alg: this.privateKey.alg ?? "ES256" })
       .setIssuedAt()
       .setIssuer(issuer)
-      .setExpirationTime('5 minutes')
-      .sign(await importJWK(this.privateKey, this.privateKey.alg ?? 'ES256'));
+      .setExpirationTime(
+        Math.floor(Date.now() / 1000) + TOKEN_EXPIRES_IN_SECONDS,
+      )
+      .sign(await importJWK(this.privateKey, this.privateKey.alg ?? "ES256"));
   }
 }

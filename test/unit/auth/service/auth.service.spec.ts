@@ -1,18 +1,18 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {ModuleConnectors} from '../../../../src/context/shared/infrastructure/moduleConnectors';
-import {AuthService} from '../../../../src/context/auth/service/auth.service';
-import {PasswordService} from '../../../../src/context/shared/utils/password.service';
-import UserInfoDto from '../../../../src/context/auth/domain/userInfoDto';
-import {InvalidEmailException} from '../../../../src/context/auth/exceptions/invalidEmailException';
-import {InvalidPasswordException} from '../../../../src/context/auth/exceptions/invalidPasswordException';
-import UserId from '../../../../src/context/shared/domain/userId';
-import {TOKEN_EXPIRES_IN_SECONDS, TOKEN_ISSUER, TOKEN_TYPE,} from '../../../../src/context/auth/config';
-import ms from 'ms';
-import {JoseWrapper} from '../../../../src/context/shared/infrastructure/joseWrapper';
-import {mock} from 'jest-mock-extended';
-import {Role} from '../../../../src/context/shared/domain/role';
+import { Test, TestingModule } from "@nestjs/testing";
+import { ModuleConnectors } from "../../../../src/context/shared/infrastructure/moduleConnectors";
+import { AuthService } from "../../../../src/context/auth/service/auth.service";
+import { PasswordService } from "../../../../src/context/shared/utils/password.service";
+import UserInfoDto from "../../../../src/context/auth/domain/userInfoDto";
+import { InvalidEmailException } from "../../../../src/context/auth/exceptions/invalidEmailException";
+import { InvalidPasswordException } from "../../../../src/context/auth/exceptions/invalidPasswordException";
+import UserId from "../../../../src/context/shared/domain/userId";
+import { TOKEN_ISSUER, TOKEN_TYPE } from "../../../../src/context/auth/config";
+import ms from "ms";
+import { JoseWrapper } from "../../../../src/context/shared/infrastructure/joseWrapper";
+import { mock } from "jest-mock-extended";
+import { Role } from "../../../../src/context/shared/domain/role";
 
-describe('AuthService', () => {
+describe("AuthService", () => {
   let service: AuthService;
   let moduleConnectors: ModuleConnectors;
   let passwordService: PasswordService;
@@ -35,7 +35,7 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: 'JoseWrapperInitialized',
+          provide: "JoseWrapperInitialized",
           useValue: mock<JoseWrapper>(),
         },
       ],
@@ -44,20 +44,20 @@ describe('AuthService', () => {
     service = module.get<AuthService>(AuthService);
     moduleConnectors = module.get<ModuleConnectors>(ModuleConnectors);
     passwordService = module.get<PasswordService>(PasswordService);
-    joseWrapper = module.get<JoseWrapper>('JoseWrapperInitialized');
+    joseWrapper = module.get<JoseWrapper>("JoseWrapperInitialized");
   });
 
-  it('should validate user successfully', async () => {
-    const email = 'user@example.com';
-    const password = 'password';
+  it("should validate user successfully", async () => {
+    const email = "user@example.com";
+    const password = "password";
     const user = {
       toPrimitives: () => ({
         id: UserId.generate().toPrimitive(),
         email,
-        firstName: 'John',
-        familyName: 'Doe',
-        password: 'hashedPassword',
-        role: 'Musician',
+        firstName: "John",
+        familyName: "Doe",
+        password: "hashedPassword",
+        role: "Musician",
       }),
     };
 
@@ -74,13 +74,13 @@ describe('AuthService', () => {
     );
     expect(passwordService.comparePasswords).toHaveBeenCalledWith(
       password,
-      'hashedPassword',
+      "hashedPassword",
     );
     expect(result).toBeInstanceOf(UserInfoDto);
   });
-  it('should throw InvalidEmailException if user does not exist', async () => {
-    const email = 'user@example.com';
-    const password = 'password';
+  it("should throw InvalidEmailException if user does not exist", async () => {
+    const email = "user@example.com";
+    const password = "password";
 
     (moduleConnectors.obtainUserInformation as jest.Mock).mockResolvedValue(
       null,
@@ -90,17 +90,17 @@ describe('AuthService', () => {
       InvalidEmailException,
     );
   });
-  it('should throw InvalidPasswordException if password is incorrect', async () => {
-    const email = 'user@example.com';
-    const password = 'password';
+  it("should throw InvalidPasswordException if password is incorrect", async () => {
+    const email = "user@example.com";
+    const password = "password";
     const user = {
       toPrimitives: () => ({
         id: UserId.generate().toPrimitive(),
         email,
-        firstName: 'John',
-        familyName: 'Doe',
-        password: 'hashedPassword',
-        role: 'Musician',
+        firstName: "John",
+        familyName: "Doe",
+        password: "hashedPassword",
+        role: "Musician",
       }),
     };
 
@@ -113,15 +113,15 @@ describe('AuthService', () => {
       InvalidPasswordException,
     );
   });
-  it('should generate login response successfully', async () => {
+  it("should generate login response successfully", async () => {
     const user = {
       id: UserId.generate().toPrimitive(),
-      email: 'user@example.com',
-      firstName: 'John',
-      familyName: 'Doe',
-      role: 'Musician',
+      email: "user@example.com",
+      firstName: "John",
+      familyName: "Doe",
+      role: "Musician",
     };
-    const expectedAccessToken = 'access_token';
+    const expectedAccessToken = "access_token";
 
     (joseWrapper.signJwt as jest.Mock).mockResolvedValueOnce(
       expectedAccessToken,
@@ -139,6 +139,6 @@ describe('AuthService', () => {
     );
     expect(result.access_token).toBe(expectedAccessToken);
     expect(result.token_type).toBe(TOKEN_TYPE);
-    expect(result.expires_in).toBe(ms(TOKEN_EXPIRES_IN_SECONDS));
+    expect(result.expires_in).toBe(ms(TOKEN_EXPIRES_IN_MINUTES));
   });
 });
