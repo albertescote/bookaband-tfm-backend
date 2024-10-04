@@ -1,6 +1,6 @@
-import UserId from './userId';
-import { Role } from './role';
-import { InvalidRoleException } from '../exceptions/invalidRoleException';
+import UserId from "./userId";
+import { Role } from "./role";
+import { InvalidRoleException } from "../exceptions/invalidRoleException";
 
 export interface UserPrimitives {
   id: string;
@@ -49,5 +49,9 @@ export default class User {
 
   getRole(): Role {
     return this.role;
+  }
+
+  getId(): UserId {
+    return this.id;
   }
 }

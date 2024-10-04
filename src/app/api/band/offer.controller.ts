@@ -10,26 +10,26 @@ import {
   Request,
   UseGuards,
 } from "@nestjs/common";
-import { OfferService } from "../../../context/offer/service/offer.service";
-import { UpdateOfferRequestDto } from "./updateOfferRequest.dto";
-import { CreateOfferRequestDto } from "./createOfferRequest.dto";
-import { OfferResponseDto } from "./offerResponse.dto";
+import { BandResponseDto } from "./bandResponse.dto";
+import { UpdateBandRequestDto } from "./updateBandRequest.dto";
+import { CreateBandRequestDto } from "./createBandRequest.dto";
 import { IdParamDto } from "./idParam.dto";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
+import { BandService } from "../../../context/band/service/band.service";
 
-@Controller("offers")
-export class OfferController {
-  constructor(private readonly offerService: OfferService) {}
+@Controller("bands")
+export class BandController {
+  constructor(private readonly bandService: BandService) {}
 
   @Post("/")
   @UseGuards(JwtCustomGuard)
   @HttpCode(201)
   async create(
     @Request() req: { user: UserAuthInfo },
-    @Body() body: CreateOfferRequestDto,
-  ): Promise<OfferResponseDto> {
-    return await this.offerService.create(body, req.user);
+    @Body() body: CreateBandRequestDto,
+  ): Promise<BandResponseDto> {
+    return await this.bandService.create(body, req.user);
   }
 
   @Get("/:id")
@@ -38,8 +38,8 @@ export class OfferController {
   async getById(
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
-  ): Promise<OfferResponseDto> {
-    return this.offerService.getById(idParamDto.id, req.user);
+  ): Promise<BandResponseDto> {
+    return this.bandService.getById(idParamDto.id, req.user);
   }
 
   @Put("/:id")
@@ -48,9 +48,9 @@ export class OfferController {
   async update(
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
-    @Body() body: UpdateOfferRequestDto,
-  ): Promise<OfferResponseDto> {
-    return await this.offerService.update(idParamDto.id, body, req.user);
+    @Body() body: UpdateBandRequestDto,
+  ): Promise<BandResponseDto> {
+    return await this.bandService.update(idParamDto.id, body, req.user);
   }
 
   @Delete("/:id")
@@ -60,7 +60,7 @@ export class OfferController {
     @Request() req: { user: UserAuthInfo },
     @Param() idParamDto: IdParamDto,
   ): Promise<void> {
-    await this.offerService.deleteById(idParamDto.id, req.user);
+    await this.bandService.deleteById(idParamDto.id, req.user);
     return;
   }
 }

@@ -1,30 +1,15 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from "class-validator";
-import { MusicGenre } from "../../../context/offer/domain/musicGenre";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateOfferRequestDto {
+  @IsNotEmpty()
+  @IsString()
+  bandId: string;
+
   @IsNotEmpty()
   @IsNumber()
   price: number;
 
-  @IsNotEmpty()
-  @IsString()
-  bandName: string;
-
-  @IsNotEmpty()
-  @IsEnum(MusicGenre)
-  genre: MusicGenre;
-
   @IsOptional()
   @IsString()
   description: string;
-
-  @IsOptional()
-  @IsString()
-  imageUrl: string;
 }

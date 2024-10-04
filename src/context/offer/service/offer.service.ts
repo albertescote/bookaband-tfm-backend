@@ -7,130 +7,85 @@ import { WrongPermissionsException } from "../exceptions/wrongPermissionsExcepti
 import { OfferNotFoundException } from "../exceptions/offerNotFoundException";
 import { NotAbleToExecuteOfferDbTransactionException } from "../exceptions/notAbleToExecuteOfferDbTransactionException";
 import { Role } from "../../shared/domain/role";
-import UserId from "../../shared/domain/userId";
 import OfferPrice from "../domain/offerPrice";
-import { MusicGenre } from "../domain/musicGenre";
+import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
+import { BandNotFoundException } from "../exceptions/bandNotFoundException";
+import BandId from "../../shared/domain/bandId";
 
 export interface OfferRequest {
+  bandId: string;
   price: number;
-  bandName: string;
-  genre: MusicGenre;
   description?: string;
-  imageUrl?: string;
 }
 
-export interface CreateOfferResponse {
-  id: string;
-  bandName: string;
-  genre: MusicGenre;
-  description?: string;
-  imageUrl?: string;
-}
-
-export interface GetOfferResponse {
-  id: string;
-  ownerId: string;
-  price: number;
-  bandName: string;
-  genre: MusicGenre;
-  description?: string;
-  imageUrl?: string;
-}
-
-export interface GetAllOfferResponse {
+export interface OfferResponse {
   id: string;
   price: number;
-  bandName: string;
-  genre: MusicGenre;
+  bandId: string;
   description?: string;
-  imageUrl?: string;
-}
-
-export interface UpdateOfferResponse {
-  id: string;
-  price: number;
-  bandName: string;
-  genre: MusicGenre;
-  description?: string;
-  imageUrl?: string;
 }
 
 @Injectable()
 export class OfferService {
-  constructor(private offerRepository: OfferRepository) {}
+  constructor(
+    private offerRepository: OfferRepository,
+    private moduleConnectors: ModuleConnectors,
+  ) {}
 
   async create(
     request: OfferRequest,
     userAuthInfo: UserAuthInfo,
-  ): Promise<CreateOfferResponse> {
+  ): Promise<OfferResponse> {
     if (userAuthInfo.role !== Role.Musician) {
       throw new WrongPermissionsException("create offer");
     }
+    await this.checkBandMembership(request.bandId, userAuthInfo.id);
     const offer = new Offer(
       OfferId.generate(),
-      new UserId(userAuthInfo.id),
+      new BandId(request.bandId),
       new OfferPrice(request.price),
-      request.bandName,
-      request.genre,
       request.description,
-      request.imageUrl,
     );
     const storedOffer = await this.offerRepository.addOffer(offer);
     if (!storedOffer) {
       throw new NotAbleToExecuteOfferDbTransactionException(`store offer`);
     }
-    const offerPrimitives = storedOffer.toPrimitives();
-    delete offerPrimitives.ownerId;
-    return offerPrimitives;
+    return storedOffer.toPrimitives();
   }
 
   async getById(
     id: string,
     userAuthInfo: UserAuthInfo,
-  ): Promise<GetOfferResponse> {
+  ): Promise<OfferResponse> {
     const storedOffer = await this.offerRepository.getOfferById(
       new OfferId(id),
     );
     if (!storedOffer) {
       throw new OfferNotFoundException(id);
     }
-    if (storedOffer.toPrimitives().ownerId !== userAuthInfo.id) {
-      throw new WrongPermissionsException("get offer");
-    }
-    if (storedOffer) return storedOffer.toPrimitives();
-  }
-
-  async getAll(): Promise<GetAllOfferResponse[]> {
-    const offers = await this.offerRepository.getAllOffers();
-    return offers.map((offer) => {
-      const primitives = offer.toPrimitives();
-      delete primitives.ownerId;
-      return primitives;
-    });
+    return storedOffer.toPrimitives();
   }
 
   async update(
     id: string,
     request: OfferRequest,
     userAuthInfo: UserAuthInfo,
-  ): Promise<UpdateOfferResponse> {
+  ): Promise<OfferResponse> {
     const oldOffer = await this.offerRepository.getOfferById(new OfferId(id));
     if (!oldOffer) {
       throw new OfferNotFoundException(id);
     }
-    if (oldOffer.toPrimitives().ownerId !== userAuthInfo.id) {
-      throw new WrongPermissionsException("update offer");
+    const oldOfferPrimitives = oldOffer.toPrimitives();
+    await this.checkBandMembership(oldOfferPrimitives.bandId, userAuthInfo.id);
+    if (oldOfferPrimitives.bandId !== request.bandId) {
+      await this.checkBandMembership(request.bandId, userAuthInfo.id);
     }
     const updatedOffer = await this.offerRepository.updateOffer(
-      new OfferId(id),
       Offer.fromPrimitives({
         id,
-        ownerId: userAuthInfo.id,
+        bandId: request.bandId,
         price: request.price,
-        bandName: request.bandName,
-        genre: request.genre,
         description: request.description,
-        imageUrl: request.imageUrl,
       }),
     );
     if (!updatedOffer) {
@@ -138,9 +93,7 @@ export class OfferService {
         `update offer (${id})`,
       );
     }
-    const primitives = updatedOffer.toPrimitives();
-    delete primitives.ownerId;
-    return primitives;
+    return updatedOffer.toPrimitives();
   }
 
   async deleteById(id: string, userAuthInfo: UserAuthInfo): Promise<void> {
@@ -148,9 +101,10 @@ export class OfferService {
     if (!oldOffer) {
       throw new OfferNotFoundException(id);
     }
-    if (oldOffer.toPrimitives().ownerId !== userAuthInfo.id) {
-      throw new WrongPermissionsException("delete offer");
-    }
+    await this.checkBandMembership(
+      oldOffer.toPrimitives().bandId,
+      userAuthInfo.id,
+    );
     const deleted = await this.offerRepository.deleteOffer(new OfferId(id));
     if (!deleted) {
       throw new NotAbleToExecuteOfferDbTransactionException(
@@ -158,5 +112,19 @@ export class OfferService {
       );
     }
     return;
+  }
+
+  private async checkBandMembership(bandId: string, userId: string) {
+    const membersId = await this.moduleConnectors.obtainBandMembers(bandId);
+    if (!membersId) {
+      throw new BandNotFoundException(bandId);
+    }
+    if (
+      !membersId.find((id: string) => {
+        return id === userId;
+      })
+    ) {
+      throw new WrongPermissionsException("create or update offer");
+    }
   }
 }

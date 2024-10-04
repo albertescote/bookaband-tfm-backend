@@ -1,9 +1,0 @@
-import { MusicGenre } from "../../../context/offer/domain/musicGenre";
-
-export interface CreateOfferResponseDto {
-  id: string;
-  bandName: string;
-  genre: MusicGenre;
-  description?: string;
-  imageUrl?: string;
-}

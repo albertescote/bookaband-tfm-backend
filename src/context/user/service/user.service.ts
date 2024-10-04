@@ -2,8 +2,6 @@ import { Injectable } from "@nestjs/common";
 import User from "../../shared/domain/user";
 import UserId from "../../shared/domain/userId";
 import { UserRepository } from "../infrastructure/user.repository";
-import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
-import { UserQuery } from "./user.query";
 import { PasswordService } from "../../shared/utils/password.service";
 import { Role } from "../../shared/domain/role";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
@@ -37,8 +35,7 @@ export interface UserResponse {
 }
 
 @Injectable()
-@QueryHandler(UserQuery)
-export class UserService implements IQueryHandler<UserQuery> {
+export class UserService {
   constructor(
     private userRepository: UserRepository,
     private passwordService: PasswordService,
@@ -157,15 +154,6 @@ export class UserService implements IQueryHandler<UserQuery> {
       );
     }
     return;
-  }
-
-  async execute(query: UserQuery): Promise<User> {
-    if (query.id) {
-      return await this.userRepository.getUserById(new UserId(query.id));
-    }
-    if (query.email) {
-      return this.userRepository.getUserByEmail(query.email);
-    }
   }
 
   private async checkExistingEmail(email: string): Promise<void> {

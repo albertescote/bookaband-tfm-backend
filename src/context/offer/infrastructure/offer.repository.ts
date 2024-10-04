@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import Offer from "../domain/offer";
 import OfferId from "../domain/offerId";
-import { MusicGenre } from "../domain/musicGenre";
 
 @Injectable()
 export class OfferRepository {
@@ -14,12 +13,9 @@ export class OfferRepository {
       await this.prismaService.offer.create({
         data: {
           id: offerPrimitives.id,
-          ownerId: offerPrimitives.ownerId,
+          bandId: offerPrimitives.bandId,
           price: offerPrimitives.price,
-          bandName: offerPrimitives.bandName,
-          genre: offerPrimitives.genre,
           description: offerPrimitives.description,
-          imageUrl: offerPrimitives.imageUrl,
         },
       });
       return offer;
@@ -35,12 +31,9 @@ export class OfferRepository {
     return offer
       ? Offer.fromPrimitives({
           id: offer.id,
-          ownerId: offer.ownerId,
+          bandId: offer.bandId,
           price: offer.price,
-          bandName: offer.bandName,
-          genre: MusicGenre[offer.genre],
           description: offer.description,
-          imageUrl: offer.imageUrl,
         })
       : undefined;
   }
@@ -50,20 +43,17 @@ export class OfferRepository {
     return offers.map((offer) => {
       return Offer.fromPrimitives({
         id: offer.id,
-        ownerId: offer.ownerId,
+        bandId: offer.bandId,
         price: offer.price,
-        bandName: offer.bandName,
-        genre: MusicGenre[offer.genre],
         description: offer.description,
-        imageUrl: offer.imageUrl,
       });
     });
   }
 
-  async updateOffer(id: OfferId, updatedOffer: Offer): Promise<Offer> {
+  async updateOffer(updatedOffer: Offer): Promise<Offer> {
     try {
       await this.prismaService.offer.update({
-        where: { id: id.toPrimitive() },
+        where: { id: updatedOffer.toPrimitives().id },
         data: updatedOffer.toPrimitives(),
       });
       return updatedOffer;

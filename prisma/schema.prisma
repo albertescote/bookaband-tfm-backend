@@ -8,22 +8,28 @@ datasource db {
 }
 
 model user {
-  id         String  @id(map: "user_PK") @db.VarChar(36)
-  firstName  String  @db.VarChar(255)
-  familyName String  @db.VarChar(255)
-  email      String  @db.VarChar(255)
-  password   String  @db.VarChar(255)
-  role       String  @db.VarChar(255)
-  offers     offer[]
+  id         String @id(map: "user_PK") @db.VarChar(36)
+  firstName  String @db.VarChar(255)
+  familyName String @db.VarChar(255)
+  email      String @db.VarChar(255)
+  password   String @db.VarChar(255)
+  role       String @db.VarChar(255)
+  bands      band[] @relation("UserBands")
 }
 
 model offer {
   id          String  @id(map: "offer_PK") @db.VarChar(36)
-  ownerId     String  @db.VarChar(36)
+  bandId      String  @unique @db.VarChar(36)
   price       Int
-  bandName    String  @db.VarChar(255)
-  genre       String  @db.VarChar(255)
   description String? @db.VarChar(255)
-  imageUrl    String? @db.VarChar(255)
-  user        user    @relation(fields: [ownerId], references: [id], map: "FK_Owner_User", onDelete: Cascade)
+  band        band    @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
+}
+
+model band {
+  id       String  @id(map: "band_PK") @db.VarChar(36)
+  name     String  @db.VarChar(255)
+  genre    String  @db.VarChar(255)
+  members  user[]  @relation("UserBands")
+  imageUrl String? @db.VarChar(255)
+  offer    offer?
 }

@@ -3,7 +3,7 @@ import Offer from "../../../../src/context/offer/domain/offer";
 import OfferId from "../../../../src/context/offer/domain/offerId";
 import UserId from "../../../../src/context/shared/domain/userId";
 import OfferPrice from "../../../../src/context/offer/domain/offerPrice";
-import { MusicGenre } from "../../../../src/context/offer/domain/musicGenre";
+import { MusicGenre } from "../../../../src/context/band/domain/musicGenre";
 import PrismaService from "../../../../src/context/shared/infrastructure/db/prisma.service";
 import User from "../../../../src/context/shared/domain/user";
 import { Role } from "../../../../src/context/shared/domain/role";
