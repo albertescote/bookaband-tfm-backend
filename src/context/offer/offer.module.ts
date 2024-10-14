@@ -5,16 +5,18 @@ import { UserRepository } from "../user/infrastructure/user.repository";
 import { CqrsModule } from "@nestjs/cqrs";
 import PrismaService from "../shared/infrastructure/db/prisma.service";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
+import { OffersViewService } from "./service/offersView.service";
 
 @Module({
   imports: [CqrsModule],
   providers: [
     OfferService,
+    OffersViewService,
     OfferRepository,
     UserRepository,
     PrismaService,
     ModuleConnectors,
   ],
-  exports: [OfferService],
+  exports: [OfferService, OffersViewService],
 })
 export class OfferModule {}

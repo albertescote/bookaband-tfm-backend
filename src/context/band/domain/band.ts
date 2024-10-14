@@ -2,7 +2,7 @@ import BandId from "../../shared/domain/bandId";
 import UserId from "../../shared/domain/userId";
 import { MusicGenre } from "./musicGenre";
 
-export interface OfferPrimitives {
+export interface BandPrimitives {
   id: string;
   name: string;
   membersId: string[];
@@ -22,28 +22,28 @@ export default class Band {
     this.imageUrl = imageUrl;
   }
 
-  static fromPrimitives(offer: OfferPrimitives): Band {
+  static fromPrimitives(band: BandPrimitives): Band {
     return new Band(
-      new BandId(offer.id),
-      offer.name,
-      offer.membersId.map((memberId) => {
+      new BandId(band.id),
+      band.name,
+      band.membersId.map((memberId) => {
         return new UserId(memberId);
       }),
-      offer.genre,
-      offer.imageUrl,
+      band.genre,
+      band.imageUrl,
     );
   }
 
-  toPrimitives(): OfferPrimitives {
-    const offerPrimitives = {
+  toPrimitives(): BandPrimitives {
+    const bandPrimitives = {
       id: this.id.toPrimitive(),
       name: this.name,
       membersId: this.membersId.map((memberId) => {
         return memberId.toPrimitive();
       }),
       genre: this.genre,
-    } as OfferPrimitives;
-    if (this.imageUrl) offerPrimitives.imageUrl = this.imageUrl;
-    return offerPrimitives;
+    } as BandPrimitives;
+    if (this.imageUrl) bandPrimitives.imageUrl = this.imageUrl;
+    return bandPrimitives;
   }
 }
