@@ -18,9 +18,9 @@ export class CreateBandRequestDto {
 
   @IsOptional()
   @IsArray()
-  membersId: string[];
+  membersId?: string[];
 
   @IsOptional()
   @IsString()
-  imageUrl: string;
+  imageUrl?: string;
 }

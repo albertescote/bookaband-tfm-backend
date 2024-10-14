@@ -16,11 +16,11 @@ export class UpdateBandRequestDto {
   @IsEnum(MusicGenre)
   genre: MusicGenre;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsArray()
   membersId: string[];
 
   @IsOptional()
   @IsString()
-  imageUrl: string;
+  imageUrl?: string;
 }

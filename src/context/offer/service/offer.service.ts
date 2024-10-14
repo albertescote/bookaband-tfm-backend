@@ -11,6 +11,7 @@ import OfferPrice from "../domain/offerPrice";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import BandId from "../../shared/domain/bandId";
+import { OfferAlreadyExistsException } from "../exceptions/offerAlreadyExistsException";
 
 export interface OfferRequest {
   bandId: string;
@@ -40,6 +41,7 @@ export class OfferService {
       throw new WrongPermissionsException("create offer");
     }
     await this.checkBandMembership(request.bandId, userAuthInfo.id);
+    await this.checkExistingOffersForBandId(request.bandId);
     const offer = new Offer(
       OfferId.generate(),
       new BandId(request.bandId),
@@ -112,6 +114,17 @@ export class OfferService {
       );
     }
     return;
+  }
+
+  private async checkExistingOffersForBandId(bandId: string) {
+    const offers = await this.offerRepository.getAllOffers();
+    if (
+      offers.find((offer) => {
+        return offer.toPrimitives().bandId === bandId;
+      })
+    ) {
+      throw new OfferAlreadyExistsException(bandId);
+    }
   }
 
   private async checkBandMembership(bandId: string, userId: string) {
