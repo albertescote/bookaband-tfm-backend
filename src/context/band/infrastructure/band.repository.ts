@@ -3,6 +3,12 @@ import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import Band from "../domain/band";
 import BandId from "../../shared/domain/bandId";
 import { MusicGenre } from "../domain/musicGenre";
+import UserId from "../../shared/domain/userId";
+
+export interface UserBand {
+  id: string;
+  name: string;
+}
 
 @Injectable()
 export class BandRepository {
@@ -61,6 +67,23 @@ export class BandRepository {
         imageUrl: band.imageUrl,
       });
     });
+  }
+
+  async getUserBands(userId: UserId): Promise<UserBand[]> {
+    const bands = await this.prismaService.band.findMany({
+      where: {
+        members: {
+          some: {
+            id: userId.toPrimitive(),
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    return bands ?? [];
   }
 
   async updateBand(updatedBand: Band): Promise<Band> {

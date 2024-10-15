@@ -17,6 +17,7 @@ import { IdParamDto } from "./idParam.dto";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { BandService } from "../../../context/band/service/band.service";
+import { GetUserBandsResponse } from "./getUserBandsResponse.dto";
 
 @Controller("bands")
 export class BandController {
@@ -40,6 +41,15 @@ export class BandController {
     @Request() req: { user: UserAuthInfo },
   ): Promise<BandResponseDto> {
     return this.bandService.getById(idParamDto.id, req.user);
+  }
+
+  @Get("/")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async getUserBands(
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<GetUserBandsResponse[]> {
+    return this.bandService.getUserBands(req.user);
   }
 
   @Put("/:id")

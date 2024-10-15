@@ -27,6 +27,11 @@ export interface BandResponse {
   imageUrl?: string;
 }
 
+export interface GetUserBandsResponse {
+  id: string;
+  name: string;
+}
+
 @Injectable()
 export class BandService {
   constructor(
@@ -69,6 +74,12 @@ export class BandService {
       throw new WrongPermissionsException("get band");
     }
     return storedBand.toPrimitives();
+  }
+
+  async getUserBands(
+    userAuthInfo: UserAuthInfo,
+  ): Promise<GetUserBandsResponse[]> {
+    return await this.bandRepository.getUserBands(new UserId(userAuthInfo.id));
   }
 
   async update(
