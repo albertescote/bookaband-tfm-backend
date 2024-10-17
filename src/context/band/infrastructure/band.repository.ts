@@ -8,6 +8,12 @@ import UserId from "../../shared/domain/userId";
 export interface UserBand {
   id: string;
   name: string;
+  offer?: {
+    id: string;
+    bandId: string;
+    price: number;
+    description?: string;
+  };
 }
 
 @Injectable()
@@ -81,6 +87,7 @@ export class BandRepository {
       select: {
         id: true,
         name: true,
+        offer: true,
       },
     });
     return bands ?? [];
