@@ -17,6 +17,7 @@ export interface CreateUserRequest {
   email: string;
   password: string;
   role: string;
+  imageUrl?: string;
 }
 
 export interface UpdateUserRequest {
@@ -32,6 +33,7 @@ export interface UserResponse {
   familyName: string;
   email: string;
   role: string;
+  imageUrl?: string;
 }
 
 @Injectable()
@@ -57,6 +59,7 @@ export class UserService {
       request.email,
       encryptedPassword,
       role,
+      request.imageUrl,
     );
     const storedUser = await this.userRepository.addUser(user);
     if (!storedUser) {
@@ -69,6 +72,7 @@ export class UserService {
       familyName: userPrimitives.familyName,
       email: userPrimitives.email,
       role: userPrimitives.role,
+      imageUrl: userPrimitives.imageUrl,
     };
   }
 
@@ -84,6 +88,7 @@ export class UserService {
       familyName: userPrimitives.familyName,
       email: userPrimitives.email,
       role: userPrimitives.role,
+      imageUrl: userPrimitives.imageUrl,
     };
   }
 
@@ -97,6 +102,7 @@ export class UserService {
         familyName: userPrimitives.familyName,
         email: userPrimitives.email,
         role: userPrimitives.role,
+        imageUrl: userPrimitives.imageUrl,
       };
     });
   }
@@ -136,6 +142,7 @@ export class UserService {
       familyName: userPrimitives.familyName,
       email: userPrimitives.email,
       role: userPrimitives.role,
+      imageUrl: userPrimitives.imageUrl,
     };
   }
 

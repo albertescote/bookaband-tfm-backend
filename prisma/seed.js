@@ -11,6 +11,8 @@ async function main() {
       email: "john.doe@example.com",
       password: "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2",
       role: "Musician",
+      imageUrl:
+        "https://img.freepik.com/foto-gratis/joven-barbudo-camisa_273609-5938.jpg",
     },
   });
 
@@ -22,6 +24,8 @@ async function main() {
       email: "jane.smith@example.com",
       password: "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2",
       role: "Client",
+      imageUrl:
+        "https://img.freepik.com/foto-gratis/retrato-mujer_23-2147626503.jpg",
     },
   });
 

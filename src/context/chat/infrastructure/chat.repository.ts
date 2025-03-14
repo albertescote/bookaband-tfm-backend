@@ -67,8 +67,15 @@ export class ChatRepository {
         messages: {
           orderBy: { timestamp: "asc" },
         },
-        user: { select: { id: true, firstName: true, familyName: true } },
-        band: { select: { id: true, name: true } },
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            familyName: true,
+            imageUrl: true,
+          },
+        },
+        band: { select: { id: true, name: true, imageUrl: true } },
       },
     });
 
@@ -87,8 +94,15 @@ export class ChatRepository {
           orderBy: { timestamp: "desc" },
           take: 1,
         },
-        user: { select: { id: true, firstName: true, familyName: true } },
-        band: { select: { id: true, name: true } },
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            familyName: true,
+            imageUrl: true,
+          },
+        },
+        band: { select: { id: true, name: true, imageUrl: true } },
       },
     });
   }
@@ -105,8 +119,15 @@ export class ChatRepository {
           orderBy: { timestamp: "desc" },
           take: 1,
         },
-        user: { select: { id: true, firstName: true, familyName: true } },
-        band: { select: { id: true, name: true } },
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            familyName: true,
+            imageUrl: true,
+          },
+        },
+        band: { select: { id: true, name: true, imageUrl: true } },
       },
     });
   }

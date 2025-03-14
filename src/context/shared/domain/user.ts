@@ -9,6 +9,7 @@ export interface UserPrimitives {
   email: string;
   password: string;
   role: string;
+  imageUrl?: string;
 }
 
 export default class User {
@@ -19,6 +20,7 @@ export default class User {
     private email: string,
     private password: string,
     private role: Role,
+    private imageUrl?: string,
   ) {}
 
   static fromPrimitives(user: UserPrimitives): User {
@@ -33,6 +35,7 @@ export default class User {
       user.email,
       user.password,
       role,
+      user.imageUrl,
     );
   }
 
@@ -44,6 +47,7 @@ export default class User {
       email: this.email,
       password: this.password,
       role: this.role.toString(),
+      imageUrl: this.imageUrl,
     };
   }
 
