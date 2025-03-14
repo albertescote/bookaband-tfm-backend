@@ -7,6 +7,7 @@ import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 export interface OffersViewResponse {
   id: string;
   price: number;
+  bandId: string;
   bandName: string;
   genre: string;
   description?: string;
@@ -34,6 +35,7 @@ export class OffersViewService {
     return {
       id: offerPrimitives.id,
       price: offerPrimitives.price,
+      bandId: band.id,
       bandName: band.name,
       genre: band.genre,
       description: offerPrimitives.description,
@@ -52,6 +54,7 @@ export class OffersViewService {
       offersView.push({
         id: offerPrimitives.id,
         price: offerPrimitives.price,
+        bandId: band.id,
         bandName: band.name,
         genre: band.genre,
         description: offerPrimitives.description,

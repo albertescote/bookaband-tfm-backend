@@ -10,6 +10,18 @@ import { GetBandInfoQuery } from "../../band/service/getBandInfo.query";
 import { MusicGenre } from "../../band/domain/musicGenre";
 import { ChatView } from "../domain/chatView";
 import Chat from "../domain/chat";
+import { MessagePrimitives } from "../domain/message";
+
+export interface CreateChatRequestDto {
+  bandId: string;
+}
+
+export interface CreateChatResponseDto {
+  id: string;
+  userId: string;
+  bandId: string;
+  messages: MessagePrimitives[];
+}
 
 interface BandPrimitives {
   id: string;
@@ -25,6 +37,19 @@ export class ChatService {
     private chatRepository: ChatRepository,
     private queryBus: QueryBus,
   ) {}
+
+  async createChat(
+    userAuthInfo: UserAuthInfo,
+    request: CreateChatRequestDto,
+  ): Promise<CreateChatResponseDto> {
+    const newChat = new Chat(
+      ChatId.generate(),
+      new UserId(userAuthInfo.id),
+      new BandId(request.bandId),
+    );
+    const createdChat = await this.chatRepository.createChat(newChat);
+    return createdChat.toPrimitives();
+  }
 
   async getChatHistory(
     authorized: UserAuthInfo,
@@ -50,10 +75,10 @@ export class ChatService {
   }
 
   async getUserChats(
-    authorized: UserAuthInfo,
+    userAuthInfo: UserAuthInfo,
     userId: string,
   ): Promise<ChatView[]> {
-    if (authorized.id !== userId) {
+    if (userAuthInfo.id !== userId) {
       throw new NotOwnerOfTheRequestedChatException();
     }
     return await this.chatRepository.getUserChats(new UserId(userId));
@@ -74,7 +99,7 @@ export class ChatService {
   }
 
   private async checkIfBandMember(
-    authorized: UserAuthInfo,
+    userAuthInfo: UserAuthInfo,
     bandId: string,
   ): Promise<boolean> {
     const bandInfo = (await this.queryBus.execute(
@@ -82,7 +107,7 @@ export class ChatService {
     )) as BandPrimitives;
 
     const memberId = bandInfo.membersId.find((memberId) => {
-      return memberId === authorized.id;
+      return memberId === userAuthInfo.id;
     });
     return !!memberId;
   }

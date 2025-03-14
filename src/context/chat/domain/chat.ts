@@ -13,7 +13,7 @@ export interface ChatPrimitives {
 export default class Chat {
   private readonly messages: Message[];
 
-  private constructor(
+  constructor(
     private readonly id: ChatId,
     private readonly userId: UserId,
     private readonly bandId: BandId,
