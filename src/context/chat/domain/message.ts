@@ -39,7 +39,7 @@ export default class Message {
       new SenderId(data.senderId),
       new RecipientId(data.recipientId),
       data.content,
-      new Date(data.timestamp),
+      data.timestamp ? new Date(data.timestamp) : undefined,
     );
   }
 
@@ -49,7 +49,7 @@ export default class Message {
       senderId: this.senderId.toPrimitive(),
       recipientId: this.recipientId.toPrimitive(),
       content: this.content,
-      timestamp: this.timestamp.toISOString(),
+      timestamp: this.timestamp?.toISOString(),
     };
   }
 }

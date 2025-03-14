@@ -3,38 +3,43 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  const user = await prisma.user.upsert({
-    where: { id: "8721e564-997d-47cd-8d46-6a41e468dadb" },
-    update: {},
-    create: {
+  const musician = await prisma.user.create({
+    data: {
       id: "8721e564-997d-47cd-8d46-6a41e468dadb",
-      firstName: "Admin",
-      familyName: "User",
-      email: "admin@example.com",
+      firstName: "John",
+      familyName: "Doe",
+      email: "john.doe@example.com",
       password: "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2",
       role: "Musician",
     },
   });
 
-  const band = await prisma.band.upsert({
-    where: { id: "63ae2224-74e0-4a83-8aec-90cfb1d96a2e" },
-    update: {},
-    create: {
+  const client = await prisma.user.create({
+    data: {
+      id: "0e3d0435-b60c-433f-bc5d-2c4e18c94fdc",
+      firstName: "Jane",
+      familyName: "Smith",
+      email: "jane.smith@example.com",
+      password: "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2",
+      role: "Client",
+    },
+  });
+
+  const band = await prisma.band.create({
+    data: {
       id: "63ae2224-74e0-4a83-8aec-90cfb1d96a2e",
       name: "Default Band",
       genre: "ROCK",
       imageUrl:
         "https://img.freepik.com/free-vector/illustration-rock-band_23-2149593909.jpg",
       members: {
-        connect: { id: user.id },
+        connect: { id: musician.id },
       },
     },
   });
 
-  await prisma.offer.upsert({
-    where: { id: "db0185c6-6a12-4825-9620-c13b8bde082e" },
-    update: {},
-    create: {
+  await prisma.offer.create({
+    data: {
       id: "db0185c6-6a12-4825-9620-c13b8bde082e",
       bandId: band.id,
       price: 100,
@@ -42,7 +47,34 @@ async function main() {
     },
   });
 
-  console.log("Seeding completed!");
+  const chat = await prisma.chat.create({
+    data: {
+      id: "6f258d1d-9448-44f7-b1b5-047b1976ee16",
+      userId: client.id,
+      bandId: band.id,
+    },
+  });
+
+  await prisma.message.createMany({
+    data: [
+      {
+        id: "467d2a4b-b2cd-49d5-8441-bd6c41825c61",
+        senderId: client.id,
+        recipientId: band.id,
+        chatId: chat.id,
+        content: "Hey, I am interested in your band!",
+      },
+      {
+        id: "c7723dcd-f3e7-4384-a6c5-33155cca3acd",
+        senderId: band.id,
+        recipientId: client.id,
+        chatId: chat.id,
+        content: "Thanks for reaching out! Let me know how I can help.",
+      },
+    ],
+  });
+
+  console.log("Database seeded successfully!");
 }
 
 main()

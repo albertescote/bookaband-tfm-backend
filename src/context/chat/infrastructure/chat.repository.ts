@@ -2,15 +2,10 @@ import { Injectable } from "@nestjs/common";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import Chat from "../domain/chat";
 import ChatId from "../domain/chatId";
-import Message, { MessagePrimitives } from "../domain/message";
+import Message from "../domain/message";
 import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
-
-export interface AllChatsView {
-  messages: MessagePrimitives[];
-  user: { id: string; firstName: string; familyName: string };
-  band: { id: string; name: string };
-}
+import { ChatView } from "../domain/chatView";
 
 @Injectable()
 export class ChatRepository {
@@ -63,12 +58,31 @@ export class ChatRepository {
       : undefined;
   }
 
-  async getUserChats(userId: UserId): Promise<AllChatsView[]> {
+  async getChatViewById(id: ChatId): Promise<ChatView> {
+    const chat = await this.prismaService.chat.findFirst({
+      where: { id: id.toPrimitive() },
+      select: {
+        id: true,
+        createdAt: true,
+        messages: {
+          orderBy: { timestamp: "asc" },
+        },
+        user: { select: { id: true, firstName: true, familyName: true } },
+        band: { select: { id: true, name: true } },
+      },
+    });
+
+    return chat ?? undefined;
+  }
+
+  async getUserChats(userId: UserId): Promise<ChatView[]> {
     return this.prismaService.chat.findMany({
       where: {
         userId: userId.toPrimitive(),
       },
-      include: {
+      select: {
+        id: true,
+        createdAt: true,
         messages: {
           orderBy: { timestamp: "desc" },
           take: 1,
@@ -79,12 +93,14 @@ export class ChatRepository {
     });
   }
 
-  async getBandChats(bandId: BandId): Promise<AllChatsView[]> {
+  async getBandChats(bandId: BandId): Promise<ChatView[]> {
     return this.prismaService.chat.findMany({
       where: {
         bandId: bandId.toPrimitive(),
       },
-      include: {
+      select: {
+        id: true,
+        createdAt: true,
         messages: {
           orderBy: { timestamp: "desc" },
           take: 1,

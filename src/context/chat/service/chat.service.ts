@@ -1,17 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import { NotOwnerOfTheRequestedChatException } from "../exceptions/notOwnerOfTheRequestedChatException";
-import {
-  AllChatsView,
-  ChatRepository,
-} from "../infrastructure/chat.repository";
+import { ChatRepository } from "../infrastructure/chat.repository";
 import ChatId from "../domain/chatId";
-import { ChatPrimitives } from "../domain/chat";
 import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
 import { QueryBus } from "@nestjs/cqrs";
 import { GetBandInfoQuery } from "../../band/service/getBandInfo.query";
 import { MusicGenre } from "../../band/domain/musicGenre";
+import { ChatView } from "../domain/chatView";
+import Chat from "../domain/chat";
 
 interface BandPrimitives {
   id: string;
@@ -31,18 +29,30 @@ export class ChatService {
   async getChatHistory(
     authorized: UserAuthInfo,
     chatId: string,
-  ): Promise<ChatPrimitives> {
-    const chat = await this.chatRepository.getChatById(new ChatId(chatId));
-    if (!chat.isOwner(authorized.id)) {
+  ): Promise<ChatView> {
+    const chatView = await this.chatRepository.getChatViewById(
+      new ChatId(chatId),
+    );
+    const isBandMember = await this.checkIfBandMember(
+      authorized,
+      chatView.band.id,
+    );
+    const chat = Chat.fromPrimitives({
+      id: chatView.id,
+      userId: chatView.user.id,
+      bandId: chatView.band.id,
+      messages: chatView.messages,
+    });
+    if (!chat.isOwner(authorized.id) && !isBandMember) {
       throw new NotOwnerOfTheRequestedChatException();
     }
-    return chat.toPrimitives();
+    return chatView;
   }
 
   async getUserChats(
     authorized: UserAuthInfo,
     userId: string,
-  ): Promise<AllChatsView[]> {
+  ): Promise<ChatView[]> {
     if (authorized.id !== userId) {
       throw new NotOwnerOfTheRequestedChatException();
     }
@@ -52,10 +62,21 @@ export class ChatService {
   async getBandChats(
     authorized: UserAuthInfo,
     bandId: string,
-  ): Promise<AllChatsView[]> {
+  ): Promise<ChatView[]> {
     const userChats = await this.chatRepository.getBandChats(
       new BandId(bandId),
     );
+    const isBandMember = await this.checkIfBandMember(authorized, bandId);
+    if (!isBandMember) {
+      throw new NotOwnerOfTheRequestedChatException();
+    }
+    return userChats;
+  }
+
+  private async checkIfBandMember(
+    authorized: UserAuthInfo,
+    bandId: string,
+  ): Promise<boolean> {
     const bandInfo = (await this.queryBus.execute(
       new GetBandInfoQuery(bandId),
     )) as BandPrimitives;
@@ -63,9 +84,6 @@ export class ChatService {
     const memberId = bandInfo.membersId.find((memberId) => {
       return memberId === authorized.id;
     });
-    if (!memberId) {
-      throw new NotOwnerOfTheRequestedChatException();
-    }
-    return userChats;
+    return !!memberId;
   }
 }
