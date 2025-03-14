@@ -11,10 +11,12 @@ model user {
   id         String @id(map: "user_PK") @db.VarChar(36)
   firstName  String @db.VarChar(255)
   familyName String @db.VarChar(255)
-  email      String @db.VarChar(255)
+  email      String @unique @db.VarChar(255)
   password   String @db.VarChar(255)
   role       String @db.VarChar(255)
-  bands      band[] @relation("UserBands")
+
+  bands band[] @relation("UserBands")
+  chats chat[] @relation("UserChats")
 }
 
 model offer {
@@ -22,14 +24,39 @@ model offer {
   bandId      String  @unique @db.VarChar(36)
   price       Int
   description String? @db.VarChar(255)
-  band        band    @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
+
+  band band @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
 }
 
 model band {
   id       String  @id(map: "band_PK") @db.VarChar(36)
   name     String  @db.VarChar(255)
   genre    String  @db.VarChar(255)
-  members  user[]  @relation("UserBands")
   imageUrl String? @db.VarChar(255)
-  offer    offer?
+
+  offer   offer?
+  members user[] @relation("UserBands")
+  chats   chat[] @relation("BandChats")
+}
+
+model message {
+  id          String   @id(map: "message_PK") @db.VarChar(36)
+  senderId    String   @db.VarChar(36)
+  recipientId String   @db.VarChar(36)
+  chatId      String   @db.VarChar(36)
+  content     String
+  timestamp   DateTime @default(now())
+
+  chat chat @relation(fields: [chatId], references: [id])
+}
+
+model chat {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  userId    String   @db.VarChar(36)
+  bandId    String   @db.VarChar(36)
+  createdAt DateTime @default(now())
+
+  user     user      @relation("UserChats", fields: [userId], references: [id], map: "FK_Chat_User", onDelete: NoAction, onUpdate: NoAction)
+  band     band      @relation("BandChats", fields: [bandId], references: [id], map: "FK_Chat_Band", onDelete: NoAction, onUpdate: NoAction)
+  messages message[]
 }

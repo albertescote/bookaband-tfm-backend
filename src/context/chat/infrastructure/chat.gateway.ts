@@ -1,0 +1,73 @@
+import {
+  ConnectedSocket,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import Message from "../domain/message";
+import MessageId from "../domain/messageId";
+import { ChatRepository } from "./chat.repository";
+import ChatId from "../domain/chatId";
+import { FRONTEND_URL } from "../../../config";
+
+@WebSocketGateway({ cors: { origin: FRONTEND_URL } })
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Server;
+
+  private users = new Map<string, string>(); // userId -> socketId mapping
+
+  constructor(private chatRepository: ChatRepository) {}
+
+  handleConnection(client: Socket) {
+    console.log(`Client connected: ${client.id}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log(`Client disconnected: ${client.id}`);
+    for (const [userId, socketId] of this.users.entries()) {
+      if (socketId === client.id) {
+        this.users.delete(userId);
+        break;
+      }
+    }
+  }
+
+  @SubscribeMessage("join")
+  handleJoin(@MessageBody() userId: string, @ConnectedSocket() client: Socket) {
+    this.users.set(userId, client.id);
+    console.log(`User ${userId} joined with socket ${client.id}`);
+  }
+
+  @SubscribeMessage("privateMessage")
+  async handlePrivateMessage(
+    @MessageBody()
+    data: {
+      chatId: string;
+      senderId: string;
+      recipientId: string;
+      message: string;
+    },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const recipientSocketId = this.users.get(data.recipientId);
+
+    await this.chatRepository.addMessage(
+      new ChatId(data.chatId),
+      Message.createNew({
+        id: MessageId.generate().toPrimitive(),
+        senderId: data.senderId,
+        recipientId: data.recipientId,
+        content: data.message,
+      }),
+    );
+
+    if (recipientSocketId) {
+      this.server.to(recipientSocketId).emit("privateMessage", data);
+    }
+  }
+}
