@@ -13,6 +13,15 @@ import MessageId from "../domain/messageId";
 import { ChatRepository } from "./chat.repository";
 import ChatId from "../domain/chatId";
 import { FRONTEND_URL } from "../../../config";
+import { InvalidMessageActorsException } from "../exceptions/invalidMessageActorsException";
+import { ChatIdNotFoundException } from "../exceptions/chatIdNotFoundException";
+
+interface MessageRequest {
+  chatId: string;
+  senderId: string;
+  recipientId: string;
+  message: string;
+}
 
 @WebSocketGateway({ cors: { origin: FRONTEND_URL } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -23,12 +32,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private chatRepository: ChatRepository) {}
 
-  handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
-  }
+  handleConnection(client: Socket) {}
 
   handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
     for (const [userId, socketId] of this.users.entries()) {
       if (socketId === client.id) {
         this.users.delete(userId);
@@ -40,21 +46,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage("join")
   handleJoin(@MessageBody() userId: string, @ConnectedSocket() client: Socket) {
     this.users.set(userId, client.id);
-    console.log(`User ${userId} joined with socket ${client.id}`);
   }
 
-  @SubscribeMessage("privateMessage")
-  async handlePrivateMessage(
+  @SubscribeMessage("message")
+  async handleMessage(
     @MessageBody()
-    data: {
-      chatId: string;
-      senderId: string;
-      recipientId: string;
-      message: string;
-    },
+    data: MessageRequest,
     @ConnectedSocket() client: Socket,
   ) {
     const recipientSocketId = this.users.get(data.recipientId);
+
+    const chat = await this.chatRepository.getChatById(new ChatId(data.chatId));
+    if (!chat) {
+      throw new ChatIdNotFoundException(data.chatId);
+    }
+    if (!chat.isOwner(data.senderId) || !chat.isOwner(data.recipientId)) {
+      throw new InvalidMessageActorsException();
+    }
 
     await this.chatRepository.addMessage(
       new ChatId(data.chatId),
@@ -67,7 +75,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     if (recipientSocketId) {
-      this.server.to(recipientSocketId).emit("privateMessage", data);
+      this.server.to(recipientSocketId).emit("message", data);
     }
   }
 }

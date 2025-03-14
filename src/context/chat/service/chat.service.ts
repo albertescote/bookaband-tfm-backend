@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import { NotOwnerOfTheRequestedChatException } from "../exceptions/notOwnerOfTheRequestedChatException";
-import { ChatRepository } from "../infrastructure/chat.repository";
+import {
+  AllChatsView,
+  ChatRepository,
+} from "../infrastructure/chat.repository";
 import ChatId from "../domain/chatId";
 import { ChatPrimitives } from "../domain/chat";
 import UserId from "../../shared/domain/userId";
@@ -29,23 +32,27 @@ export class ChatService {
     authorized: UserAuthInfo,
     chatId: string,
   ): Promise<ChatPrimitives> {
-    const chat = await this.chatRepository.getChatHistoryById(
-      new ChatId(chatId),
-    );
+    const chat = await this.chatRepository.getChatById(new ChatId(chatId));
     if (!chat.isOwner(authorized.id)) {
       throw new NotOwnerOfTheRequestedChatException();
     }
     return chat.toPrimitives();
   }
 
-  async getUserChats(authorized: UserAuthInfo, userId: string) {
+  async getUserChats(
+    authorized: UserAuthInfo,
+    userId: string,
+  ): Promise<AllChatsView[]> {
     if (authorized.id !== userId) {
       throw new NotOwnerOfTheRequestedChatException();
     }
     return await this.chatRepository.getUserChats(new UserId(userId));
   }
 
-  async getBandChats(authorized: UserAuthInfo, bandId: string) {
+  async getBandChats(
+    authorized: UserAuthInfo,
+    bandId: string,
+  ): Promise<AllChatsView[]> {
     const userChats = await this.chatRepository.getBandChats(
       new BandId(bandId),
     );

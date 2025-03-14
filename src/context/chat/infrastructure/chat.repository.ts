@@ -45,7 +45,7 @@ export class ChatRepository {
     });
   }
 
-  async getChatHistoryById(id: ChatId): Promise<Chat> {
+  async getChatById(id: ChatId): Promise<Chat> {
     const chat = await this.prismaService.chat.findFirst({
       where: { id: id.toPrimitive() },
     });
