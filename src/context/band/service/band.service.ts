@@ -82,6 +82,14 @@ export class BandService {
     return storedBand.toPrimitives();
   }
 
+  async getViewById(id: string): Promise<BandResponse> {
+    const storedBand = await this.bandRepository.getBandById(new BandId(id));
+    if (!storedBand) {
+      throw new BandNotFoundException(id);
+    }
+    return storedBand.toPrimitives();
+  }
+
   async getUserBands(
     userAuthInfo: UserAuthInfo,
   ): Promise<GetUserBandsResponse[]> {
