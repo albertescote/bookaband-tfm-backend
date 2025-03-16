@@ -47,6 +47,7 @@ model message {
   chatId      String   @db.VarChar(36)
   content     String
   timestamp   DateTime @default(now())
+  isRead      Boolean
 
   chat chat @relation(fields: [chatId], references: [id])
 }
@@ -56,6 +57,7 @@ model chat {
   userId    String   @db.VarChar(36)
   bandId    String   @db.VarChar(36)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user     user      @relation("UserChats", fields: [userId], references: [id], map: "FK_Chat_User", onDelete: NoAction, onUpdate: NoAction)
   band     band      @relation("BandChats", fields: [bandId], references: [id], map: "FK_Chat_Band", onDelete: NoAction, onUpdate: NoAction)

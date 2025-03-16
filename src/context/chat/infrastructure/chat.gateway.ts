@@ -64,6 +64,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new InvalidMessageActorsException();
     }
 
+    let isRead = false;
+
+    if (recipientSocketId) {
+      isRead = true;
+      this.server.to(recipientSocketId).emit("message", data);
+    }
+
     await this.chatRepository.addMessage(
       new ChatId(data.chatId),
       Message.createNew({
@@ -72,10 +79,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         recipientId: data.recipientId,
         content: data.message,
       }),
+      isRead,
     );
-
-    if (recipientSocketId) {
-      this.server.to(recipientSocketId).emit("message", data);
-    }
   }
 }

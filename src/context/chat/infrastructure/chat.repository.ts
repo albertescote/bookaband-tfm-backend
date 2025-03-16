@@ -6,6 +6,7 @@ import Message from "../domain/message";
 import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
 import { ChatView } from "../domain/chatView";
+import { ChatHistory } from "../domain/chatHistory";
 
 @Injectable()
 export class ChatRepository {
@@ -27,15 +28,37 @@ export class ChatRepository {
     }
   }
 
-  async addMessage(chatId: ChatId, message: Message) {
+  async addMessage(chatId: ChatId, message: Message, isRead: boolean) {
     const messagePrimitives = message.toPrimitives();
-    await this.prismaService.message.create({
+    await this.prismaService.$transaction([
+      this.prismaService.message.create({
+        data: {
+          id: messagePrimitives.id,
+          chatId: chatId.toPrimitive(),
+          senderId: messagePrimitives.senderId,
+          recipientId: messagePrimitives.recipientId,
+          content: messagePrimitives.content,
+          isRead,
+        },
+      }),
+      this.prismaService.chat.update({
+        where: { id: chatId.toPrimitive() },
+        data: {
+          updatedAt: new Date(),
+        },
+      }),
+    ]);
+  }
+
+  async markMessagesAsRead(chatId: string, recipientId: string) {
+    await this.prismaService.message.updateMany({
+      where: {
+        chatId,
+        recipientId,
+        isRead: false,
+      },
       data: {
-        id: messagePrimitives.id,
-        chatId: chatId.toPrimitive(),
-        senderId: messagePrimitives.senderId,
-        recipientId: messagePrimitives.recipientId,
-        content: messagePrimitives.content,
+        isRead: true,
       },
     });
   }
@@ -58,12 +81,13 @@ export class ChatRepository {
       : undefined;
   }
 
-  async getChatViewById(id: ChatId): Promise<ChatView> {
+  async getChatViewById(id: ChatId): Promise<ChatHistory> {
     const chat = await this.prismaService.chat.findFirst({
       where: { id: id.toPrimitive() },
       select: {
         id: true,
         createdAt: true,
+        updatedAt: true,
         messages: {
           orderBy: { timestamp: "asc" },
         },
@@ -83,16 +107,27 @@ export class ChatRepository {
   }
 
   async getUserChats(userId: UserId): Promise<ChatView[]> {
-    return this.prismaService.chat.findMany({
+    const chats = await this.prismaService.chat.findMany({
       where: {
         userId: userId.toPrimitive(),
       },
+      orderBy: {
+        updatedAt: "desc",
+      },
       select: {
         id: true,
         createdAt: true,
+        updatedAt: true,
         messages: {
           orderBy: { timestamp: "desc" },
           take: 1,
+          select: {
+            id: true,
+            senderId: true,
+            recipientId: true,
+            content: true,
+            timestamp: true,
+          },
         },
         user: {
           select: {
@@ -102,19 +137,49 @@ export class ChatRepository {
             imageUrl: true,
           },
         },
-        band: { select: { id: true, name: true, imageUrl: true } },
+        band: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+          },
+        },
+        _count: {
+          select: {
+            messages: {
+              where: {
+                isRead: false,
+                recipientId: userId.toPrimitive(),
+              },
+            },
+          },
+        },
       },
     });
+
+    return chats.map((chat) => ({
+      id: chat.id,
+      createdAt: chat.createdAt,
+      updatedAt: chat.updatedAt,
+      messages: chat.messages,
+      user: chat.user,
+      band: chat.band,
+      unreadMessagesCount: chat._count.messages,
+    }));
   }
 
   async getBandChats(bandId: BandId): Promise<ChatView[]> {
-    return this.prismaService.chat.findMany({
+    const chats = await this.prismaService.chat.findMany({
       where: {
         bandId: bandId.toPrimitive(),
+      },
+      orderBy: {
+        updatedAt: "desc",
       },
       select: {
         id: true,
         createdAt: true,
+        updatedAt: true,
         messages: {
           orderBy: { timestamp: "desc" },
           take: 1,
@@ -128,8 +193,27 @@ export class ChatRepository {
           },
         },
         band: { select: { id: true, name: true, imageUrl: true } },
+        _count: {
+          select: {
+            messages: {
+              where: {
+                isRead: false,
+                recipientId: bandId.toPrimitive(),
+              },
+            },
+          },
+        },
       },
     });
+    return chats.map((chat) => ({
+      id: chat.id,
+      createdAt: chat.createdAt,
+      updatedAt: chat.updatedAt,
+      messages: chat.messages,
+      user: chat.user,
+      band: chat.band,
+      unreadMessagesCount: chat._count.messages,
+    }));
   }
 
   async deleteChat(id: ChatId): Promise<boolean> {

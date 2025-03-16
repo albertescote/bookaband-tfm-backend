@@ -11,6 +11,7 @@ import { MusicGenre } from "../../band/domain/musicGenre";
 import { ChatView } from "../domain/chatView";
 import Chat from "../domain/chat";
 import { MessagePrimitives } from "../domain/message";
+import { ChatHistory } from "../domain/chatHistory";
 
 export interface CreateChatRequestDto {
   bandId: string;
@@ -54,24 +55,29 @@ export class ChatService {
   async getChatHistory(
     authorized: UserAuthInfo,
     chatId: string,
-  ): Promise<ChatView> {
-    const chatView = await this.chatRepository.getChatViewById(
+  ): Promise<ChatHistory> {
+    const chatHistory = await this.chatRepository.getChatViewById(
       new ChatId(chatId),
     );
     const isBandMember = await this.checkIfBandMember(
       authorized,
-      chatView.band.id,
+      chatHistory.band.id,
     );
     const chat = Chat.fromPrimitives({
-      id: chatView.id,
-      userId: chatView.user.id,
-      bandId: chatView.band.id,
-      messages: chatView.messages,
+      id: chatHistory.id,
+      userId: chatHistory.user.id,
+      bandId: chatHistory.band.id,
+      messages: chatHistory.messages,
     });
     if (!chat.isOwner(authorized.id) && !isBandMember) {
       throw new NotOwnerOfTheRequestedChatException();
     }
-    return chatView;
+    let recipientId = authorized.id;
+    if (isBandMember) {
+      recipientId = chatHistory.band.id;
+    }
+    await this.chatRepository.markMessagesAsRead(chatId, recipientId);
+    return chatHistory;
   }
 
   async getUserChats(

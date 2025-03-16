@@ -67,6 +67,7 @@ async function main() {
         recipientId: band.id,
         chatId: chat.id,
         content: "Hey, I am interested in your band!",
+        isRead: true,
       },
       {
         id: "c7723dcd-f3e7-4384-a6c5-33155cca3acd",
@@ -74,6 +75,7 @@ async function main() {
         recipientId: client.id,
         chatId: chat.id,
         content: "Thanks for reaching out! Let me know how I can help.",
+        isRead: true,
       },
     ],
   });
