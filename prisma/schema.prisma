@@ -16,8 +16,9 @@ model user {
   role       String  @db.VarChar(255)
   imageUrl   String? @db.VarChar(255)
 
-  bands band[] @relation("UserBands")
-  chats chat[] @relation("UserChats")
+  bands      band[]       @relation("UserBands")
+  chats      chat[]       @relation("UserChats")
+  invitation invitation[]
 }
 
 model offer {
@@ -35,9 +36,10 @@ model band {
   genre    String  @db.VarChar(255)
   imageUrl String? @db.VarChar(255)
 
-  offer   offer?
-  members user[] @relation("UserBands")
-  chats   chat[] @relation("BandChats")
+  offer      offer?
+  members    user[]       @relation("UserBands")
+  chats      chat[]       @relation("BandChats")
+  invitation invitation[]
 }
 
 model message {
@@ -62,4 +64,15 @@ model chat {
   user     user      @relation("UserChats", fields: [userId], references: [id], map: "FK_Chat_User", onDelete: NoAction, onUpdate: NoAction)
   band     band      @relation("BandChats", fields: [bandId], references: [id], map: "FK_Chat_Band", onDelete: NoAction, onUpdate: NoAction)
   messages message[]
+}
+
+model invitation {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  bandId    String   @db.VarChar(36)
+  userId    String   @db.VarChar(36)
+  status    String   @db.VarChar(50)
+  createdAt DateTime @default(now())
+
+  band band @relation(fields: [bandId], references: [id], map: "FK_Invitation_Band", onDelete: Cascade)
+  user user @relation(fields: [userId], references: [id], map: "FK_Invitation_User", onDelete: Cascade)
 }

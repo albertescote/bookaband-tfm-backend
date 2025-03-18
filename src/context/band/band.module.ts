@@ -6,6 +6,7 @@ import { BandRepository } from "./infrastructure/band.repository";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
 import PrismaService from "../shared/infrastructure/db/prisma.service";
 import { GetBandInfoQueryHandler } from "./service/getBandInfo.queryHandler";
+import { JoinBandCommandHandler } from "./service/joinBand.commandHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -13,10 +14,16 @@ import { GetBandInfoQueryHandler } from "./service/getBandInfo.queryHandler";
     BandService,
     GetBandMembersQueryHandler,
     GetBandInfoQueryHandler,
+    JoinBandCommandHandler,
     BandRepository,
     ModuleConnectors,
     PrismaService,
   ],
-  exports: [BandService, GetBandMembersQueryHandler, GetBandInfoQueryHandler],
+  exports: [
+    BandService,
+    GetBandMembersQueryHandler,
+    GetBandInfoQueryHandler,
+    JoinBandCommandHandler,
+  ],
 })
 export class BandModule {}

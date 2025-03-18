@@ -11,9 +11,18 @@ import { BandController } from "./api/band/band.controller";
 import { OffersViewController } from "./api/offersView/offersView.controller";
 import { ChatModule } from "../context/chat/chat.module";
 import { ChatController } from "./api/chat/chat.controller";
+import { InvitationModule } from "../context/invitation/invitation.module";
+import { InvitationController } from "./api/invitation/invitation.controller";
 
 @Module({
-  imports: [OfferModule, UserModule, AuthModule, BandModule, ChatModule],
+  imports: [
+    OfferModule,
+    UserModule,
+    AuthModule,
+    BandModule,
+    ChatModule,
+    InvitationModule,
+  ],
   controllers: [
     HealthcheckController,
     OfferController,
@@ -22,6 +31,7 @@ import { ChatController } from "./api/chat/chat.controller";
     UserController,
     AuthController,
     ChatController,
+    InvitationController,
   ],
 })
 export class AppModule {}

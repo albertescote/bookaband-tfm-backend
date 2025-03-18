@@ -46,4 +46,8 @@ export default class Band {
     if (this.imageUrl) bandPrimitives.imageUrl = this.imageUrl;
     return bandPrimitives;
   }
+
+  addMember(newMemberId: UserId) {
+    this.membersId.push(newMemberId);
+  }
 }
