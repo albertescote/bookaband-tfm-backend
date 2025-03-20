@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import Offer from "../domain/offer";
-import OfferId from "../domain/offerId";
+import OfferId from "../../shared/domain/offerId";
 import { OfferRepository } from "../infrastructure/offer.repository";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import { WrongPermissionsException } from "../exceptions/wrongPermissionsException";

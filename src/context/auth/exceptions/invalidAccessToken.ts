@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '../../../app/api/exceptions/unauthorizedException';
+import { UnauthorizedException } from "../../../app/exceptions/unauthorizedException";
 
 export class InvalidAccessToken extends UnauthorizedException {
   constructor() {

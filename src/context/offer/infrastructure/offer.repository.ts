@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import Offer from "../domain/offer";
-import OfferId from "../domain/offerId";
+import OfferId from "../../shared/domain/offerId";
 
 @Injectable()
 export class OfferRepository {

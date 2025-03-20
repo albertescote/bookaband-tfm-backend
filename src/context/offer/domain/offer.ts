@@ -1,4 +1,4 @@
-import OfferId from "./offerId";
+import OfferId from "../../shared/domain/offerId";
 import OfferPrice from "./offerPrice";
 import BandId from "../../shared/domain/bandId";
 

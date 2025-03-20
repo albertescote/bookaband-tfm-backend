@@ -1,4 +1,4 @@
-import { BadRequestException } from "../../../app/api/exceptions/badRequestException";
+import { BadRequestException } from "../../../app/exceptions/badRequestException";
 
 export class InvalidInvitationIdFormatException extends BadRequestException {
   constructor(id: string) {

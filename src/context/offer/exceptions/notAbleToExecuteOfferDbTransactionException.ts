@@ -1,4 +1,4 @@
-import { InternalServerErrorException } from '../../../app/api/exceptions/internalServerErrorException';
+import { InternalServerErrorException } from "../../../app/exceptions/internalServerErrorException";
 
 export class NotAbleToExecuteOfferDbTransactionException extends InternalServerErrorException {
   constructor(action: string) {

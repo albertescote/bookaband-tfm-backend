@@ -1,4 +1,4 @@
-import { ForbiddenException } from "../../../app/api/exceptions/forbiddenException";
+import { ForbiddenException } from "../../../app/exceptions/forbiddenException";
 
 export class NotOwnerOfTheRequestedInvitationException extends ForbiddenException {
   constructor(invitationId: string) {

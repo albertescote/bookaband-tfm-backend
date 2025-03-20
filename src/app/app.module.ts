@@ -13,6 +13,8 @@ import { ChatModule } from "../context/chat/chat.module";
 import { ChatController } from "./api/chat/chat.controller";
 import { InvitationModule } from "../context/invitation/invitation.module";
 import { InvitationController } from "./api/invitation/invitation.controller";
+import { BookingController } from "./api/booking/booking.controller";
+import { BookingModule } from "../context/booking/booking.module";
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { InvitationController } from "./api/invitation/invitation.controller";
     BandModule,
     ChatModule,
     InvitationModule,
+    BookingModule,
   ],
   controllers: [
     HealthcheckController,
@@ -32,6 +35,7 @@ import { InvitationController } from "./api/invitation/invitation.controller";
     AuthController,
     ChatController,
     InvitationController,
+    BookingController,
   ],
 })
 export class AppModule {}

@@ -16,9 +16,10 @@ model user {
   role       String  @db.VarChar(255)
   imageUrl   String? @db.VarChar(255)
 
-  bands      band[]       @relation("UserBands")
-  chats      chat[]       @relation("UserChats")
-  invitation invitation[]
+  bands       band[]       @relation("UserBands")
+  chats       chat[]       @relation("UserChats")
+  invitations invitation[]
+  bookings    booking[]
 }
 
 model offer {
@@ -27,7 +28,8 @@ model offer {
   price       Int
   description String? @db.VarChar(255)
 
-  band band @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
+  band     band      @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
+  bookings booking[]
 }
 
 model band {
@@ -36,10 +38,10 @@ model band {
   genre    String  @db.VarChar(255)
   imageUrl String? @db.VarChar(255)
 
-  offer      offer?
-  members    user[]       @relation("UserBands")
-  chats      chat[]       @relation("BandChats")
-  invitation invitation[]
+  offer       offer?
+  members     user[]       @relation("UserBands")
+  chats       chat[]       @relation("BandChats")
+  invitations invitation[]
 }
 
 model message {
@@ -75,4 +77,16 @@ model invitation {
 
   band band @relation(fields: [bandId], references: [id], map: "FK_Invitation_Band", onDelete: Cascade)
   user user @relation(fields: [userId], references: [id], map: "FK_Invitation_User", onDelete: Cascade)
+}
+
+model booking {
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  offerId   String   @db.VarChar(36)
+  userId    String   @db.VarChar(36)
+  status    String   @db.VarChar(50)
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  offer offer @relation(fields: [offerId], references: [id], map: "FK_Booking_Offer", onDelete: Cascade)
+  user  user  @relation(fields: [userId], references: [id], map: "FK_Booking_User", onDelete: Cascade)
 }

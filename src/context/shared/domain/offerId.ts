@@ -1,5 +1,5 @@
-import { v4 as uuidv4, validate } from 'uuid';
-import { InvalidOfferIdFormatException } from '../exceptions/invalidOfferIdFormatException';
+import { v4 as uuidv4, validate } from "uuid";
+import { InvalidOfferIdFormatException } from "../../offer/exceptions/invalidOfferIdFormatException";
 
 export default class OfferId {
   constructor(private value: string) {

@@ -6,6 +6,7 @@ import { CqrsModule } from "@nestjs/cqrs";
 import PrismaService from "../shared/infrastructure/db/prisma.service";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
 import { OffersViewService } from "./service/offersView.service";
+import { GetOfferInfoQueryHandler } from "./service/getOfferInfo.queryHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -16,7 +17,8 @@ import { OffersViewService } from "./service/offersView.service";
     UserRepository,
     PrismaService,
     ModuleConnectors,
+    GetOfferInfoQueryHandler,
   ],
-  exports: [OfferService, OffersViewService],
+  exports: [OfferService, OffersViewService, GetOfferInfoQueryHandler],
 })
 export class OfferModule {}

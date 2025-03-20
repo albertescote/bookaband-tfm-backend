@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import OfferId from "../domain/offerId";
+import OfferId from "../../shared/domain/offerId";
 import { OfferRepository } from "../infrastructure/offer.repository";
 import { OfferNotFoundException } from "../exceptions/offerNotFoundException";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";

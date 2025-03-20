@@ -1,9 +1,9 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { FRONTEND_URL } from './config';
-import { AllExceptionsFilter } from './app/api/filter/http-exception.filter';
-import { LoggingInterceptor } from './app/api/interceptor/logging.interceptor';
+import { HttpAdapterHost, NestFactory } from "@nestjs/core";
+import { AppModule } from "./app/app.module";
+import { ValidationPipe } from "@nestjs/common";
+import { FRONTEND_URL } from "./config";
+import { AllExceptionsFilter } from "./app/filter/http-exception.filter";
+import { LoggingInterceptor } from "./app/interceptor/logging.interceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,13 +13,13 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.enableCors({
     origin: FRONTEND_URL,
-    methods: ['POST'],
+    methods: ["POST"],
     allowedHeaders: [
-      'Origin',
-      'X-Requested-With',
-      'Content-Type',
-      'Accept',
-      'Authorization',
+      "Origin",
+      "X-Requested-With",
+      "Content-Type",
+      "Accept",
+      "Authorization",
     ],
     credentials: true,
   });

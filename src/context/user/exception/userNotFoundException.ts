@@ -1,4 +1,4 @@
-import { NotFoundException } from '../../../app/api/exceptions/notFoundException';
+import { NotFoundException } from "../../../app/exceptions/notFoundException";
 
 export class UserNotFoundException extends NotFoundException {
   constructor(id: string) {
