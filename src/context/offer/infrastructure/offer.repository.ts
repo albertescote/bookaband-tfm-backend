@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import Offer from "../domain/offer";
 import OfferId from "../../shared/domain/offerId";
+import { OfferDetails } from "../domain/offerDetails";
+import { BookingStatus } from "../../booking/domain/bookingStatus";
 
 @Injectable()
 export class OfferRepository {
@@ -71,5 +73,54 @@ export class OfferRepository {
     } catch {
       return false;
     }
+  }
+
+  async getOfferDetailsById(id: OfferId): Promise<OfferDetails> {
+    const offer = await this.prismaService.offer.findFirst({
+      where: { id: id.toPrimitive() },
+      include: {
+        band: true,
+        bookings: true,
+      },
+    });
+    return offer
+      ? {
+          id: offer.id,
+          price: offer.price,
+          bandId: offer.band.id,
+          bandName: offer.band.name,
+          genre: offer.band.genre,
+          bookingDates: offer.bookings.map((booking) => {
+            if (booking.status === BookingStatus.ACCEPTED) {
+              return booking.date.toISOString();
+            }
+          }),
+          description: offer.description,
+          imageUrl: offer.band.imageUrl,
+        }
+      : undefined;
+  }
+
+  async getAllOffersDetails(): Promise<OfferDetails[]> {
+    const offers = await this.prismaService.offer.findMany({
+      include: {
+        band: true,
+        bookings: true,
+      },
+    });
+    return offers.map((offer) => {
+      return {
+        id: offer.id,
+        price: offer.price,
+        bandId: offer.band.id,
+        bandName: offer.band.name,
+        genre: offer.band.genre,
+        bookingDates: offer.bookings.map((booking) =>
+          booking.date.toISOString(),
+        ),
+        description: offer.description,
+        imageUrl: offer.band.imageUrl,
+      };
+    });
   }
 }

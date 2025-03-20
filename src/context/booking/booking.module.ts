@@ -3,9 +3,10 @@ import PrismaService from "../shared/infrastructure/db/prisma.service";
 import { BookingService } from "./service/booking.service";
 import { BookingRepository } from "./infrastructure/booking.repository";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
+import { CqrsModule } from "@nestjs/cqrs";
 
 @Module({
-  imports: [],
+  imports: [CqrsModule],
   providers: [
     BookingService,
     BookingRepository,

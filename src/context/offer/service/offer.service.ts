@@ -12,6 +12,7 @@ import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import BandId from "../../shared/domain/bandId";
 import { OfferAlreadyExistsException } from "../exceptions/offerAlreadyExistsException";
+import { OfferDetails } from "../domain/offerDetails";
 
 export interface OfferRequest {
   bandId: string;
@@ -65,6 +66,11 @@ export class OfferService {
     if (!storedOffer) {
       throw new OfferNotFoundException(id);
     }
+    const storedOfferPrimitives = storedOffer.toPrimitives();
+    await this.checkBandMembership(
+      storedOfferPrimitives.bandId,
+      userAuthInfo.id,
+    );
     return storedOffer.toPrimitives();
   }
 
@@ -114,6 +120,20 @@ export class OfferService {
       );
     }
     return;
+  }
+
+  async getOfferDetails(id: string): Promise<OfferDetails> {
+    const storedOffer = await this.offerRepository.getOfferDetailsById(
+      new OfferId(id),
+    );
+    if (!storedOffer) {
+      throw new OfferNotFoundException(id);
+    }
+    return storedOffer;
+  }
+
+  async getAll(): Promise<OfferDetails[]> {
+    return await this.offerRepository.getAllOffersDetails();
   }
 
   private async checkExistingOffersForBandId(bandId: string) {

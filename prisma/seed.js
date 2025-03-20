@@ -42,7 +42,7 @@ async function main() {
     },
   });
 
-  await prisma.offer.create({
+  const offer = await prisma.offer.create({
     data: {
       id: "db0185c6-6a12-4825-9620-c13b8bde082e",
       bandId: band.id,
@@ -78,6 +78,16 @@ async function main() {
         isRead: true,
       },
     ],
+  });
+
+  await prisma.booking.create({
+    data: {
+      id: "0eb627aa-3dc5-44b8-b395-2774defb0d74",
+      offerId: offer.id,
+      userId: client.id,
+      status: "ACCEPTED",
+      date: "2025-03-22 20:00:00.000",
+    },
   });
 
   console.log("Database seeded successfully!");

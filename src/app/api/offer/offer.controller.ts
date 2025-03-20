@@ -17,6 +17,7 @@ import { OfferResponseDto } from "./offerResponse.dto";
 import { IdParamDto } from "./idParam.dto";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
+import { OfferDetailsResponseDto } from "./offerDetailsResponse.dto";
 
 @Controller("offers")
 export class OfferController {
@@ -62,5 +63,20 @@ export class OfferController {
   ): Promise<void> {
     await this.offerService.deleteById(idParamDto.id, req.user);
     return;
+  }
+
+  @Get("/:id/details")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async getOfferDetails(
+    @Param() idParamDto: IdParamDto,
+  ): Promise<OfferDetailsResponseDto> {
+    return this.offerService.getOfferDetails(idParamDto.id);
+  }
+
+  @Get("/")
+  @HttpCode(200)
+  async getAll(): Promise<OfferDetailsResponseDto[]> {
+    return this.offerService.getAll();
   }
 }
