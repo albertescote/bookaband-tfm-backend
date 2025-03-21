@@ -6,5 +6,4 @@ export interface BookingResponseDto {
   userId: string;
   status: BookingStatus;
   date: Date;
-  createdAt: Date;
 }

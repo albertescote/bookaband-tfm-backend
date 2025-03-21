@@ -9,7 +9,6 @@ export interface BookingPrimitives {
   userId: string;
   status: BookingStatus;
   date: Date;
-  createdAt: Date;
 }
 
 export class Booking {
@@ -19,7 +18,6 @@ export class Booking {
     private userId: UserId,
     private status: BookingStatus,
     private date: Date,
-    private createdAt?: Date,
   ) {}
 
   static fromPrimitives(primitives: BookingPrimitives): Booking {
@@ -29,7 +27,6 @@ export class Booking {
       new UserId(primitives.userId),
       primitives.status,
       primitives.date,
-      primitives.createdAt,
     );
   }
 
@@ -40,7 +37,6 @@ export class Booking {
       userId,
       BookingStatus.PENDING,
       date,
-      new Date(),
     );
   }
 
@@ -51,7 +47,6 @@ export class Booking {
       userId: this.userId.toPrimitive(),
       status: this.status,
       date: this.date,
-      createdAt: this.createdAt,
     };
   }
 

@@ -24,7 +24,6 @@ export class BookingRepository {
           userId: storedBooking.userId,
           status: BookingStatus[storedBooking.status],
           date: storedBooking.date,
-          createdAt: storedBooking.createdAt,
         })
       : undefined;
   }
@@ -40,7 +39,6 @@ export class BookingRepository {
           userId: booking.userId,
           status: BookingStatus[booking.status],
           date: booking.date,
-          createdAt: booking.createdAt,
         })
       : undefined;
   }
@@ -48,6 +46,7 @@ export class BookingRepository {
   async findAllByUserId(userId: UserId) {
     const bookings = await this.prismaService.booking.findMany({
       where: { userId: userId.toPrimitive() },
+      orderBy: { updatedAt: "desc" },
     });
     return bookings
       ? bookings.map((booking) => {
@@ -57,7 +56,6 @@ export class BookingRepository {
             userId: booking.userId,
             status: BookingStatus[booking.status],
             date: booking.date,
-            createdAt: booking.createdAt,
           });
         })
       : undefined;
@@ -66,6 +64,7 @@ export class BookingRepository {
   async findAllByBandId(bandId: BandId) {
     const bookings = await this.prismaService.booking.findMany({
       where: { offer: { bandId: bandId.toPrimitive() } },
+      orderBy: { updatedAt: "desc" },
     });
     return bookings
       ? bookings.map((booking) => {
@@ -75,7 +74,6 @@ export class BookingRepository {
             userId: booking.userId,
             status: BookingStatus[booking.status],
             date: booking.date,
-            createdAt: booking.createdAt,
           });
         })
       : undefined;
