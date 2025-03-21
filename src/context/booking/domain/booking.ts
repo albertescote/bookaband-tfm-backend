@@ -58,4 +58,16 @@ export class Booking {
   isOwner(userId: UserId) {
     return this.userId.toPrimitive() === userId.toPrimitive();
   }
+
+  isPending(): boolean {
+    return this.status === BookingStatus.PENDING;
+  }
+
+  accept() {
+    this.status = BookingStatus.ACCEPTED;
+  }
+
+  decline() {
+    this.status = BookingStatus.DECLINED;
+  }
 }

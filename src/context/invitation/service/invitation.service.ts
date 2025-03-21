@@ -100,7 +100,7 @@ export class InvitationService {
       invitationPrimitives.userId,
     );
 
-    return invitation.toPrimitives();
+    return invitationPrimitives;
   }
 
   async declineInvitation(

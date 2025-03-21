@@ -90,11 +90,9 @@ export class OfferRepository {
           bandId: offer.band.id,
           bandName: offer.band.name,
           genre: offer.band.genre,
-          bookingDates: offer.bookings.map((booking) => {
-            if (booking.status === BookingStatus.ACCEPTED) {
-              return booking.date.toISOString();
-            }
-          }),
+          bookingDates: offer.bookings
+            .filter((booking) => booking.status === BookingStatus.ACCEPTED)
+            .map((booking) => booking.date.toISOString()),
           description: offer.description,
           imageUrl: offer.band.imageUrl,
         }

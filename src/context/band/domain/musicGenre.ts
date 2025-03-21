@@ -1,4 +1,5 @@
-export enum MusicGenre{
-    ROCK = 'ROCK',
-    POP = 'POP'
+export enum MusicGenre {
+  ROCK = "ROCK",
+  POP = "POP",
+  JAZZ = "JAZZ",
 }

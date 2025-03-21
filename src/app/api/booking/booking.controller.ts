@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Request,
   UseGuards,
 } from "@nestjs/common";
@@ -29,6 +30,15 @@ export class BookingController {
     return await this.bookingService.create(req.user, body);
   }
 
+  @Get("/user")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async getAllFromUser(
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BookingResponseDto[]> {
+    return await this.bookingService.getAllFromUser(req.user);
+  }
+
   @Get("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
@@ -37,5 +47,35 @@ export class BookingController {
     @Request() req: { user: UserAuthInfo },
   ): Promise<BookingResponseDto> {
     return await this.bookingService.getById(req.user, id);
+  }
+
+  @Get("/band/:id")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async getAllFromBand(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BookingResponseDto[]> {
+    return await this.bookingService.getAllFromBand(req.user, id);
+  }
+
+  @Put("/:id/accept")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async acceptBooking(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BookingResponseDto> {
+    return await this.bookingService.acceptBooking(req.user, id);
+  }
+
+  @Put("/:id/decline")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async declineBooking(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BookingResponseDto> {
+    return await this.bookingService.declineBooking(req.user, id);
   }
 }

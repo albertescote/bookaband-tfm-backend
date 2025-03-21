@@ -3,6 +3,8 @@ import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import BookingId from "../domain/bookingId";
 import { Booking } from "../domain/booking";
 import { BookingStatus } from "../domain/bookingStatus";
+import UserId from "../../shared/domain/userId";
+import BandId from "../../shared/domain/bandId";
 
 @Injectable()
 export class BookingRepository {
@@ -39,6 +41,42 @@ export class BookingRepository {
           status: BookingStatus[booking.status],
           date: booking.date,
           createdAt: booking.createdAt,
+        })
+      : undefined;
+  }
+
+  async findAllByUserId(userId: UserId) {
+    const bookings = await this.prismaService.booking.findMany({
+      where: { userId: userId.toPrimitive() },
+    });
+    return bookings
+      ? bookings.map((booking) => {
+          return Booking.fromPrimitives({
+            id: booking.id,
+            offerId: booking.offerId,
+            userId: booking.userId,
+            status: BookingStatus[booking.status],
+            date: booking.date,
+            createdAt: booking.createdAt,
+          });
+        })
+      : undefined;
+  }
+
+  async findAllByBandId(bandId: BandId) {
+    const bookings = await this.prismaService.booking.findMany({
+      where: { offer: { bandId: bandId.toPrimitive() } },
+    });
+    return bookings
+      ? bookings.map((booking) => {
+          return Booking.fromPrimitives({
+            id: booking.id,
+            offerId: booking.offerId,
+            userId: booking.userId,
+            status: BookingStatus[booking.status],
+            date: booking.date,
+            createdAt: booking.createdAt,
+          });
         })
       : undefined;
   }

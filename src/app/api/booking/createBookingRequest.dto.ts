@@ -1,5 +1,5 @@
-import { BookingStatus } from "../../../context/booking/domain/bookingStatus";
-import { IsDate, IsEnum, IsNotEmpty, IsUUID } from "class-validator";
+import { IsNotEmpty, IsUUID } from "class-validator";
+import { IsStringDate } from "../../validators/isStringDateConstraint";
 
 export class CreateBookingRequestDto {
   @IsNotEmpty()
@@ -7,10 +7,6 @@ export class CreateBookingRequestDto {
   offerId: string;
 
   @IsNotEmpty()
-  @IsEnum(BookingStatus)
-  status: BookingStatus;
-
-  @IsNotEmpty()
-  @IsDate()
-  date: Date;
+  @IsStringDate()
+  date: string;
 }
