@@ -15,6 +15,7 @@ import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import BandId from "../../shared/domain/bandId";
 import { NotOwnerOfTheRequestedBandException } from "../exceptions/notOwnerOfTheRequestedBandException";
 import { BookingAlreadyProcessedException } from "../exceptions/bookingAlreadyProcessedException";
+import { BookingWithDetailsPrimitives } from "../domain/bookingWithDetails";
 
 export interface CreateBookingRequest {
   offerId: string;
@@ -47,33 +48,40 @@ export class BookingService {
   async getById(
     userAuthInfo: UserAuthInfo,
     id: string,
-  ): Promise<BookingPrimitives> {
-    const booking = await this.bookingRepository.findById(new BookingId(id));
-    if (!booking) {
+  ): Promise<BookingWithDetailsPrimitives> {
+    const bookingWithDetails = await this.bookingRepository.findByIdWithDetails(
+      new BookingId(id),
+    );
+    if (!bookingWithDetails) {
       throw new BookingNotFoundException(id);
     }
-    const isOwner = booking.isOwner(new UserId(userAuthInfo.id));
+    const isOwner = bookingWithDetails.isOwner(new UserId(userAuthInfo.id));
     const isBandMember = await this.checkIsBandMember(
-      booking,
+      bookingWithDetails.getOfferId(),
+      bookingWithDetails.getId(),
       new UserId(userAuthInfo.id),
     );
     if (!isOwner && !isBandMember) {
       throw new NotOwnerOfTheRequestedBookingException();
     }
-    return booking.toPrimitives();
+    return bookingWithDetails.toPrimitives();
   }
 
-  async getAllFromUser(user: UserAuthInfo): Promise<BookingPrimitives[]> {
+  async getAllFromUser(
+    user: UserAuthInfo,
+  ): Promise<BookingWithDetailsPrimitives[]> {
     const bookings = await this.bookingRepository.findAllByUserId(
       new UserId(user.id),
     );
-    return bookings.map((booking) => booking.toPrimitives());
+    return bookings.map((booking) => {
+      return booking.toPrimitives();
+    });
   }
 
   async getAllFromBand(
     user: UserAuthInfo,
     bandId: string,
-  ): Promise<BookingPrimitives[]> {
+  ): Promise<BookingWithDetailsPrimitives[]> {
     const members = await this.moduleConnectors.obtainBandMembers(bandId);
     const isMember = members.find((member) => member === user.id);
     if (!isMember) {
@@ -82,7 +90,9 @@ export class BookingService {
     const bookings = await this.bookingRepository.findAllByBandId(
       new BandId(bandId),
     );
-    return bookings.map((booking) => booking.toPrimitives());
+    return bookings.map((booking) => {
+      return booking.toPrimitives();
+    });
   }
 
   async acceptBooking(
@@ -94,7 +104,8 @@ export class BookingService {
       throw new BookingNotFoundException(id);
     }
     const isBandMember = await this.checkIsBandMember(
-      booking,
+      booking.getOfferId(),
+      booking.getId(),
       new UserId(userAuthInfo.id),
     );
     if (!isBandMember) {
@@ -118,7 +129,8 @@ export class BookingService {
       throw new BookingNotFoundException(id);
     }
     const isBandMember = await this.checkIsBandMember(
-      booking,
+      booking.getOfferId(),
+      booking.getId(),
       new UserId(userAuthInfo.id),
     );
     if (!isBandMember) {
@@ -134,20 +146,21 @@ export class BookingService {
   }
 
   private async checkIsBandMember(
-    booking: Booking,
+    offerId: OfferId,
+    bookingId: BookingId,
     userId: UserId,
   ): Promise<boolean> {
     const offer = await this.moduleConnectors.obtainOfferInformation(
-      booking.toPrimitives().offerId,
+      offerId.toPrimitive(),
     );
     if (!offer) {
-      throw new OfferNotFoundException(booking.toPrimitives().id);
+      throw new OfferNotFoundException(bookingId.toPrimitive());
     }
     const bandMembers = await this.moduleConnectors.obtainBandMembers(
       offer.bandId,
     );
     if (!bandMembers) {
-      throw new BandNotFoundException(booking.toPrimitives().id);
+      throw new BandNotFoundException(bookingId.toPrimitive());
     }
     const foundMember = bandMembers.find(
       (memberId) => memberId === userId.toPrimitive(),

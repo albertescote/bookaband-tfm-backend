@@ -15,6 +15,7 @@ import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { CreateBookingRequestDto } from "./createBookingRequest.dto";
 import { BookingService } from "../../../context/booking/service/booking.service";
 import { BookingResponseDto } from "./bookingResponse.dto";
+import { BookingResponseWithDetailsDto } from "./bookingResponseWithDetails.dto";
 
 @Controller("/bookings")
 export class BookingController {
@@ -35,7 +36,7 @@ export class BookingController {
   @HttpCode(200)
   async getAllFromUser(
     @Request() req: { user: UserAuthInfo },
-  ): Promise<BookingResponseDto[]> {
+  ): Promise<BookingResponseWithDetailsDto[]> {
     return await this.bookingService.getAllFromUser(req.user);
   }
 
@@ -45,7 +46,7 @@ export class BookingController {
   async getById(
     @Param("id", ParseUUIDPipe) id: string,
     @Request() req: { user: UserAuthInfo },
-  ): Promise<BookingResponseDto> {
+  ): Promise<BookingResponseWithDetailsDto> {
     return await this.bookingService.getById(req.user, id);
   }
 
@@ -55,7 +56,7 @@ export class BookingController {
   async getAllFromBand(
     @Param("id", ParseUUIDPipe) id: string,
     @Request() req: { user: UserAuthInfo },
-  ): Promise<BookingResponseDto[]> {
+  ): Promise<BookingResponseWithDetailsDto[]> {
     return await this.bookingService.getAllFromBand(req.user, id);
   }
 

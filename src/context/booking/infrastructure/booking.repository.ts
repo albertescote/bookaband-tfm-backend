@@ -5,6 +5,7 @@ import { Booking } from "../domain/booking";
 import { BookingStatus } from "../domain/bookingStatus";
 import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
+import { BookingWithDetails } from "../domain/bookingWithDetails";
 
 @Injectable()
 export class BookingRepository {
@@ -43,37 +44,121 @@ export class BookingRepository {
       : undefined;
   }
 
-  async findAllByUserId(userId: UserId) {
+  async findByIdWithDetails(bookingId: BookingId): Promise<BookingWithDetails> {
+    const booking = await this.prismaService.booking.findFirst({
+      where: { id: bookingId.toPrimitive() },
+      include: {
+        offer: {
+          include: {
+            band: {
+              select: {
+                name: true,
+                imageUrl: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            firstName: true,
+            familyName: true,
+            imageUrl: true,
+          },
+        },
+      },
+    });
+    return booking
+      ? BookingWithDetails.fromPrimitives({
+          id: booking.id,
+          offerId: booking.offerId,
+          userId: booking.userId,
+          status: BookingStatus[booking.status],
+          date: booking.date,
+          userName: booking.user.firstName + " " + booking.user.familyName,
+          userImageUrl: booking.user.imageUrl,
+          bandName: booking.offer.band.name,
+          bandImageUrl: booking.offer.band.imageUrl,
+        })
+      : undefined;
+  }
+
+  async findAllByUserId(userId: UserId): Promise<BookingWithDetails[]> {
     const bookings = await this.prismaService.booking.findMany({
       where: { userId: userId.toPrimitive() },
       orderBy: { updatedAt: "desc" },
+      include: {
+        offer: {
+          include: {
+            band: {
+              select: {
+                name: true,
+                imageUrl: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            firstName: true,
+            familyName: true,
+            imageUrl: true,
+          },
+        },
+      },
     });
     return bookings
       ? bookings.map((booking) => {
-          return Booking.fromPrimitives({
+          return BookingWithDetails.fromPrimitives({
             id: booking.id,
             offerId: booking.offerId,
             userId: booking.userId,
             status: BookingStatus[booking.status],
             date: booking.date,
+            userName: booking.user.firstName + " " + booking.user.familyName,
+            userImageUrl: booking.user.imageUrl,
+            bandName: booking.offer.band.name,
+            bandImageUrl: booking.offer.band.imageUrl,
           });
         })
       : undefined;
   }
 
-  async findAllByBandId(bandId: BandId) {
+  async findAllByBandId(bandId: BandId): Promise<BookingWithDetails[]> {
     const bookings = await this.prismaService.booking.findMany({
       where: { offer: { bandId: bandId.toPrimitive() } },
       orderBy: { updatedAt: "desc" },
+      include: {
+        offer: {
+          include: {
+            band: {
+              select: {
+                name: true,
+                imageUrl: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            firstName: true,
+            familyName: true,
+            imageUrl: true,
+          },
+        },
+      },
     });
     return bookings
       ? bookings.map((booking) => {
-          return Booking.fromPrimitives({
+          return BookingWithDetails.fromPrimitives({
             id: booking.id,
             offerId: booking.offerId,
             userId: booking.userId,
             status: BookingStatus[booking.status],
             date: booking.date,
+            userName: booking.user.firstName + " " + booking.user.familyName,
+            userImageUrl: booking.user.imageUrl,
+            bandName: booking.offer.band.name,
+            bandImageUrl: booking.offer.band.imageUrl,
           });
         })
       : undefined;
