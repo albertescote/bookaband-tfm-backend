@@ -7,16 +7,21 @@ import { WrongPermissionsException } from "../exceptions/wrongPermissionsExcepti
 import { OfferNotFoundException } from "../exceptions/offerNotFoundException";
 import { NotAbleToExecuteOfferDbTransactionException } from "../exceptions/notAbleToExecuteOfferDbTransactionException";
 import { Role } from "../../shared/domain/role";
-import OfferPrice from "../domain/offerPrice";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
-import BandId from "../../shared/domain/bandId";
 import { OfferAlreadyExistsException } from "../exceptions/offerAlreadyExistsException";
 import { OfferDetails } from "../domain/offerDetails";
 
-export interface OfferRequest {
+export interface CreateOfferRequest {
   bandId: string;
   price: number;
+  description?: string;
+}
+
+export interface UpdateOfferRequest {
+  bandId: string;
+  price: number;
+  visible: boolean;
   description?: string;
 }
 
@@ -24,6 +29,7 @@ export interface OfferResponse {
   id: string;
   price: number;
   bandId: string;
+  visible: boolean;
   description?: string;
 }
 
@@ -35,7 +41,7 @@ export class OfferService {
   ) {}
 
   async create(
-    request: OfferRequest,
+    request: CreateOfferRequest,
     userAuthInfo: UserAuthInfo,
   ): Promise<OfferResponse> {
     if (userAuthInfo.role !== Role.Musician) {
@@ -43,10 +49,9 @@ export class OfferService {
     }
     await this.checkBandMembership(request.bandId, userAuthInfo.id);
     await this.checkExistingOffersForBandId(request.bandId);
-    const offer = new Offer(
-      OfferId.generate(),
-      new BandId(request.bandId),
-      new OfferPrice(request.price),
+    const offer = Offer.create(
+      request.bandId,
+      request.price,
       request.description,
     );
     const storedOffer = await this.offerRepository.addOffer(offer);
@@ -76,7 +81,7 @@ export class OfferService {
 
   async update(
     id: string,
-    request: OfferRequest,
+    request: UpdateOfferRequest,
     userAuthInfo: UserAuthInfo,
   ): Promise<OfferResponse> {
     const oldOffer = await this.offerRepository.getOfferById(new OfferId(id));
@@ -94,6 +99,7 @@ export class OfferService {
         bandId: request.bandId,
         price: request.price,
         description: request.description,
+        visible: request.visible,
       }),
     );
     if (!updatedOffer) {

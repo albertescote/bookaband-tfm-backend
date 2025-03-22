@@ -13,6 +13,7 @@ export interface UserBand {
     id: string;
     bandId: string;
     price: number;
+    visible: boolean;
     description?: string;
   };
 }

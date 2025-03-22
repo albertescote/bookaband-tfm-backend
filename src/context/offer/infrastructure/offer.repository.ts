@@ -36,6 +36,7 @@ export class OfferRepository {
           bandId: offer.bandId,
           price: offer.price,
           description: offer.description,
+          visible: offer.visible,
         })
       : undefined;
   }
@@ -48,6 +49,7 @@ export class OfferRepository {
         bandId: offer.bandId,
         price: offer.price,
         description: offer.description,
+        visible: offer.visible,
       });
     });
   }
@@ -77,7 +79,7 @@ export class OfferRepository {
 
   async getOfferDetailsById(id: OfferId): Promise<OfferDetails> {
     const offer = await this.prismaService.offer.findFirst({
-      where: { id: id.toPrimitive() },
+      where: { id: id.toPrimitive(), visible: true },
       include: {
         band: true,
         bookings: true,
@@ -101,6 +103,7 @@ export class OfferRepository {
 
   async getAllOffersDetails(): Promise<OfferDetails[]> {
     const offers = await this.prismaService.offer.findMany({
+      where: { visible: true },
       include: {
         band: true,
         bookings: true,

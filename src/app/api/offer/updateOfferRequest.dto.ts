@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
 
 export class UpdateOfferRequestDto {
   @IsNotEmpty()
@@ -8,6 +14,10 @@ export class UpdateOfferRequestDto {
   @IsNotEmpty()
   @IsNumber()
   price: number;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  visible: boolean;
 
   @IsOptional()
   @IsString()

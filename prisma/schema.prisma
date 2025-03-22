@@ -27,6 +27,7 @@ model offer {
   bandId      String  @unique @db.VarChar(36)
   price       Int
   description String? @db.VarChar(255)
+  visible     Boolean @default(true)
 
   band     band      @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
   bookings booking[]

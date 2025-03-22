@@ -5,6 +5,7 @@ export interface GetUserBandsResponse {
     id: string;
     bandId: string;
     price: number;
+    visible: boolean;
     description?: string;
   };
 }
