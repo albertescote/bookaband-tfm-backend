@@ -4,6 +4,7 @@ import Band from "../domain/band";
 import BandId from "../../shared/domain/bandId";
 import { MusicGenre } from "../domain/musicGenre";
 import UserId from "../../shared/domain/userId";
+import BandWithDetails from "../domain/bandWithDetails";
 
 export interface UserBand {
   id: string;
@@ -60,19 +61,35 @@ export class BandRepository {
       : undefined;
   }
 
-  async getAllBands(): Promise<Band[]> {
-    const bands = await this.prismaService.band.findMany({
-      include: { members: true },
+  async getBandWithDetailsById(id: BandId): Promise<BandWithDetails> {
+    const band = await this.prismaService.band.findFirst({
+      where: { id: id.toPrimitive() },
+      include: {
+        members: {
+          select: {
+            id: true,
+            firstName: true,
+            familyName: true,
+            imageUrl: true,
+          },
+        },
+      },
     });
-    return bands.map((band) => {
-      return Band.fromPrimitives({
-        id: band.id,
-        name: band.name,
-        membersId: band.members.map((member) => member.id),
-        genre: MusicGenre[band.genre],
-        imageUrl: band.imageUrl,
-      });
-    });
+    return band
+      ? BandWithDetails.fromPrimitives({
+          id: band.id,
+          name: band.name,
+          members: band.members.map((member) => {
+            return {
+              id: member.id,
+              userName: member.firstName + " " + member.familyName,
+              imageUrl: member.imageUrl,
+            };
+          }),
+          genre: MusicGenre[band.genre],
+          imageUrl: band.imageUrl,
+        })
+      : undefined;
   }
 
   async getUserBands(userId: UserId): Promise<UserBand[]> {

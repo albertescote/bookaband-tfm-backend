@@ -27,6 +27,18 @@ export interface BandResponse {
   imageUrl?: string;
 }
 
+export interface BandWithDetailsResponse {
+  id: string;
+  name: string;
+  genre: MusicGenre;
+  members: {
+    id: string;
+    userName: string;
+    imageUrl?: string;
+  }[];
+  imageUrl?: string;
+}
+
 export interface GetUserBandsResponse {
   id: string;
   name: string;
@@ -79,7 +91,28 @@ export class BandService {
     if (!storedBandPrimitives.membersId.find((id) => id === userAuthInfo.id)) {
       throw new WrongPermissionsException("get band");
     }
-    return storedBand.toPrimitives();
+    return storedBandPrimitives;
+  }
+
+  async getDetailsById(
+    id: string,
+    userAuthInfo: UserAuthInfo,
+  ): Promise<BandWithDetailsResponse> {
+    const storedBand = await this.bandRepository.getBandWithDetailsById(
+      new BandId(id),
+    );
+    if (!storedBand) {
+      throw new BandNotFoundException(id);
+    }
+    const storedBandPrimitives = storedBand.toPrimitives();
+    if (
+      !storedBandPrimitives.members.find(
+        (member) => member.id === userAuthInfo.id,
+      )
+    ) {
+      throw new WrongPermissionsException("get band");
+    }
+    return storedBandPrimitives;
   }
 
   async getViewById(id: string): Promise<BandResponse> {
