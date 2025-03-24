@@ -82,6 +82,6 @@ export class InvitationRepository {
             createdAt: invitation.createdAt,
           };
         })
-      : undefined;
+      : [];
   }
 }

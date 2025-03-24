@@ -33,12 +33,14 @@ export class AuthController {
     const loginResponse = await this.loginService.login(req.user);
     response.cookie("access_token", loginResponse.access_token, {
       httpOnly: true,
-      secure: true,
+      // TODO: put secure if https
+      secure: false,
       sameSite: "strict",
     });
     response.cookie("refresh_token", loginResponse.refresh_token, {
       httpOnly: true,
-      secure: true,
+      // TODO: put secure if https
+      secure: false,
       sameSite: "strict",
     });
     response.setHeader("Cache-Control", "no-store");
@@ -65,7 +67,8 @@ export class AuthController {
     );
     response.cookie("access_token", refreshTokenResponse.access_token, {
       httpOnly: true,
-      secure: true,
+      // TODO: put secure if https
+      secure: false,
       sameSite: "strict",
     });
     response.setHeader("Cache-Control", "no-store");
