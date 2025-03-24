@@ -1,4 +1,5 @@
 import {
+  decodeJwt,
   exportJWK,
   generateKeyPair,
   importJWK,
@@ -6,7 +7,6 @@ import {
   jwtVerify,
   SignJWT,
 } from "jose";
-import { TOKEN_EXPIRES_IN_SECONDS } from "../../auth/config";
 
 export interface JWTValidationResult {
   valid: boolean;
@@ -43,14 +43,20 @@ export class JoseWrapper {
     }
   }
 
-  public async signJwt(payload: JwtPayload, issuer: string): Promise<string> {
+  public async signJwt(
+    payload: JwtPayload,
+    issuer: string,
+    expInSeconds: number,
+  ): Promise<string> {
     return await new SignJWT(payload)
       .setProtectedHeader({ alg: this.privateKey.alg ?? "ES256" })
       .setIssuedAt()
       .setIssuer(issuer)
-      .setExpirationTime(
-        Math.floor(Date.now() / 1000) + TOKEN_EXPIRES_IN_SECONDS,
-      )
+      .setExpirationTime(Math.floor(Date.now() / 1000) + expInSeconds)
       .sign(await importJWK(this.privateKey, this.privateKey.alg ?? "ES256"));
+  }
+
+  public decodeJwt(jwt: string): JwtPayload {
+    return decodeJwt(jwt);
   }
 }

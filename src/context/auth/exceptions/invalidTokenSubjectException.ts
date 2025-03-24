@@ -1,7 +1,7 @@
 import { UnauthorizedException } from "../../../app/exceptions/unauthorizedException";
 
-export class InvalidAccessTokenSubject extends UnauthorizedException {
+export class InvalidTokenSubjectException extends UnauthorizedException {
   constructor(subject: string) {
-    super(`Invalid access token subject: ${subject}`);
+    super(`Invalid token subject: ${subject}`);
   }
 }

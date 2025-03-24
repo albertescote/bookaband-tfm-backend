@@ -4,6 +4,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { FRONTEND_URL } from "./config";
 import { AllExceptionsFilter } from "./app/filter/http-exception.filter";
 import { LoggingInterceptor } from "./app/interceptor/logging.interceptor";
+import cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +14,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
   app.enableCors({
     origin: FRONTEND_URL,
-    methods: ["POST"],
+    methods: ["POST", "GET"],
     allowedHeaders: [
       "Origin",
       "X-Requested-With",
@@ -23,6 +24,7 @@ async function bootstrap() {
     ],
     credentials: true,
   });
+  app.use(cookieParser());
   await app.listen(4000);
 }
 bootstrap();

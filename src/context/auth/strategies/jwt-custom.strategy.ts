@@ -1,17 +1,17 @@
-import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
-import { AuthService } from '../service/auth.service';
-import { UserAuthInfo } from '../../shared/domain/userAuthInfo';
-import { Request } from 'express';
-import { InvalidAuthorizationHeader } from '../exceptions/invalidAuthorizationHeader';
-import { Strategy } from 'passport-custom';
+import { PassportStrategy } from "@nestjs/passport";
+import { Injectable } from "@nestjs/common";
+import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
+import { Request } from "express";
+import { InvalidAuthorizationHeader } from "../exceptions/invalidAuthorizationHeader";
+import { Strategy } from "passport-custom";
+import { TokenService } from "../service/token.service";
 
 @Injectable()
 export class JwtCustomStrategy extends PassportStrategy(
   Strategy,
-  'jwt-custom',
+  "jwt-custom",
 ) {
-  constructor(private authService: AuthService) {
+  constructor(private tokenService: TokenService) {
     super();
   }
 
@@ -20,8 +20,7 @@ export class JwtCustomStrategy extends PassportStrategy(
     if (!accessToken) {
       throw new InvalidAuthorizationHeader();
     }
-    const accessTokenPayload =
-      await this.authService.validateAccessToken(accessToken);
+    const accessTokenPayload = await this.tokenService.verifyToken(accessToken);
     return {
       email: accessTokenPayload.email,
       id: accessTokenPayload.sub,
@@ -30,7 +29,7 @@ export class JwtCustomStrategy extends PassportStrategy(
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    const [type, token] = request.headers.authorization?.split(" ") ?? [];
+    return type === "Bearer" ? token : undefined;
   }
 }

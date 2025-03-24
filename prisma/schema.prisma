@@ -16,10 +16,21 @@ model user {
   role       String  @db.VarChar(255)
   imageUrl   String? @db.VarChar(255)
 
-  bands       band[]       @relation("UserBands")
-  chats       chat[]       @relation("UserChats")
-  invitations invitation[]
-  bookings    booking[]
+  refreshTokens refreshToken[]
+  bands         band[]         @relation("UserBands")
+  chats         chat[]         @relation("UserChats")
+  invitations   invitation[]
+  bookings      booking[]
+}
+
+model refreshToken {
+  id        String   @id(map: "refresToken_PK") @db.VarChar(36)
+  token     String   @unique
+  userId    String   @db.VarChar(36)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model offer {

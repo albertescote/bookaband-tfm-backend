@@ -1,4 +1,4 @@
-export interface AccessTokenPayload {
+export interface TokenPayload {
   email: string;
   sub: string;
   role: string;
