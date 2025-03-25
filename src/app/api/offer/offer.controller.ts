@@ -76,7 +76,7 @@ export class OfferController {
 
   @Get("/")
   @HttpCode(200)
-  async getAll(): Promise<OfferDetailsResponseDto[]> {
+  async getAllOffers(): Promise<OfferDetailsResponseDto[]> {
     return this.offerService.getAll();
   }
 }

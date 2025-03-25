@@ -38,7 +38,7 @@ export class UserController {
   @Get("/")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  async getAll(): Promise<UserResponseDto[]> {
+  async getAllUsers(): Promise<UserResponseDto[]> {
     return this.userService.getAll();
   }
 
