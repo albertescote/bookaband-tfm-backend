@@ -17,6 +17,7 @@ export class OfferRepository {
           id: offerPrimitives.id,
           bandId: offerPrimitives.bandId,
           price: offerPrimitives.price,
+          visible: offerPrimitives.visible,
           description: offerPrimitives.description,
         },
       });

@@ -25,7 +25,7 @@ async function main() {
           "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2",
         role: "Musician",
         imageUrl:
-          "https://img.freepik.com/foto-gratis/joven-barbudo-camisa_273609-5938.jpg",
+          "https://img.freepik.com/free-photo/young-beautiful-blonde-woman-wearing-casual-striped-tshirt-isolated-white-background-looking-away-side-with-smile-face-natural-expression-laughing-confident_839833-30463.jpg",
       },
       {
         id: "5cbbf2a4-7cf4-482d-8b96-940ecdfcc9fc",
@@ -36,7 +36,7 @@ async function main() {
           "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2",
         role: "Musician",
         imageUrl:
-          "https://img.freepik.com/foto-gratis/joven-barbudo-camisa_273609-5938.jpg",
+          "https://img.freepik.com/free-photo/portrait-handsome-young-man-with-arms-crossed-holding-white-headphone-around-his-neck_23-2148096439.jpg",
       },
     ],
   });
@@ -63,7 +63,7 @@ async function main() {
           "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2",
         role: "Client",
         imageUrl:
-          "https://img.freepik.com/foto-gratis/retrato-mujer_23-2147626503.jpg",
+          "https://img.freepik.com/free-photo/front-view-beautiful-man_23-2148780802.jpg",
       },
     ],
   });
@@ -74,8 +74,19 @@ async function main() {
       name: "Rock Legends",
       genre: "ROCK",
       imageUrl:
-        "https://img.freepik.com/free-vector/illustration-rock-band_23-2149593909.jpg",
+        "https://img.freepik.com/free-photo/music-band-guitarist-performing-repetition-recording-studio_53876-138054.jpg",
       members: { connect: [{ id: "8721e564-997d-47cd-8d46-6a41e468dadb" }] },
+    },
+  });
+
+  await prisma.band.create({
+    data: {
+      id: "80cead79-df8a-4c8a-a08b-d187e718d71e",
+      name: "Pop Icons",
+      genre: "POP",
+      imageUrl:
+        "https://img.freepik.com/free-photo/band-musicians-playing-music-local-event_23-2149188063.jpg",
+      members: { connect: [{ id: "5cbbf2a4-7cf4-482d-8b96-940ecdfcc9fc" }] },
     },
   });
 
@@ -85,7 +96,7 @@ async function main() {
       name: "Jazz Masters",
       genre: "JAZZ",
       imageUrl:
-        "https://img.freepik.com/free-vector/illustration-rock-band_23-2149593909.jpg",
+        "https://img.freepik.com/free-photo/medium-shot-people-playing-together_23-2149223634.jpg",
       members: { connect: [{ id: "bf9ef9b4-f46e-47b8-b2b1-12f8b12433bb" }] },
     },
   });
@@ -103,6 +114,11 @@ async function main() {
         bandId: "2b7e3d4a-8749-4c3c-b6f5-172c1a6c8e62",
         price: 120,
         description: "Exclusive jazz night experience!",
+      },
+      {
+        id: "29f0d965-864a-4187-9189-6a3b243a7b65",
+        bandId: "80cead79-df8a-4c8a-a08b-d187e718d71e",
+        price: 500,
       },
     ],
   });

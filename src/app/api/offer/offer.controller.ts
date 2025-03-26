@@ -11,8 +11,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { OfferService } from "../../../context/offer/service/offer.service";
-import { UpdateOfferRequestDto } from "./updateOfferRequest.dto";
-import { CreateOfferRequestDto } from "./createOfferRequest.dto";
+import { OfferRequestDto } from "./offerRequest.dto";
 import { OfferResponseDto } from "./offerResponse.dto";
 import { IdParamDto } from "./idParam.dto";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
@@ -28,7 +27,7 @@ export class OfferController {
   @HttpCode(201)
   async create(
     @Request() req: { user: UserAuthInfo },
-    @Body() body: CreateOfferRequestDto,
+    @Body() body: OfferRequestDto,
   ): Promise<OfferResponseDto> {
     return await this.offerService.create(body, req.user);
   }
@@ -49,7 +48,7 @@ export class OfferController {
   async update(
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
-    @Body() body: UpdateOfferRequestDto,
+    @Body() body: OfferRequestDto,
   ): Promise<OfferResponseDto> {
     return await this.offerService.update(idParamDto.id, body, req.user);
   }

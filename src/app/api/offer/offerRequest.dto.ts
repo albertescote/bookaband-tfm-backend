@@ -6,7 +6,7 @@ import {
   IsString,
 } from "class-validator";
 
-export class UpdateOfferRequestDto {
+export class OfferRequestDto {
   @IsNotEmpty()
   @IsString()
   bandId: string;

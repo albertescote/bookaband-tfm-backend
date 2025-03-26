@@ -15,6 +15,7 @@ import { OfferDetails } from "../domain/offerDetails";
 export interface CreateOfferRequest {
   bandId: string;
   price: number;
+  visible: boolean;
   description?: string;
 }
 
@@ -53,6 +54,7 @@ export class OfferService {
       request.bandId,
       request.price,
       request.description,
+      request.visible,
     );
     const storedOffer = await this.offerRepository.addOffer(offer);
     if (!storedOffer) {

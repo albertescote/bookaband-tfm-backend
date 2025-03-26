@@ -22,12 +22,17 @@ export default class Offer {
     this.description = description;
   }
 
-  static create(bandId: string, price: number, description: string): Offer {
+  static create(
+    bandId: string,
+    price: number,
+    description: string,
+    visible: boolean,
+  ): Offer {
     return new Offer(
       OfferId.generate(),
       new BandId(bandId),
       new OfferPrice(price),
-      true,
+      visible,
       description,
     );
   }
