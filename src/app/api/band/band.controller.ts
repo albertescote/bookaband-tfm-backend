@@ -31,7 +31,7 @@ export class BandController {
     @Request() req: { user: UserAuthInfo },
     @Body() body: CreateBandRequestDto,
   ): Promise<BandResponseDto> {
-    return await this.bandService.create(body, req.user);
+    return await this.bandService.create(req.user, body);
   }
 
   @Get("/:id/view")
@@ -48,7 +48,7 @@ export class BandController {
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
   ): Promise<BandWithDetailsResponseDto> {
-    return this.bandService.getDetailsById(idParamDto.id, req.user);
+    return this.bandService.getDetailsById(req.user, idParamDto.id);
   }
 
   @Get("/:id")
@@ -58,7 +58,7 @@ export class BandController {
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
   ): Promise<BandResponseDto> {
-    return this.bandService.getById(idParamDto.id, req.user);
+    return this.bandService.getById(req.user, idParamDto.id);
   }
 
   @Get("/")
@@ -78,7 +78,7 @@ export class BandController {
     @Request() req: { user: UserAuthInfo },
     @Body() body: UpdateBandRequestDto,
   ): Promise<BandResponseDto> {
-    return await this.bandService.update(idParamDto.id, body, req.user);
+    return await this.bandService.update(req.user, idParamDto.id, body);
   }
 
   @Delete("/:id")
@@ -88,7 +88,7 @@ export class BandController {
     @Request() req: { user: UserAuthInfo },
     @Param() idParamDto: IdParamDto,
   ): Promise<void> {
-    await this.bandService.deleteById(idParamDto.id, req.user);
+    await this.bandService.deleteById(req.user, idParamDto.id);
     return;
   }
 }

@@ -12,6 +12,8 @@ import { ChatView } from "../domain/chatView";
 import Chat from "../domain/chat";
 import { MessagePrimitives } from "../domain/message";
 import { ChatHistory } from "../domain/chatHistory";
+import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
+import { Role } from "../../shared/domain/role";
 
 export interface CreateChatRequestDto {
   bandId: string;
@@ -39,6 +41,7 @@ export class ChatService {
     private queryBus: QueryBus,
   ) {}
 
+  @RoleAuth([Role.Client])
   async createChat(
     userAuthInfo: UserAuthInfo,
     request: CreateChatRequestDto,
@@ -52,6 +55,7 @@ export class ChatService {
     return createdChat.toPrimitives();
   }
 
+  @RoleAuth([Role.Musician, Role.Client])
   async getChatHistory(
     authorized: UserAuthInfo,
     chatId: string,
@@ -80,7 +84,8 @@ export class ChatService {
     return chatHistory;
   }
 
-  async getUserChats(
+  @RoleAuth([Role.Client])
+  async getClientChats(
     userAuthInfo: UserAuthInfo,
     userId: string,
   ): Promise<ChatView[]> {
@@ -90,6 +95,7 @@ export class ChatService {
     return await this.chatRepository.getUserChats(new UserId(userId));
   }
 
+  @RoleAuth([Role.Musician])
   async getBandChats(
     authorized: UserAuthInfo,
     bandId: string,

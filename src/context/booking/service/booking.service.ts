@@ -7,7 +7,6 @@ import UserId from "../../shared/domain/userId";
 import BookingId from "../domain/bookingId";
 import { Role } from "../../shared/domain/role";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
-import { WrongPermissionsException } from "../exceptions/wrongPermissionsException";
 import { BookingNotFoundException } from "../exceptions/bookingNotFoundException";
 import { NotOwnerOfTheRequestedBookingException } from "../exceptions/notOwnerOfTheRequestedBookingException";
 import { OfferNotFoundException } from "../exceptions/offerNotFoundException";
@@ -16,6 +15,7 @@ import BandId from "../../shared/domain/bandId";
 import { NotOwnerOfTheRequestedBandException } from "../exceptions/notOwnerOfTheRequestedBandException";
 import { BookingAlreadyProcessedException } from "../exceptions/bookingAlreadyProcessedException";
 import { BookingWithDetailsPrimitives } from "../domain/bookingWithDetails";
+import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 
 export interface CreateBookingRequest {
   offerId: string;
@@ -29,13 +29,11 @@ export class BookingService {
     private moduleConnectors: ModuleConnectors,
   ) {}
 
+  @RoleAuth([Role.Client])
   async create(
     userAuthInfo: UserAuthInfo,
     request: CreateBookingRequest,
   ): Promise<BookingPrimitives> {
-    if (userAuthInfo.role !== Role.Client) {
-      throw new WrongPermissionsException("create booking");
-    }
     const newBooking = Booking.create(
       new OfferId(request.offerId),
       new UserId(userAuthInfo.id),
@@ -45,6 +43,7 @@ export class BookingService {
     return storedBooking.toPrimitives();
   }
 
+  @RoleAuth([Role.Musician, Role.Client])
   async getById(
     userAuthInfo: UserAuthInfo,
     id: string,
@@ -67,7 +66,8 @@ export class BookingService {
     return bookingWithDetails.toPrimitives();
   }
 
-  async getAllFromUser(
+  @RoleAuth([Role.Client])
+  async getAllFromClient(
     user: UserAuthInfo,
   ): Promise<BookingWithDetailsPrimitives[]> {
     const bookings = await this.bookingRepository.findAllByUserId(
@@ -78,6 +78,7 @@ export class BookingService {
     });
   }
 
+  @RoleAuth([Role.Musician])
   async getAllFromBand(
     user: UserAuthInfo,
     bandId: string,
@@ -95,6 +96,7 @@ export class BookingService {
     });
   }
 
+  @RoleAuth([Role.Musician])
   async acceptBooking(
     userAuthInfo: UserAuthInfo,
     id: string,
@@ -120,6 +122,7 @@ export class BookingService {
     return booking.toPrimitives();
   }
 
+  @RoleAuth([Role.Musician])
   async declineBooking(
     userAuthInfo: UserAuthInfo,
     id: string,

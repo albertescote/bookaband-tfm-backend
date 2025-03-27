@@ -10,6 +10,7 @@ import { WrongPermissionsException } from "../exception/wrongPermissionsExceptio
 import { EmailAlreadyExistsException } from "../exception/emailAlreadyExistsException";
 import { NotAbleToExecuteUserDbTransactionException } from "../exception/notAbleToExecuteUserDbTransactionException";
 import { InvalidRoleException } from "../../shared/exceptions/invalidRoleException";
+import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 
 export interface CreateUserRequest {
   firstName: string;
@@ -76,7 +77,8 @@ export class UserService {
     };
   }
 
-  async getById(id: string): Promise<UserResponse> {
+  @RoleAuth([Role.Musician, Role.Client])
+  async getById(userAuthInfo: UserAuthInfo, id: string): Promise<UserResponse> {
     const storedUser = await this.userRepository.getUserById(new UserId(id));
     if (!storedUser) {
       throw new UserNotFoundException(id);
@@ -92,7 +94,8 @@ export class UserService {
     };
   }
 
-  async getAll(): Promise<UserResponse[]> {
+  @RoleAuth([Role.Musician, Role.Client])
+  async getAll(_: UserAuthInfo): Promise<UserResponse[]> {
     const users = await this.userRepository.getAllUsers();
     return users.map((user) => {
       const userPrimitives = user.toPrimitives();
@@ -107,10 +110,11 @@ export class UserService {
     });
   }
 
+  @RoleAuth([Role.Musician, Role.Client])
   async update(
+    userAuthInfo: UserAuthInfo,
     id: string,
     request: UpdateUserRequest,
-    userAuthInfo: UserAuthInfo,
   ): Promise<UserResponse> {
     const oldUser = await this.userRepository.getUserById(new UserId(id));
     if (!oldUser) {
@@ -146,7 +150,8 @@ export class UserService {
     };
   }
 
-  async deleteById(id: string, userAuthInfo: UserAuthInfo): Promise<void> {
+  @RoleAuth([Role.Musician, Role.Client])
+  async deleteById(userAuthInfo: UserAuthInfo, id: string): Promise<void> {
     const oldUser = await this.userRepository.getUserById(new UserId(id));
     if (!oldUser) {
       throw new UserNotFoundException(id);

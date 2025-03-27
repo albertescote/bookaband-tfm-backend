@@ -29,7 +29,7 @@ export class OfferController {
     @Request() req: { user: UserAuthInfo },
     @Body() body: OfferRequestDto,
   ): Promise<OfferResponseDto> {
-    return await this.offerService.create(body, req.user);
+    return await this.offerService.create(req.user, body);
   }
 
   @Get("/:id")
@@ -39,7 +39,7 @@ export class OfferController {
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
   ): Promise<OfferResponseDto> {
-    return this.offerService.getById(idParamDto.id, req.user);
+    return this.offerService.getById(req.user, idParamDto.id);
   }
 
   @Put("/:id")
@@ -50,7 +50,7 @@ export class OfferController {
     @Request() req: { user: UserAuthInfo },
     @Body() body: OfferRequestDto,
   ): Promise<OfferResponseDto> {
-    return await this.offerService.update(idParamDto.id, body, req.user);
+    return await this.offerService.update(req.user, idParamDto.id, body);
   }
 
   @Delete("/:id")
@@ -60,7 +60,7 @@ export class OfferController {
     @Request() req: { user: UserAuthInfo },
     @Param() idParamDto: IdParamDto,
   ): Promise<void> {
-    await this.offerService.deleteById(idParamDto.id, req.user);
+    await this.offerService.deleteById(req.user, idParamDto.id);
     return;
   }
 
@@ -69,8 +69,9 @@ export class OfferController {
   @HttpCode(200)
   async getOfferDetails(
     @Param() idParamDto: IdParamDto,
+    @Request() req: { user: UserAuthInfo },
   ): Promise<OfferDetailsResponseDto> {
-    return this.offerService.getOfferDetails(idParamDto.id);
+    return this.offerService.getOfferDetails(req.user, idParamDto.id);
   }
 
   @Get("/")

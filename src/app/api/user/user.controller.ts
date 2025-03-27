@@ -31,15 +31,20 @@ export class UserController {
   @Get("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  async getById(@Param() idParamDto: IdParamDto): Promise<UserResponseDto> {
-    return this.userService.getById(idParamDto.id);
+  async getById(
+    @Param() idParamDto: IdParamDto,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<UserResponseDto> {
+    return this.userService.getById(req.user, idParamDto.id);
   }
 
   @Get("/")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  async getAllUsers(): Promise<UserResponseDto[]> {
-    return this.userService.getAll();
+  async getAllUsers(
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<UserResponseDto[]> {
+    return this.userService.getAll(req.user);
   }
 
   @Put("/:id")
@@ -50,7 +55,7 @@ export class UserController {
     @Body() body: UpdateUserRequestDto,
     @Request() req: { user: UserAuthInfo },
   ): Promise<UserResponseDto> {
-    return this.userService.update(idParamDto.id, body, req.user);
+    return this.userService.update(req.user, idParamDto.id, body);
   }
 
   @Delete("/:id")
@@ -60,7 +65,7 @@ export class UserController {
     @Request() req: { user: UserAuthInfo },
     @Param() idParamDto: IdParamDto,
   ): Promise<void> {
-    await this.userService.deleteById(idParamDto.id, req.user);
+    await this.userService.deleteById(req.user, idParamDto.id);
     return;
   }
 }

@@ -14,8 +14,8 @@ import { UserEmailNotFoundException } from "../exception/userEmailNotFoundExcept
 import { InvitationAlreadySentException } from "../exception/invitationAlreadySentException";
 import { AlreadyMemberOfThisBandException } from "../exception/alreadyMemberOfThisBandException";
 import { Role } from "../../shared/domain/role";
-import { UserIsNotMusicianException } from "../exception/userIsNotMusicianException";
 import { UserInvitation } from "../domain/userInvitation";
+import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 
 @Injectable()
 export class InvitationService {
@@ -24,6 +24,7 @@ export class InvitationService {
     private moduleConnectors: ModuleConnectors,
   ) {}
 
+  @RoleAuth([Role.Musician])
   async sendInvitation(
     userAuthInfo: UserAuthInfo,
     bandId: string,
@@ -42,9 +43,6 @@ export class InvitationService {
     );
     if (!user) {
       throw new UserEmailNotFoundException(userEmail);
-    }
-    if (user.getRole() !== Role.Musician) {
-      throw new UserIsNotMusicianException();
     }
     const existingMember = bandMembers.find(
       (member) => member === user.getId().toPrimitive(),
@@ -71,6 +69,7 @@ export class InvitationService {
     return storedInvitation.toPrimitives();
   }
 
+  @RoleAuth([Role.Musician])
   async acceptInvitation(
     userAuthInfo: UserAuthInfo,
     invitationId: string,
@@ -103,6 +102,7 @@ export class InvitationService {
     return invitationPrimitives;
   }
 
+  @RoleAuth([Role.Musician])
   async declineInvitation(
     userAuthInfo: UserAuthInfo,
     invitationId: string,
@@ -129,6 +129,7 @@ export class InvitationService {
     return invitation.toPrimitives();
   }
 
+  @RoleAuth([Role.Musician])
   async getUserInvitations(
     userAuthInfo: UserAuthInfo,
   ): Promise<UserInvitation[]> {

@@ -11,6 +11,7 @@ import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import { OfferAlreadyExistsException } from "../exceptions/offerAlreadyExistsException";
 import { OfferDetails } from "../domain/offerDetails";
+import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 
 export interface CreateOfferRequest {
   bandId: string;
@@ -41,13 +42,11 @@ export class OfferService {
     private moduleConnectors: ModuleConnectors,
   ) {}
 
+  @RoleAuth([Role.Musician])
   async create(
-    request: CreateOfferRequest,
     userAuthInfo: UserAuthInfo,
+    request: CreateOfferRequest,
   ): Promise<OfferResponse> {
-    if (userAuthInfo.role !== Role.Musician) {
-      throw new WrongPermissionsException("create offer");
-    }
     await this.checkBandMembership(request.bandId, userAuthInfo.id);
     await this.checkExistingOffersForBandId(request.bandId);
     const offer = Offer.create(
@@ -63,9 +62,10 @@ export class OfferService {
     return storedOffer.toPrimitives();
   }
 
+  @RoleAuth([Role.Musician])
   async getById(
-    id: string,
     userAuthInfo: UserAuthInfo,
+    id: string,
   ): Promise<OfferResponse> {
     const storedOffer = await this.offerRepository.getOfferById(
       new OfferId(id),
@@ -81,10 +81,11 @@ export class OfferService {
     return storedOffer.toPrimitives();
   }
 
+  @RoleAuth([Role.Musician])
   async update(
+    userAuthInfo: UserAuthInfo,
     id: string,
     request: UpdateOfferRequest,
-    userAuthInfo: UserAuthInfo,
   ): Promise<OfferResponse> {
     const oldOffer = await this.offerRepository.getOfferById(new OfferId(id));
     if (!oldOffer) {
@@ -112,7 +113,8 @@ export class OfferService {
     return updatedOffer.toPrimitives();
   }
 
-  async deleteById(id: string, userAuthInfo: UserAuthInfo): Promise<void> {
+  @RoleAuth([Role.Musician])
+  async deleteById(userAuthInfo: UserAuthInfo, id: string): Promise<void> {
     const oldOffer = await this.offerRepository.getOfferById(new OfferId(id));
     if (!oldOffer) {
       throw new OfferNotFoundException(id);
@@ -130,7 +132,8 @@ export class OfferService {
     return;
   }
 
-  async getOfferDetails(id: string): Promise<OfferDetails> {
+  @RoleAuth([Role.Musician, Role.Client])
+  async getOfferDetails(_: UserAuthInfo, id: string): Promise<OfferDetails> {
     const storedOffer = await this.offerRepository.getOfferDetailsById(
       new OfferId(id),
     );

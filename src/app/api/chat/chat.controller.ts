@@ -38,14 +38,14 @@ export class ChatController {
     return this.chatService.getChatHistory(req.user, chatId);
   }
 
-  @Get("/user/:id")
+  @Get("/client/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  async getUserChats(
+  async getClientChats(
     @Param("id", ParseUUIDPipe) userId: string,
     @Request() req: { user: UserAuthInfo },
   ) {
-    return this.chatService.getUserChats(req.user, userId);
+    return this.chatService.getClientChats(req.user, userId);
   }
 
   @Get("/band/:id")

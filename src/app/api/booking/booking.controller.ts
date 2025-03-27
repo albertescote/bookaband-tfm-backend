@@ -31,13 +31,13 @@ export class BookingController {
     return await this.bookingService.create(req.user, body);
   }
 
-  @Get("/user")
+  @Get("/client")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  async getAllFromUser(
+  async getAllFromClient(
     @Request() req: { user: UserAuthInfo },
   ): Promise<BookingResponseWithDetailsDto[]> {
-    return await this.bookingService.getAllFromUser(req.user);
+    return await this.bookingService.getAllFromClient(req.user);
   }
 
   @Get("/:id")

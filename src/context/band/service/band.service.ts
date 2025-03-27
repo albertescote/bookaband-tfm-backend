@@ -11,6 +11,7 @@ import UserId from "../../shared/domain/userId";
 import { MusicGenre } from "../domain/musicGenre";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { MemberIdNotFoundException } from "../exceptions/memberIdNotFoundException";
+import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 
 export interface BandRequest {
   name: string;
@@ -58,13 +59,11 @@ export class BandService {
     private moduleConnectors: ModuleConnectors,
   ) {}
 
+  @RoleAuth([Role.Musician])
   async create(
-    request: BandRequest,
     userAuthInfo: UserAuthInfo,
+    request: BandRequest,
   ): Promise<BandResponse> {
-    if (userAuthInfo.role !== Role.Musician) {
-      throw new WrongPermissionsException("create band");
-    }
     const membersId: UserId[] = await this.checkMembersIdExistence(
       request.membersId,
       userAuthInfo.id,
@@ -83,7 +82,8 @@ export class BandService {
     return storedBand.toPrimitives();
   }
 
-  async getById(id: string, userAuthInfo: UserAuthInfo): Promise<BandResponse> {
+  @RoleAuth([Role.Musician])
+  async getById(userAuthInfo: UserAuthInfo, id: string): Promise<BandResponse> {
     const storedBand = await this.bandRepository.getBandById(new BandId(id));
     if (!storedBand) {
       throw new BandNotFoundException(id);
@@ -95,9 +95,10 @@ export class BandService {
     return storedBandPrimitives;
   }
 
+  @RoleAuth([Role.Musician])
   async getDetailsById(
-    id: string,
     userAuthInfo: UserAuthInfo,
+    id: string,
   ): Promise<BandWithDetailsResponse> {
     const storedBand = await this.bandRepository.getBandWithDetailsById(
       new BandId(id),
@@ -116,6 +117,7 @@ export class BandService {
     return storedBandPrimitives;
   }
 
+  @RoleAuth([Role.Musician, Role.Client])
   async getViewById(id: string): Promise<BandResponse> {
     const storedBand = await this.bandRepository.getBandById(new BandId(id));
     if (!storedBand) {
@@ -124,16 +126,18 @@ export class BandService {
     return storedBand.toPrimitives();
   }
 
+  @RoleAuth([Role.Musician])
   async getUserBands(
     userAuthInfo: UserAuthInfo,
   ): Promise<GetUserBandsResponse[]> {
     return await this.bandRepository.getUserBands(new UserId(userAuthInfo.id));
   }
 
+  @RoleAuth([Role.Musician])
   async update(
+    userAuthInfo: UserAuthInfo,
     id: string,
     request: BandRequest,
-    userAuthInfo: UserAuthInfo,
   ): Promise<BandResponse> {
     const oldBand = await this.bandRepository.getBandById(new BandId(id));
     if (!oldBand) {
@@ -165,7 +169,8 @@ export class BandService {
     return updatedBand.toPrimitives();
   }
 
-  async deleteById(id: string, userAuthInfo: UserAuthInfo): Promise<void> {
+  @RoleAuth([Role.Musician])
+  async deleteById(userAuthInfo: UserAuthInfo, id: string): Promise<void> {
     const oldBand = await this.bandRepository.getBandById(new BandId(id));
     if (!oldBand) {
       throw new BandNotFoundException(id);
