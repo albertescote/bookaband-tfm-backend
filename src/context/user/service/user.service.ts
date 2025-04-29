@@ -11,6 +11,8 @@ import { EmailAlreadyExistsException } from "../exception/emailAlreadyExistsExce
 import { NotAbleToExecuteUserDbTransactionException } from "../exception/notAbleToExecuteUserDbTransactionException";
 import { InvalidRoleException } from "../../shared/exceptions/invalidRoleException";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
+import { PasswordNotSecureException } from "../exception/passwordNotSecureException";
+import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 
 export interface CreateUserRequest {
   firstName: string;
@@ -42,9 +44,13 @@ export class UserService {
   constructor(
     private userRepository: UserRepository,
     private passwordService: PasswordService,
+    private moduleConnectors: ModuleConnectors,
   ) {}
 
   async create(request: CreateUserRequest): Promise<UserResponse> {
+    if (!this.passwordService.isPasswordSecure(request.password)) {
+      throw new PasswordNotSecureException();
+    }
     const encryptedPassword = await this.passwordService.hashPassword(
       request.password,
     );
@@ -60,12 +66,14 @@ export class UserService {
       request.email,
       encryptedPassword,
       role,
+      false,
       request.imageUrl,
     );
     const storedUser = await this.userRepository.addUser(user);
     if (!storedUser) {
       throw new NotAbleToExecuteUserDbTransactionException(`store user`);
     }
+    await this.moduleConnectors.sendVerificationEmail(request.email, "token");
     const userPrimitives = storedUser.toPrimitives();
     return {
       id: userPrimitives.id,
@@ -131,6 +139,7 @@ export class UserService {
       User.fromPrimitives({
         ...request,
         id,
+        emailVerified: oldUser.toPrimitives().emailVerified,
         password: oldUser.toPrimitives().password,
       }),
     );

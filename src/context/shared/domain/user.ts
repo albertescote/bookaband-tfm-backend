@@ -9,6 +9,7 @@ export interface UserPrimitives {
   email: string;
   password: string;
   role: string;
+  emailVerified: boolean;
   imageUrl?: string;
 }
 
@@ -20,6 +21,7 @@ export default class User {
     private email: string,
     private password: string,
     private role: Role,
+    private emailVerified: boolean = false,
     private imageUrl?: string,
   ) {}
 
@@ -35,6 +37,7 @@ export default class User {
       user.email,
       user.password,
       role,
+      user.emailVerified,
       user.imageUrl,
     );
   }
@@ -47,6 +50,7 @@ export default class User {
       email: this.email,
       password: this.password,
       role: this.role.toString(),
+      emailVerified: this.emailVerified,
       imageUrl: this.imageUrl,
     };
   }

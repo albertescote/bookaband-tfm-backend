@@ -4,14 +4,18 @@ import { PasswordService } from "../shared/utils/password.service";
 import { UserService } from "./service/user.service";
 import PrismaService from "../shared/infrastructure/db/prisma.service";
 import { UserQueryHandler } from "./service/user.queryHandler";
+import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
+import { CqrsModule } from "@nestjs/cqrs";
 
 @Module({
+  imports: [CqrsModule],
   providers: [
     UserService,
     UserRepository,
     PasswordService,
     PrismaService,
     UserQueryHandler,
+    ModuleConnectors,
   ],
   exports: [UserService, UserQueryHandler],
 })

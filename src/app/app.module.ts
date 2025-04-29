@@ -14,6 +14,7 @@ import { InvitationModule } from "../context/invitation/invitation.module";
 import { InvitationController } from "./api/invitation/invitation.controller";
 import { BookingController } from "./api/booking/booking.controller";
 import { BookingModule } from "../context/booking/booking.module";
+import { EmailModule } from "../context/email/email.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { BookingModule } from "../context/booking/booking.module";
     ChatModule,
     InvitationModule,
     BookingModule,
+    EmailModule,
   ],
   controllers: [
     HealthcheckController,

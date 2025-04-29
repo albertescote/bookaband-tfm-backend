@@ -8,6 +8,7 @@ import { GetBandInfoQuery } from "../../band/service/getBandInfo.query";
 import { JoinBandCommand } from "../../band/service/joinBand.command";
 import { OfferPrimitives } from "../../offer/domain/offer";
 import { GetOfferInfoQuery } from "../../offer/service/getOfferInfo.query";
+import { SendVerificationEmailCommand } from "../../email/service/sendVerificationEmail.command";
 
 @Injectable()
 class ModuleConnectors {
@@ -37,6 +38,11 @@ class ModuleConnectors {
 
   async joinBand(bandId: string, userId: string): Promise<void> {
     const joinBandCommand = new JoinBandCommand(bandId, userId);
+    await this.commandBus.execute(joinBandCommand);
+  }
+
+  async sendVerificationEmail(to: string, token: string): Promise<void> {
+    const joinBandCommand = new SendVerificationEmailCommand(to, token);
     await this.commandBus.execute(joinBandCommand);
   }
 }
