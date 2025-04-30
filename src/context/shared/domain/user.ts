@@ -62,4 +62,8 @@ export default class User {
   getId(): UserId {
     return this.id;
   }
+
+  isEmailVerified(): boolean {
+    return this.emailVerified;
+  }
 }

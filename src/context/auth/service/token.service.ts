@@ -4,6 +4,7 @@ import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { InvalidTokenException } from "../exceptions/invalidTokenException";
 import { InvalidTokenSubjectException } from "../exceptions/invalidTokenSubjectException";
 import { TokenPayload } from "../domain/tokenPayload";
+import { EmailNotVerifiedException } from "../exceptions/emailNotVerifiedException";
 
 @Injectable()
 export class TokenService {
@@ -32,6 +33,9 @@ export class TokenService {
     );
     if (!user) {
       throw new InvalidTokenSubjectException(tokenPayload.sub);
+    }
+    if (!user.isEmailVerified()) {
+      throw new EmailNotVerifiedException();
     }
     return tokenPayload;
   }
