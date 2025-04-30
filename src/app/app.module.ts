@@ -15,6 +15,7 @@ import { InvitationController } from "./api/invitation/invitation.controller";
 import { BookingController } from "./api/booking/booking.controller";
 import { BookingModule } from "../context/booking/booking.module";
 import { EmailModule } from "../context/email/email.module";
+import { EmailController } from "./api/email/email.controller";
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { EmailModule } from "../context/email/email.module";
     ChatController,
     InvitationController,
     BookingController,
+    EmailController,
   ],
 })
 export class AppModule {}

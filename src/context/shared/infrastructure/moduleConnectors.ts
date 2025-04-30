@@ -9,13 +9,16 @@ import { JoinBandCommand } from "../../band/service/joinBand.command";
 import { OfferPrimitives } from "../../offer/domain/offer";
 import { GetOfferInfoQuery } from "../../offer/service/getOfferInfo.query";
 import { SendVerificationEmailCommand } from "../../email/service/sendVerificationEmail.command";
+import { VerifyUserEmailCommand } from "../../user/service/verifyUserEmail.command";
+import UserId from "../domain/userId";
 
 @Injectable()
 class ModuleConnectors {
   constructor(
-    private queryBus: QueryBus,
-    private commandBus: CommandBus,
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
+
   async obtainUserInformation(id?: string, email?: string): Promise<User> {
     const userQuery = new UserQuery(id, email);
     return await this.queryBus.execute(userQuery);
@@ -42,8 +45,18 @@ class ModuleConnectors {
   }
 
   async sendVerificationEmail(to: string, token: string): Promise<void> {
-    const joinBandCommand = new SendVerificationEmailCommand(to, token);
-    await this.commandBus.execute(joinBandCommand);
+    const sendVerificationEmailCommand = new SendVerificationEmailCommand(
+      to,
+      token,
+    );
+    await this.commandBus.execute(sendVerificationEmailCommand);
+  }
+
+  async verifyUserEmail(userId: string): Promise<void> {
+    const verifyUserEmailCommand = new VerifyUserEmailCommand(
+      new UserId(userId),
+    );
+    await this.commandBus.execute(verifyUserEmailCommand);
   }
 }
 

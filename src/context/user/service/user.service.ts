@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import User from "../../shared/domain/user";
 import UserId from "../../shared/domain/userId";
 import { UserRepository } from "../infrastructure/user.repository";
@@ -13,6 +13,7 @@ import { InvalidRoleException } from "../../shared/exceptions/invalidRoleExcepti
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { PasswordNotSecureException } from "../exception/passwordNotSecureException";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
+import { JoseWrapper } from "../../shared/infrastructure/joseWrapper";
 
 export interface CreateUserRequest {
   firstName: string;
@@ -45,6 +46,8 @@ export class UserService {
     private userRepository: UserRepository,
     private passwordService: PasswordService,
     private moduleConnectors: ModuleConnectors,
+    @Inject("JoseWrapperInitialized")
+    private joseWrapper: JoseWrapper,
   ) {}
 
   async create(request: CreateUserRequest): Promise<UserResponse> {
@@ -73,7 +76,12 @@ export class UserService {
     if (!storedUser) {
       throw new NotAbleToExecuteUserDbTransactionException(`store user`);
     }
-    await this.moduleConnectors.sendVerificationEmail(request.email, "token");
+    const token = await this.joseWrapper.signJwt(
+      { userId: storedUser.toPrimitives().id },
+      "bookaband",
+      3600,
+    );
+    await this.moduleConnectors.sendVerificationEmail(request.email, token);
     const userPrimitives = storedUser.toPrimitives();
     return {
       id: userPrimitives.id,
