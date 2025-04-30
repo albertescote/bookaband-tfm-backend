@@ -73,15 +73,20 @@ export class UserService {
       request.imageUrl,
     );
 
-    await this.moduleConnectors.sendVerificationEmail(
-      user.getId().toPrimitive(),
-      request.email,
-      request.lng ?? Languages.ENGLISH,
-    );
-
     const storedUser = await this.userRepository.addUser(user);
     if (!storedUser) {
       throw new NotAbleToExecuteUserDbTransactionException(`store user`);
+    }
+
+    try {
+      await this.moduleConnectors.sendVerificationEmail(
+        user.getId().toPrimitive(),
+        request.email,
+        request.lng ?? Languages.ENGLISH,
+      );
+    } catch (e) {
+      await this.userRepository.deleteUser(user.getId());
+      throw e;
     }
 
     const userPrimitives = storedUser.toPrimitives();
