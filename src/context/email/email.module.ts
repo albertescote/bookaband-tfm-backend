@@ -9,6 +9,7 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { JoseWrapper } from "../shared/infrastructure/joseWrapper";
 import { RESEND_API_KEY } from "../../config";
 import { ResendVerificationEmailCommandHandler } from "./service/resendVerificationEmail.commandHandler";
+import { SendResetPasswordEmailCommandHandler } from "./service/sendResetPasswordEmail.commandHandler";
 
 const ResendApiKey = {
   provide: "resend-api-key",
@@ -27,6 +28,7 @@ const ResendApiKey = {
     ResendApiKey,
     SendVerificationEmailCommandHandler,
     ResendVerificationEmailCommandHandler,
+    SendResetPasswordEmailCommandHandler,
     {
       provide: "JoseWrapperInitialized",
       useFactory: () => {
@@ -38,6 +40,7 @@ const ResendApiKey = {
     VerifyEmailService,
     SendVerificationEmailCommandHandler,
     ResendVerificationEmailCommandHandler,
+    SendResetPasswordEmailCommandHandler,
   ],
 })
 export class EmailModule {}

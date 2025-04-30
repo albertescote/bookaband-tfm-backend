@@ -30,7 +30,7 @@ export class EmailVerification {
 
   static create(
     userId: UserId,
-    language: Languages,
+    language: Languages = Languages.ENGLISH,
     email: string,
   ): EmailVerification {
     const now = new Date();

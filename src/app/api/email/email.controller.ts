@@ -7,6 +7,8 @@ import { VerifyEmailService } from "../../../context/email/service/verifyEmail.s
 import { ResendEmailRequestDto } from "./resendEmail.dto";
 import { ResendVerificationEmailCommand } from "../../../context/email/service/resendVerificationEmail.command";
 import { CommandBus } from "@nestjs/cqrs";
+import { SendResetPasswordEmailCommand } from "../../../context/email/service/sendResetPasswordEmail.command";
+import { ResetPasswordRequestDto } from "./resetPassword.dto";
 
 @Controller("email")
 export class EmailController {
@@ -26,10 +28,22 @@ export class EmailController {
   @Post("resend")
   @HttpCode(201)
   async resendEmail(
-    @Body() verifyEmailDto: ResendEmailRequestDto,
+    @Body() resendEmailDto: ResendEmailRequestDto,
   ): Promise<void> {
     const reSendVerificationEmailCommand = new ResendVerificationEmailCommand(
-      verifyEmailDto.userId,
+      resendEmailDto.userId,
+    );
+    await this.commandBus.execute(reSendVerificationEmailCommand);
+  }
+
+  @Post("password/reset")
+  @HttpCode(201)
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordRequestDto,
+  ): Promise<void> {
+    const reSendVerificationEmailCommand = new SendResetPasswordEmailCommand(
+      resetPasswordDto.email,
+      resetPasswordDto.lng,
     );
     await this.commandBus.execute(reSendVerificationEmailCommand);
   }

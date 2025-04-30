@@ -25,7 +25,7 @@ export class EmailVerificationRepository {
         },
       });
       return emailVerification;
-    } catch {
+    } catch (e) {
       return undefined;
     }
   }
