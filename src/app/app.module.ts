@@ -16,9 +16,11 @@ import { BookingController } from "./api/booking/booking.controller";
 import { BookingModule } from "../context/booking/booking.module";
 import { EmailModule } from "../context/email/email.module";
 import { EmailController } from "./api/email/email.controller";
+import { CqrsModule } from "@nestjs/cqrs";
 
 @Module({
   imports: [
+    CqrsModule,
     OfferModule,
     UserModule,
     AuthModule,

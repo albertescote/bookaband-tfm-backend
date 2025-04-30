@@ -8,20 +8,20 @@ datasource db {
 }
 
 model user {
-  id            String  @id(map: "user_PK") @db.VarChar(36)
-  firstName     String  @db.VarChar(255)
-  familyName    String  @db.VarChar(255)
-  email         String  @unique @db.VarChar(255)
-  password      String  @db.VarChar(255)
-  role          String  @db.VarChar(255)
-  emailVerified Boolean @default(false)
-  imageUrl      String? @db.VarChar(255)
+  id         String  @id(map: "user_PK") @db.VarChar(36)
+  firstName  String  @db.VarChar(255)
+  familyName String  @db.VarChar(255)
+  email      String  @unique @db.VarChar(255)
+  password   String  @db.VarChar(255)
+  role       String  @db.VarChar(255)
+  imageUrl   String? @db.VarChar(255)
 
-  refreshTokens refreshToken[]
-  bands         band[]         @relation("UserBands")
-  chats         chat[]         @relation("UserChats")
-  invitations   invitation[]
-  bookings      booking[]
+  refreshTokens     refreshToken[]
+  bands             band[]             @relation("UserBands")
+  chats             chat[]             @relation("UserChats")
+  invitations       invitation[]
+  bookings          booking[]
+  emailVerification emailVerification?
 }
 
 model refreshToken {
@@ -103,4 +103,16 @@ model booking {
 
   offer offer @relation(fields: [offerId], references: [id], map: "FK_Booking_Offer", onDelete: Cascade)
   user  user  @relation(fields: [userId], references: [id], map: "FK_Booking_User", onDelete: Cascade)
+}
+
+model emailVerification {
+  id              String   @id(map: "emailVerification_PK") @db.VarChar(36)
+  userId          String   @unique @db.VarChar(36)
+  language        String   @db.VarChar(2)
+  verified        Boolean  @default(false)
+  lastEmailSentAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

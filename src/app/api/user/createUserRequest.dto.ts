@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from "class-validator";
+import { Languages } from "../../../context/shared/domain/languages";
 
 export class CreateUserRequestDto {
   @IsNotEmpty()
@@ -20,4 +27,8 @@ export class CreateUserRequestDto {
   @IsNotEmpty()
   @IsString()
   role: string;
+
+  @IsOptional()
+  @IsEnum(Languages)
+  lng: Languages;
 }

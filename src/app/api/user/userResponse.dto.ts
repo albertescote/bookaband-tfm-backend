@@ -4,5 +4,6 @@ export interface UserResponseDto {
   familyName: string;
   email: string;
   role: string;
+  emailVerified: boolean;
   imageUrl?: string;
 }

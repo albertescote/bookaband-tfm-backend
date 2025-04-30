@@ -171,6 +171,46 @@ async function main() {
     ],
   });
 
+  await prisma.emailVerification.createMany({
+    data: [
+      {
+        id: "01ea885c-f3e5-47c3-a2ed-3b4a59dc2a01",
+        userId: "8721e564-997d-47cd-8d46-6a41e468dadb", // John
+        language: "en",
+        verified: false,
+        lastEmailSentAt: new Date(),
+      },
+      {
+        id: "c33dc66a-34be-4c37-a862-f63d69fc51bc",
+        userId: "bf9ef9b4-f46e-47b8-b2b1-12f8b12433bb", // Alice
+        language: "ca",
+        verified: true,
+        lastEmailSentAt: new Date(),
+      },
+      {
+        id: "9670f50f-79a5-4ef0-a9d1-cfe6a99a3cd2",
+        userId: "5cbbf2a4-7cf4-482d-8b96-940ecdfcc9fc", // Mike
+        language: "es",
+        verified: true,
+        lastEmailSentAt: new Date(),
+      },
+      {
+        id: "7cc2d89b-28ed-4a75-ae61-39bd7753215d",
+        userId: "0e3d0435-b60c-433f-bc5d-2c4e18c94fdc", // Jane
+        language: "en",
+        verified: true,
+        lastEmailSentAt: new Date(),
+      },
+      {
+        id: "c4529659-718d-4d89-a41e-e64a9b1c8ec2",
+        userId: "ad1c5d2a-49c8-4b0e-9d93-92d5ad728c13", // Emma
+        language: "ca",
+        verified: true,
+        lastEmailSentAt: new Date(),
+      },
+    ],
+  });
+
   console.log("Database seeded successfully!");
 }
 

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import User from "../../shared/domain/user";
 import UserId from "../../shared/domain/userId";
 import { UserRepository } from "../infrastructure/user.repository";
@@ -13,7 +13,7 @@ import { InvalidRoleException } from "../../shared/exceptions/invalidRoleExcepti
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { PasswordNotSecureException } from "../exception/passwordNotSecureException";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
-import { JoseWrapper } from "../../shared/infrastructure/joseWrapper";
+import { Languages } from "../../shared/domain/languages";
 
 export interface CreateUserRequest {
   firstName: string;
@@ -22,6 +22,7 @@ export interface CreateUserRequest {
   password: string;
   role: string;
   imageUrl?: string;
+  lng?: Languages;
 }
 
 export interface UpdateUserRequest {
@@ -37,6 +38,7 @@ export interface UserResponse {
   familyName: string;
   email: string;
   role: string;
+  emailVerified: boolean;
   imageUrl?: string;
 }
 
@@ -46,8 +48,6 @@ export class UserService {
     private userRepository: UserRepository,
     private passwordService: PasswordService,
     private moduleConnectors: ModuleConnectors,
-    @Inject("JoseWrapperInitialized")
-    private joseWrapper: JoseWrapper,
   ) {}
 
   async create(request: CreateUserRequest): Promise<UserResponse> {
@@ -72,16 +72,18 @@ export class UserService {
       false,
       request.imageUrl,
     );
+
+    await this.moduleConnectors.sendVerificationEmail(
+      user.getId().toPrimitive(),
+      request.email,
+      request.lng ?? Languages.ENGLISH,
+    );
+
     const storedUser = await this.userRepository.addUser(user);
     if (!storedUser) {
       throw new NotAbleToExecuteUserDbTransactionException(`store user`);
     }
-    const token = await this.joseWrapper.signJwt(
-      { userId: storedUser.toPrimitives().id },
-      "bookaband",
-      3600,
-    );
-    await this.moduleConnectors.sendVerificationEmail(request.email, token);
+
     const userPrimitives = storedUser.toPrimitives();
     return {
       id: userPrimitives.id,
@@ -89,6 +91,7 @@ export class UserService {
       familyName: userPrimitives.familyName,
       email: userPrimitives.email,
       role: userPrimitives.role,
+      emailVerified: userPrimitives.emailVerified,
       imageUrl: userPrimitives.imageUrl,
     };
   }
@@ -106,6 +109,7 @@ export class UserService {
       familyName: userPrimitives.familyName,
       email: userPrimitives.email,
       role: userPrimitives.role,
+      emailVerified: userPrimitives.emailVerified,
       imageUrl: userPrimitives.imageUrl,
     };
   }
@@ -121,6 +125,7 @@ export class UserService {
         familyName: userPrimitives.familyName,
         email: userPrimitives.email,
         role: userPrimitives.role,
+        emailVerified: userPrimitives.emailVerified,
         imageUrl: userPrimitives.imageUrl,
       };
     });
@@ -163,6 +168,7 @@ export class UserService {
       familyName: userPrimitives.familyName,
       email: userPrimitives.email,
       role: userPrimitives.role,
+      emailVerified: userPrimitives.emailVerified,
       imageUrl: userPrimitives.imageUrl,
     };
   }

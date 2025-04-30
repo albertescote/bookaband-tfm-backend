@@ -1,11 +1,9 @@
 import { JoseWrapper } from "../../shared/infrastructure/joseWrapper";
-import { InvalidTokenException } from "../exceptions/invalidTokenException";
-import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { VerificationStatus } from "../domain/verificationStatus";
 import { Inject } from "@nestjs/common";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
-import { SendVerificationEmailCommand } from "./sendVerificationEmail.command";
-import { CommandBus } from "@nestjs/cqrs";
+import { EmailVerificationRepository } from "../infrastructure/emailVerification.repository";
+import EmailVerificationId from "../domain/emailVerificationId";
+import { NotAbleToExecuteEmailVerificationDbTransactionException } from "../exceptions/notAbleToExecuteEmailVerificationDbTransactionException";
 
 export class VerifyEmailResponse {
   status: VerificationStatus;
@@ -13,72 +11,45 @@ export class VerifyEmailResponse {
 }
 
 export class VerifyEmailService {
-  private readonly RATE_LIMIT_SECONDS = 30;
-
   constructor(
     @Inject("JoseWrapperInitialized")
     private readonly joseWrapper: JoseWrapper,
-    private readonly moduleConnectors: ModuleConnectors,
-    private readonly commandBus: CommandBus,
+    private readonly emailVerificationRepository: EmailVerificationRepository,
   ) {}
 
   async execute(token: string): Promise<VerifyEmailResponse> {
-    try {
-      const verificationResult = await this.joseWrapper.verifyJwt(token);
+    const verificationResult = await this.joseWrapper.verifyJwt(token);
 
-      if (
-        !verificationResult.valid ||
-        !verificationResult.decodedPayload?.userId
-      ) {
-        throw new InvalidTokenException();
-      }
-
-      await this.moduleConnectors.verifyUserEmail(
-        verificationResult.decodedPayload.userId,
-      );
-      return {
-        status: VerificationStatus.VERIFIED,
-      };
-    } catch (e) {
+    if (
+      !verificationResult.valid ||
+      !verificationResult.decodedPayload?.emailVerificationId
+    ) {
       return {
         status: VerificationStatus.FAILED,
-        message: e.message,
+        message: "Invalid verification token",
       };
     }
-  }
 
-  async resendEmail(userId: string): Promise<void> {
-    const storedUser =
-      await this.moduleConnectors.obtainUserInformation(userId);
-    if (!storedUser) {
-      throw new UserNotFoundException(userId);
+    const emailVerificationId =
+      verificationResult.decodedPayload.emailVerificationId;
+
+    const emailVerification =
+      await this.emailVerificationRepository.getVerificationRecordById(
+        new EmailVerificationId(emailVerificationId),
+      );
+
+    emailVerification.verifyEmail();
+    await this.emailVerificationRepository.updateVerificationRecord(
+      emailVerification,
+    );
+    if (!emailVerification) {
+      throw new NotAbleToExecuteEmailVerificationDbTransactionException(
+        "update verification record",
+      );
     }
 
-    const userPrimitives = storedUser.toPrimitives();
-    // const now = new Date();
-    // const lastEmailSentAt = userPrimitives.lastEmailSentAt
-    //   ? new Date(userPrimitives.lastEmailSentAt)
-    //   : null;
-    //
-    // if (lastEmailSentAt) {
-    //   const secondsSinceLastEmail =
-    //     (now.getTime() - lastEmailSentAt.getTime()) / 1000;
-    //   if (secondsSinceLastEmail < this.RATE_LIMIT_SECONDS) {
-    //     throw new EmailRateLimitExceededException();
-    //   }
-    // }
-
-    const token = await this.joseWrapper.signJwt(
-      { userId: userPrimitives.id },
-      "bookaband",
-      3600,
-    );
-    const sendVerificationEmailCommand = new SendVerificationEmailCommand(
-      userPrimitives.email,
-      token,
-    );
-    await this.commandBus.execute(sendVerificationEmailCommand);
-
-    // Update the last email sent timestamp
+    return {
+      status: VerificationStatus.VERIFIED,
+    };
   }
 }

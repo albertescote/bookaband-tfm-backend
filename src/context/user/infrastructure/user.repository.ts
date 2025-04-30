@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import User, { UserPrimitives } from "../../shared/domain/user";
+import User from "../../shared/domain/user";
 import UserId from "../../shared/domain/userId";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
 
@@ -10,7 +10,17 @@ export class UserRepository {
   async addUser(user: User): Promise<User> {
     const userPrimitives = user.toPrimitives();
     try {
-      await this.prismaService.user.create({ data: userPrimitives });
+      await this.prismaService.user.create({
+        data: {
+          id: userPrimitives.id,
+          firstName: userPrimitives.firstName,
+          familyName: userPrimitives.familyName,
+          email: userPrimitives.email,
+          password: userPrimitives.password,
+          role: userPrimitives.role.toString(),
+          imageUrl: userPrimitives.imageUrl,
+        },
+      });
       return user;
     } catch {
       return undefined;
@@ -18,31 +28,57 @@ export class UserRepository {
   }
 
   async getUserById(id: UserId): Promise<User> {
-    const user: UserPrimitives = await this.prismaService.user.findFirst({
+    const result = await this.prismaService.user.findFirst({
       where: { id: id.toPrimitive() },
+      include: { emailVerification: { select: { verified: true } } },
     });
-    return user ? User.fromPrimitives(user) : undefined;
+    return result
+      ? User.fromPrimitives({
+          ...result,
+          emailVerified: result.emailVerification.verified,
+        })
+      : undefined;
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    const user: UserPrimitives = await this.prismaService.user.findFirst({
+    const result = await this.prismaService.user.findFirst({
       where: { email: email },
+      include: { emailVerification: { select: { verified: true } } },
     });
-    return user ? User.fromPrimitives(user) : undefined;
+    return result
+      ? User.fromPrimitives({
+          ...result,
+          emailVerified: result.emailVerification.verified,
+        })
+      : undefined;
   }
 
   async getAllUsers(): Promise<User[]> {
-    const users: UserPrimitives[] = await this.prismaService.user.findMany();
-    return users.map((user) => {
-      return User.fromPrimitives(user);
+    const result = await this.prismaService.user.findMany({
+      include: { emailVerification: { select: { verified: true } } },
+    });
+    return result.map((user) => {
+      return User.fromPrimitives({
+        ...user,
+        emailVerified: user.emailVerification.verified,
+      });
     });
   }
 
   async updateUser(id: UserId, updatedUser: User): Promise<User> {
     try {
+      const userPrimitives = updatedUser.toPrimitives();
       await this.prismaService.user.update({
         where: { id: id.toPrimitive() },
-        data: updatedUser.toPrimitives(),
+        data: {
+          id: userPrimitives.id,
+          firstName: userPrimitives.firstName,
+          familyName: userPrimitives.familyName,
+          email: userPrimitives.email,
+          password: userPrimitives.password,
+          role: userPrimitives.role.toString(),
+          imageUrl: userPrimitives.imageUrl,
+        },
       });
       return updatedUser;
     } catch {
