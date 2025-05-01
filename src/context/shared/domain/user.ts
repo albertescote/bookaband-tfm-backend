@@ -66,4 +66,8 @@ export default class User {
   isEmailVerified(): boolean {
     return this.emailVerified;
   }
+
+  resetPassword(newPassword: string): void {
+    this.password = newPassword;
+  }
 }

@@ -10,6 +10,9 @@ import { OfferPrimitives } from "../../offer/domain/offer";
 import { GetOfferInfoQuery } from "../../offer/service/getOfferInfo.query";
 import { SendVerificationEmailCommand } from "../../email/service/sendVerificationEmail.command";
 import { Languages } from "../domain/languages";
+import { SendResetPasswordEmailCommand } from "../../email/service/sendResetPasswordEmail.command";
+import { GetResetPasswordSessionQuery } from "../../email/service/getResetPasswordSession.query";
+import { ResetPasswordSessionPrimitives } from "../../email/domain/resetPasswordSession";
 
 @Injectable()
 class ModuleConnectors {
@@ -54,6 +57,26 @@ class ModuleConnectors {
       lng,
     );
     await this.commandBus.execute(sendVerificationEmailCommand);
+  }
+
+  async sendResetPasswordEmail(
+    userId: string,
+    email: string,
+    lng: Languages,
+  ): Promise<void> {
+    const sendResetPasswordEmailCommand = new SendResetPasswordEmailCommand(
+      userId,
+      email,
+      lng,
+    );
+    await this.commandBus.execute(sendResetPasswordEmailCommand);
+  }
+
+  async getResetPasswordSession(
+    id: string,
+  ): Promise<ResetPasswordSessionPrimitives> {
+    const getResetPasswordSessionQuery = new GetResetPasswordSessionQuery(id);
+    return await this.queryBus.execute(getResetPasswordSessionQuery);
   }
 }
 

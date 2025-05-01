@@ -26,6 +26,6 @@ export function getEmailVerificationTemplate(lng: string): EmailTemplate {
   return emailVerificationTemplates[lng] ?? emailVerificationTemplates["en"];
 }
 
-export function getPasswordTemplate(lng: string): EmailTemplate {
+export function getResetPasswordTemplate(lng: string): EmailTemplate {
   return passwordResetTemplates[lng] ?? passwordResetTemplates["en"];
 }

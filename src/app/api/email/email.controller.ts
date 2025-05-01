@@ -7,8 +7,6 @@ import { VerifyEmailService } from "../../../context/email/service/verifyEmail.s
 import { ResendEmailRequestDto } from "./resendEmail.dto";
 import { ResendVerificationEmailCommand } from "../../../context/email/service/resendVerificationEmail.command";
 import { CommandBus } from "@nestjs/cqrs";
-import { SendResetPasswordEmailCommand } from "../../../context/email/service/sendResetPasswordEmail.command";
-import { ResetPasswordRequestDto } from "./resetPassword.dto";
 
 @Controller("email")
 export class EmailController {
@@ -20,30 +18,18 @@ export class EmailController {
   @Post("verify")
   @HttpCode(201)
   async verifyEmail(
-    @Body() verifyEmailDto: VerifyEmailRequestDto,
+    @Body() verifyEmailRequestDto: VerifyEmailRequestDto,
   ): Promise<VerifyEmailResponseDto> {
-    return this.verifyEmailService.execute(verifyEmailDto.token);
+    return this.verifyEmailService.execute(verifyEmailRequestDto.token);
   }
 
   @Post("resend")
   @HttpCode(201)
   async resendEmail(
-    @Body() resendEmailDto: ResendEmailRequestDto,
+    @Body() resendEmailRequestDto: ResendEmailRequestDto,
   ): Promise<void> {
     const reSendVerificationEmailCommand = new ResendVerificationEmailCommand(
-      resendEmailDto.userId,
-    );
-    await this.commandBus.execute(reSendVerificationEmailCommand);
-  }
-
-  @Post("password/reset")
-  @HttpCode(201)
-  async resetPassword(
-    @Body() resetPasswordDto: ResetPasswordRequestDto,
-  ): Promise<void> {
-    const reSendVerificationEmailCommand = new SendResetPasswordEmailCommand(
-      resetPasswordDto.email,
-      resetPasswordDto.lng,
+      resendEmailRequestDto.userId,
     );
     await this.commandBus.execute(reSendVerificationEmailCommand);
   }

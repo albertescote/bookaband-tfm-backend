@@ -12,6 +12,7 @@ import { RefreshTokensRepository } from "./infrastructure/refreshTokens.reposito
 import { RefreshTokenService } from "./service/refresh.service";
 import { TokenService } from "./service/token.service";
 import PrismaService from "../shared/infrastructure/db/prisma.service";
+import { JwtResetPasswordStrategy } from "./strategies/jwt-reset-password.strategy";
 
 @Module({
   imports: [CqrsModule, PassportModule],
@@ -23,6 +24,7 @@ import PrismaService from "../shared/infrastructure/db/prisma.service";
     ModuleConnectors,
     PasswordService,
     LocalStrategy,
+    JwtResetPasswordStrategy,
     JwtCustomStrategy,
     {
       provide: "JoseWrapperInitialized",

@@ -9,3 +9,9 @@ services:
     ports:
       - "1434:1433"
     hostname: "sqldb-music-manager-local"
+
+  redis:
+    container_name: redisBookaBand
+    image: redis
+    ports:
+      - "6380:6379"

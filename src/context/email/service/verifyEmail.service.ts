@@ -4,6 +4,7 @@ import { Inject } from "@nestjs/common";
 import { EmailVerificationRepository } from "../infrastructure/emailVerification.repository";
 import EmailVerificationId from "../domain/emailVerificationId";
 import { NotAbleToExecuteEmailVerificationDbTransactionException } from "../exceptions/notAbleToExecuteEmailVerificationDbTransactionException";
+import { EmailVerificationNotFoundException } from "../exceptions/emailVerificationNotFoundException";
 
 export class VerifyEmailResponse {
   status: VerificationStatus;
@@ -37,6 +38,9 @@ export class VerifyEmailService {
       await this.emailVerificationRepository.getVerificationRecordById(
         new EmailVerificationId(emailVerificationId),
       );
+    if (!emailVerification) {
+      throw new EmailVerificationNotFoundException();
+    }
 
     emailVerification.verifyEmail();
     await this.emailVerificationRepository.updateVerificationRecord(

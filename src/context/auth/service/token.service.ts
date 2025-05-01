@@ -5,6 +5,9 @@ import { InvalidTokenException } from "../exceptions/invalidTokenException";
 import { InvalidTokenSubjectException } from "../exceptions/invalidTokenSubjectException";
 import { TokenPayload } from "../domain/tokenPayload";
 import { EmailNotVerifiedException } from "../exceptions/emailNotVerifiedException";
+import { ResetPasswordSessionNotFoundException } from "../exceptions/resetPasswordSessionNotFoundException";
+import { InvalidResetPasswordTokenException } from "../exceptions/invalidResetPasswordTokenException";
+import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 @Injectable()
 export class TokenService {
@@ -38,5 +41,39 @@ export class TokenService {
       throw new EmailNotVerifiedException();
     }
     return tokenPayload;
+  }
+
+  async verifyResetPasswordToken(token: string): Promise<TokenPayload> {
+    const validationResult = await this.joseWrapper.verifyJwt(token);
+    if (!validationResult.valid) {
+      throw new InvalidTokenException();
+    }
+    const tokenPayload = validationResult.decodedPayload;
+
+    if (!tokenPayload.sessionId) {
+      throw new InvalidResetPasswordTokenException();
+    }
+
+    const resetPasswordSession =
+      await this.moduleConnectors.getResetPasswordSession(
+        tokenPayload.sessionId,
+      );
+    if (!resetPasswordSession) {
+      throw new ResetPasswordSessionNotFoundException();
+    }
+
+    const user = await this.moduleConnectors.obtainUserInformation(
+      resetPasswordSession.userId,
+    );
+    if (!user) {
+      throw new UserNotFoundException(tokenPayload.sub);
+    }
+
+    const userPrimitives = user.toPrimitives();
+    return {
+      email: userPrimitives.email,
+      sub: userPrimitives.id,
+      role: userPrimitives.role,
+    };
   }
 }

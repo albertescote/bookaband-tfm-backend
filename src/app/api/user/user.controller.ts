@@ -17,10 +17,26 @@ import { UserService } from "../../../context/user/service/user.service";
 import { IdParamDto } from "./idParam.dto";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
+import { ResetPasswordRequestDto } from "./resetPassword.dto";
+import { UpdatePasswordRequestDto } from "./updatePassword.dto";
+import { JwtResetPasswordGuard } from "../../../context/auth/guards/jwt-reset-password.guard";
 
 @Controller("/user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Put("password")
+  @UseGuards(JwtResetPasswordGuard)
+  @HttpCode(200)
+  async updatePasswordReset(
+    @Request() req: { user: UserAuthInfo },
+    @Body() updatePasswordRequestDto: UpdatePasswordRequestDto,
+  ): Promise<void> {
+    return this.userService.updatePassword(
+      req.user,
+      updatePasswordRequestDto.password,
+    );
+  }
 
   @Post("/")
   @HttpCode(201)
@@ -67,5 +83,13 @@ export class UserController {
   ): Promise<void> {
     await this.userService.deleteById(req.user, idParamDto.id);
     return;
+  }
+
+  @Post("password/reset")
+  @HttpCode(201)
+  async resetPassword(
+    @Body() resetPasswordRequestDto: ResetPasswordRequestDto,
+  ): Promise<void> {
+    await this.userService.requestResetPassword(resetPasswordRequestDto);
   }
 }

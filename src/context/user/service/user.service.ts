@@ -42,6 +42,11 @@ export interface UserResponse {
   imageUrl?: string;
 }
 
+export interface ResetPasswordRequest {
+  email: string;
+  lng?: Languages;
+}
+
 @Injectable()
 export class UserService {
   constructor(
@@ -194,6 +199,50 @@ export class UserService {
       );
     }
     return;
+  }
+
+  async requestResetPassword(resetPasswordRequestDto: ResetPasswordRequest) {
+    const user = await this.userRepository.getUserByEmail(
+      resetPasswordRequestDto.email,
+    );
+    if (!user) {
+      // Silently fail if the user is not found
+      return;
+    }
+
+    await this.moduleConnectors.sendResetPasswordEmail(
+      user.getId().toPrimitive(),
+      user.toPrimitives().email,
+      resetPasswordRequestDto.lng,
+    );
+  }
+
+  async updatePassword(
+    userAuthInfo: UserAuthInfo,
+    password: string,
+  ): Promise<void> {
+    const user = await this.userRepository.getUserById(
+      new UserId(userAuthInfo.id),
+    );
+    if (!user) {
+      throw new UserNotFoundException(userAuthInfo.id);
+    }
+    if (!this.passwordService.isPasswordSecure(password)) {
+      throw new PasswordNotSecureException();
+    }
+    const encryptedPassword = await this.passwordService.hashPassword(password);
+
+    user.resetPassword(encryptedPassword);
+
+    const updatedUser = await this.userRepository.updateUser(
+      user.getId(),
+      user,
+    );
+    if (!updatedUser) {
+      throw new NotAbleToExecuteUserDbTransactionException(
+        `update user (${userAuthInfo.id})`,
+      );
+    }
   }
 
   private async checkExistingEmail(email: string): Promise<void> {

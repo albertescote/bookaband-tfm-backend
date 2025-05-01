@@ -7,9 +7,12 @@ import { VerifyEmailService } from "./service/verifyEmail.service";
 import { SendVerificationEmailCommandHandler } from "./service/sendVerificationEmail.commandHandler";
 import { CqrsModule } from "@nestjs/cqrs";
 import { JoseWrapper } from "../shared/infrastructure/joseWrapper";
-import { RESEND_API_KEY } from "../../config";
+import { REDIS, RESEND_API_KEY } from "../../config";
 import { ResendVerificationEmailCommandHandler } from "./service/resendVerificationEmail.commandHandler";
 import { SendResetPasswordEmailCommandHandler } from "./service/sendResetPasswordEmail.commandHandler";
+import { ResetPasswordRepository } from "./infrastructure/resetPassword.repository";
+import RedisService from "../shared/infrastructure/redis/redis.service";
+import { GetResetPasswordSessionQueryHandler } from "./service/getResetPasswordSession.queryHandler";
 
 const ResendApiKey = {
   provide: "resend-api-key",
@@ -18,17 +21,28 @@ const ResendApiKey = {
   },
 };
 
+const redisConfig = {
+  provide: "RedisConfig",
+  useFactory: () => {
+    return { prefix: "email-session:", port: REDIS.PORT, url: REDIS.URL };
+  },
+};
+
 @Module({
   imports: [CqrsModule],
   providers: [
     EmailVerificationRepository,
+    ResetPasswordRepository,
     PrismaService,
     ModuleConnectors,
     VerifyEmailService,
     ResendApiKey,
+    RedisService,
+    redisConfig,
     SendVerificationEmailCommandHandler,
     ResendVerificationEmailCommandHandler,
     SendResetPasswordEmailCommandHandler,
+    GetResetPasswordSessionQueryHandler,
     {
       provide: "JoseWrapperInitialized",
       useFactory: () => {
@@ -41,6 +55,7 @@ const ResendApiKey = {
     SendVerificationEmailCommandHandler,
     ResendVerificationEmailCommandHandler,
     SendResetPasswordEmailCommandHandler,
+    GetResetPasswordSessionQueryHandler,
   ],
 })
 export class EmailModule {}
