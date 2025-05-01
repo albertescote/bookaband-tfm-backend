@@ -10,6 +10,7 @@ import { Language } from "../../shared/domain/languages";
 import { getEmailVerificationTemplate } from "../domain/templates/templateResolver";
 import { ResendVerificationEmailCommand } from "./resendVerificationEmail.command";
 import { EmailVerificationNotFoundException } from "../exceptions/emailVerificationNotFoundException";
+import { EmailAlreadyVerifiedException } from "../exceptions/emailAlreadyVerifiedException";
 
 const TOKEN_ISSUER = "BookaBand";
 const TOKEN_EXPIRATION = 3600;
@@ -38,6 +39,10 @@ export class ResendVerificationEmailCommandHandler
 
     if (!storedEmailVerification) {
       throw new EmailVerificationNotFoundException();
+    }
+
+    if (storedEmailVerification.toPrimitives().verified) {
+      throw new EmailAlreadyVerifiedException();
     }
 
     storedEmailVerification.updateLastEmailSentAt();
