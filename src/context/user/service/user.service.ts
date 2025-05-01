@@ -205,8 +205,8 @@ export class UserService {
     const user = await this.userRepository.getUserByEmail(
       resetPasswordRequestDto.email,
     );
-    if (!user) {
-      // Silently fail if the user is not found
+    if (!user || !user.isEmailVerified()) {
+      // Silently fail
       return;
     }
 
