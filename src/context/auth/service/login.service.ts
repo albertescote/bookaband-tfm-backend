@@ -1,15 +1,23 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   ACCESS_TOKEN_EXPIRES_IN_SECONDS,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
   TOKEN_ISSUER,
   TOKEN_TYPE,
 } from "../config";
 import { RefreshTokenService } from "./refresh.service";
 import { TokenPayload } from "../domain/tokenPayload";
 import { TokenService } from "./token.service";
-import { GoogleAuthService } from "../infrastructure/googleAuthService";
 import User from "../../shared/domain/user";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
+import {
+  AccessTokenPayload,
+  GoogleAuthService,
+} from "../infrastructure/googleAuthService";
+import { Role } from "../../shared/domain/role";
+import { FRONTEND_URL } from "../../../config";
+import { GoogleEmailNotVerifiedException } from "../exceptions/googleEmailNotVerifiedException";
 
 export interface LoginRequest {
   id: string;
@@ -31,8 +39,6 @@ export class LoginService {
   constructor(
     private tokenService: TokenService,
     private refreshTokenService: RefreshTokenService,
-    @Inject("GoogleAuthServiceInitialized")
-    private googleAuthService: GoogleAuthService,
     private moduleConnectors: ModuleConnectors,
   ) {}
 
@@ -60,15 +66,26 @@ export class LoginService {
     };
   }
 
-  async loginWithGoogle(code: string): Promise<LoginResponse> {
-    const tokenResponse =
-      await this.googleAuthService.exchangeCodeForToken(code);
-
-    const decodedToken = this.googleAuthService.getTokenPayload(
-      tokenResponse.tokens.id_token,
+  async loginWithGoogle(code: string, role?: Role): Promise<LoginResponse> {
+    const googleAuthService = new GoogleAuthService(
+      GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET,
+    );
+    const tokenResponse = await googleAuthService.exchangeCodeForToken(
+      code,
+      role
+        ? `${FRONTEND_URL}/federation/callback/google?role=${role}`
+        : `${FRONTEND_URL}/federation/callback/google`,
     );
 
-    const user = await this.findOrCreateAccount(decodedToken.email);
+    const decodedToken = googleAuthService.getTokenPayload(
+      tokenResponse.tokens.id_token,
+    );
+    if (!decodedToken.email_verified) {
+      throw new GoogleEmailNotVerifiedException();
+    }
+
+    const user = await this.findOrCreateAccount(decodedToken);
 
     const payload = {
       email: decodedToken.email,
@@ -96,7 +113,16 @@ export class LoginService {
     };
   }
 
-  private async findOrCreateAccount(email: string): Promise<User> {
-    return this.moduleConnectors.obtainUserInformation(undefined, email);
+  private async findOrCreateAccount(
+    decodedToken: AccessTokenPayload,
+  ): Promise<User> {
+    let user = await this.moduleConnectors.obtainUserInformation(
+      undefined,
+      decodedToken.email,
+    );
+    if (!user) {
+      user = await this.moduleConnectors.createUser();
+    }
+    return user;
   }
 }

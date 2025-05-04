@@ -87,6 +87,7 @@ export class AuthController {
   ): Promise<LoginResponseDto> {
     const loginResponse = await this.loginService.loginWithGoogle(
       loginWithGoogleRequestDto.code,
+      loginWithGoogleRequestDto.role,
     );
     response.cookie("access_token", loginResponse.access_token, {
       httpOnly: true,
