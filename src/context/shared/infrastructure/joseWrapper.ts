@@ -31,6 +31,10 @@ export class JoseWrapper {
     return Buffer.from(jsonString).toString("base64");
   }
 
+  static decodeJwt(jwt: string): JwtPayload {
+    return decodeJwt(jwt);
+  }
+
   public async verifyJwt(jwt: string): Promise<JWTValidationResult> {
     try {
       const result = await jwtVerify(
@@ -54,9 +58,5 @@ export class JoseWrapper {
       .setIssuer(issuer)
       .setExpirationTime(Math.floor(Date.now() / 1000) + expInSeconds)
       .sign(await importJWK(this.privateKey, this.privateKey.alg ?? "ES256"));
-  }
-
-  public decodeJwt(jwt: string): JwtPayload {
-    return decodeJwt(jwt);
   }
 }

@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   sqldb-music-manager-local:
-    container_name: sqldb-music-manager-local
+    container_name: sqldb-bookaband-local
     image: mcr.microsoft.com/azure-sql-edge
     environment:
       ACCEPT_EULA: 1
@@ -11,7 +11,7 @@ services:
     hostname: "sqldb-music-manager-local"
 
   redis:
-    container_name: redisBookaBand
+    container_name: redis-bookaband
     image: redis
     ports:
       - "6380:6379"

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   ACCESS_TOKEN_EXPIRES_IN_SECONDS,
   TOKEN_ISSUER,
@@ -7,6 +7,9 @@ import {
 import { RefreshTokenService } from "./refresh.service";
 import { TokenPayload } from "../domain/tokenPayload";
 import { TokenService } from "./token.service";
+import { GoogleAuthService } from "../infrastructure/googleAuthService";
+import User from "../../shared/domain/user";
+import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 
 export interface LoginRequest {
   id: string;
@@ -28,6 +31,9 @@ export class LoginService {
   constructor(
     private tokenService: TokenService,
     private refreshTokenService: RefreshTokenService,
+    @Inject("GoogleAuthServiceInitialized")
+    private googleAuthService: GoogleAuthService,
+    private moduleConnectors: ModuleConnectors,
   ) {}
 
   async login(user: LoginRequest): Promise<LoginResponse> {
@@ -52,5 +58,45 @@ export class LoginService {
       expires_in: ACCESS_TOKEN_EXPIRES_IN_SECONDS,
       refresh_token: signedRefreshToken,
     };
+  }
+
+  async loginWithGoogle(code: string): Promise<LoginResponse> {
+    const tokenResponse =
+      await this.googleAuthService.exchangeCodeForToken(code);
+
+    const decodedToken = this.googleAuthService.getTokenPayload(
+      tokenResponse.tokens.id_token,
+    );
+
+    const user = await this.findOrCreateAccount(decodedToken.email);
+
+    const payload = {
+      email: decodedToken.email,
+      sub: user.getId().toPrimitive(),
+      role: user.getRole(),
+    };
+
+    const signedAccessToken = await this.tokenService.signToken(
+      payload,
+      TOKEN_ISSUER,
+      ACCESS_TOKEN_EXPIRES_IN_SECONDS,
+    );
+
+    const signedRefreshToken =
+      await this.refreshTokenService.createRefreshToken(
+        payload,
+        user.getId().toPrimitive(),
+      );
+
+    return {
+      access_token: signedAccessToken,
+      token_type: TOKEN_TYPE,
+      expires_in: ACCESS_TOKEN_EXPIRES_IN_SECONDS,
+      refresh_token: signedRefreshToken,
+    };
+  }
+
+  private async findOrCreateAccount(email: string): Promise<User> {
+    return this.moduleConnectors.obtainUserInformation(undefined, email);
   }
 }
