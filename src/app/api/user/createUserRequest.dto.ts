@@ -6,6 +6,7 @@ import {
   IsString,
 } from "class-validator";
 import { Languages } from "../../../context/shared/domain/languages";
+import { Role } from "../../../context/shared/domain/role";
 
 export class CreateUserRequestDto {
   @IsNotEmpty()
@@ -25,8 +26,8 @@ export class CreateUserRequestDto {
   password: string;
 
   @IsNotEmpty()
-  @IsString()
-  role: string;
+  @IsEnum(Role)
+  role: Role;
 
   @IsOptional()
   @IsEnum(Languages)

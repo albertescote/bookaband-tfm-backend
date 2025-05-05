@@ -9,18 +9,18 @@ import { UserNotFoundException } from "../exception/userNotFoundException";
 import { WrongPermissionsException } from "../exception/wrongPermissionsException";
 import { EmailAlreadyExistsException } from "../exception/emailAlreadyExistsException";
 import { NotAbleToExecuteUserDbTransactionException } from "../exception/notAbleToExecuteUserDbTransactionException";
-import { InvalidRoleException } from "../../shared/exceptions/invalidRoleException";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { PasswordNotSecureException } from "../exception/passwordNotSecureException";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { Languages } from "../../shared/domain/languages";
+import { InvalidRoleException } from "../../shared/exceptions/invalidRoleException";
 
 export interface CreateUserRequest {
   firstName: string;
   familyName: string;
   email: string;
   password: string;
-  role: string;
+  role: Role;
   imageUrl?: string;
   lng?: Languages;
 }
@@ -72,9 +72,9 @@ export class UserService {
       request.firstName,
       request.familyName,
       request.email,
-      encryptedPassword,
       role,
       false,
+      encryptedPassword,
       request.imageUrl,
     );
 
@@ -107,7 +107,7 @@ export class UserService {
   }
 
   @RoleAuth([Role.Musician, Role.Client])
-  async getById(userAuthInfo: UserAuthInfo, id: string): Promise<UserResponse> {
+  async getById(_: UserAuthInfo, id: string): Promise<UserResponse> {
     const storedUser = await this.userRepository.getUserById(new UserId(id));
     if (!storedUser) {
       throw new UserNotFoundException(id);
@@ -205,7 +205,7 @@ export class UserService {
     const user = await this.userRepository.getUserByEmail(
       resetPasswordRequestDto.email,
     );
-    if (!user || !user.isEmailVerified()) {
+    if (!user || !user.isEmailVerified() || !user.hasPassword()) {
       // Silently fail
       return;
     }

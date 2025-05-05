@@ -7,6 +7,7 @@ import { InvalidPasswordException } from "../exceptions/invalidPasswordException
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { PasswordService } from "../../shared/utils/password.service";
 import { EmailNotVerifiedException } from "../exceptions/emailNotVerifiedException";
+import { InvalidAuthenticationMethodException } from "../exceptions/invalidAuthenticationMethodException";
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -30,6 +31,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
     if (!user.isEmailVerified()) {
       throw new EmailNotVerifiedException();
+    }
+
+    if (!user.hasPassword()) {
+      throw new InvalidAuthenticationMethodException();
     }
 
     const valid = await this.passwordService.comparePasswords(

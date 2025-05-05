@@ -13,6 +13,9 @@ import { Languages } from "../domain/languages";
 import { SendResetPasswordEmailCommand } from "../../email/service/sendResetPasswordEmail.command";
 import { GetResetPasswordSessionQuery } from "../../email/service/getResetPasswordSession.query";
 import { ResetPasswordSessionPrimitives } from "../../email/domain/resetPasswordSession";
+import UserId from "../domain/userId";
+import { CreateUserFromGoogleCommand } from "../../user/service/createUserFromGoogle.command";
+import { Role } from "../domain/role";
 
 @Injectable()
 class ModuleConnectors {
@@ -77,6 +80,27 @@ class ModuleConnectors {
   ): Promise<ResetPasswordSessionPrimitives> {
     const getResetPasswordSessionQuery = new GetResetPasswordSessionQuery(id);
     return await this.queryBus.execute(getResetPasswordSessionQuery);
+  }
+
+  async createUserFromGoogle(
+    firstName: string,
+    familyName: string,
+    email: string,
+    role: Role,
+    imageUrl: string,
+  ): Promise<User> {
+    const userId = UserId.generate();
+    const createUserFromGoogleCommand = new CreateUserFromGoogleCommand(
+      userId.toPrimitive(),
+      firstName,
+      familyName,
+      email,
+      role,
+      imageUrl,
+    );
+    await this.commandBus.execute(createUserFromGoogleCommand);
+    const userQuery = new UserQuery(userId.toPrimitive());
+    return await this.queryBus.execute(userQuery);
   }
 }
 

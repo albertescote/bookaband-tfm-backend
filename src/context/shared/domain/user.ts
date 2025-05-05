@@ -7,9 +7,9 @@ export interface UserPrimitives {
   firstName: string;
   familyName: string;
   email: string;
-  password: string;
   role: string;
   emailVerified: boolean;
+  password?: string;
   imageUrl?: string;
 }
 
@@ -19,9 +19,9 @@ export default class User {
     private firstName: string,
     private familyName: string,
     private email: string,
-    private password: string,
     private role: Role,
     private emailVerified: boolean = false,
+    private password?: string,
     private imageUrl?: string,
   ) {}
 
@@ -35,9 +35,9 @@ export default class User {
       user.firstName,
       user.familyName,
       user.email,
-      user.password,
       role,
       user.emailVerified,
+      user.password,
       user.imageUrl,
     );
   }
@@ -48,9 +48,9 @@ export default class User {
       firstName: this.firstName,
       familyName: this.familyName,
       email: this.email,
-      password: this.password,
       role: this.role.toString(),
       emailVerified: this.emailVerified,
+      password: this.password,
       imageUrl: this.imageUrl,
     };
   }
@@ -69,5 +69,9 @@ export default class User {
 
   resetPassword(newPassword: string): void {
     this.password = newPassword;
+  }
+
+  hasPassword(): boolean {
+    return !!this.password;
   }
 }

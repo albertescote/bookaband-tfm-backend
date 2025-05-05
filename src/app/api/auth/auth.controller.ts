@@ -16,6 +16,7 @@ import { RefreshTokenService } from "../../../context/auth/service/refresh.servi
 import { Response } from "express";
 import { LoginResponseDto } from "./loginResponse.dto";
 import { LoginWithGoogleRequestDto } from "./loginWithGoogleRequest.dto";
+import { SignUpWithGoogleRequestDto } from "./signUpWithGoogleRequest.dto";
 
 @Controller("/auth")
 export class AuthController {
@@ -79,13 +80,41 @@ export class AuthController {
     };
   }
 
-  @Post("/federation/google")
+  @Post("/federation/login/google")
   @HttpCode(201)
   async loginWithGoogle(
     @Body() loginWithGoogleRequestDto: LoginWithGoogleRequestDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<LoginResponseDto> {
     const loginResponse = await this.loginService.loginWithGoogle(
+      loginWithGoogleRequestDto.code,
+    );
+    response.cookie("access_token", loginResponse.access_token, {
+      httpOnly: true,
+      // TODO: put secure if https
+      secure: false,
+      sameSite: "strict",
+    });
+    response.cookie("refresh_token", loginResponse.refresh_token, {
+      httpOnly: true,
+      // TODO: put secure if https
+      secure: false,
+      sameSite: "strict",
+    });
+    response.setHeader("Cache-Control", "no-store");
+    return {
+      token_type: loginResponse.token_type,
+      expires_in: loginResponse.expires_in,
+    };
+  }
+
+  @Post("/federation/signup/google")
+  @HttpCode(201)
+  async signUpWithGoogle(
+    @Body() loginWithGoogleRequestDto: SignUpWithGoogleRequestDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<LoginResponseDto> {
+    const loginResponse = await this.loginService.signUpWithGoogle(
       loginWithGoogleRequestDto.code,
       loginWithGoogleRequestDto.role,
     );

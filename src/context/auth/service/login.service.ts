@@ -9,15 +9,12 @@ import {
 import { RefreshTokenService } from "./refresh.service";
 import { TokenPayload } from "../domain/tokenPayload";
 import { TokenService } from "./token.service";
-import User from "../../shared/domain/user";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
-import {
-  AccessTokenPayload,
-  GoogleAuthService,
-} from "../infrastructure/googleAuthService";
+import { GoogleAuthService } from "../infrastructure/googleAuthService";
 import { Role } from "../../shared/domain/role";
 import { FRONTEND_URL } from "../../../config";
 import { GoogleEmailNotVerifiedException } from "../exceptions/googleEmailNotVerifiedException";
+import { UserNotRegisteredYetException } from "../exceptions/userNotRegisteredYetException";
 
 export interface LoginRequest {
   id: string;
@@ -66,16 +63,14 @@ export class LoginService {
     };
   }
 
-  async loginWithGoogle(code: string, role?: Role): Promise<LoginResponse> {
+  async loginWithGoogle(code: string): Promise<LoginResponse> {
     const googleAuthService = new GoogleAuthService(
       GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET,
     );
     const tokenResponse = await googleAuthService.exchangeCodeForToken(
       code,
-      role
-        ? `${FRONTEND_URL}/federation/callback/google?role=${role}`
-        : `${FRONTEND_URL}/federation/callback/google`,
+      `${FRONTEND_URL}/federation/callback/google`,
     );
 
     const decodedToken = googleAuthService.getTokenPayload(
@@ -85,7 +80,13 @@ export class LoginService {
       throw new GoogleEmailNotVerifiedException();
     }
 
-    const user = await this.findOrCreateAccount(decodedToken);
+    const user = await this.moduleConnectors.obtainUserInformation(
+      undefined,
+      decodedToken.email,
+    );
+    if (!user) {
+      throw new UserNotRegisteredYetException(decodedToken.email);
+    }
 
     const payload = {
       email: decodedToken.email,
@@ -113,16 +114,54 @@ export class LoginService {
     };
   }
 
-  private async findOrCreateAccount(
-    decodedToken: AccessTokenPayload,
-  ): Promise<User> {
-    let user = await this.moduleConnectors.obtainUserInformation(
-      undefined,
-      decodedToken.email,
+  async signUpWithGoogle(code: string, role: Role): Promise<LoginResponse> {
+    const googleAuthService = new GoogleAuthService(
+      GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET,
     );
-    if (!user) {
-      user = await this.moduleConnectors.createUser();
+    const tokenResponse = await googleAuthService.exchangeCodeForToken(
+      code,
+      `${FRONTEND_URL}/federation/callback/google?role=${role}`,
+    );
+
+    const decodedToken = googleAuthService.getTokenPayload(
+      tokenResponse.tokens.id_token,
+    );
+    if (!decodedToken.email_verified) {
+      throw new GoogleEmailNotVerifiedException();
     }
-    return user;
+
+    const user = await this.moduleConnectors.createUserFromGoogle(
+      decodedToken.given_name,
+      decodedToken.family_name,
+      decodedToken.email,
+      role,
+      decodedToken.picture,
+    );
+
+    const payload = {
+      email: decodedToken.email,
+      sub: user.getId().toPrimitive(),
+      role: user.getRole(),
+    };
+
+    const signedAccessToken = await this.tokenService.signToken(
+      payload,
+      TOKEN_ISSUER,
+      ACCESS_TOKEN_EXPIRES_IN_SECONDS,
+    );
+
+    const signedRefreshToken =
+      await this.refreshTokenService.createRefreshToken(
+        payload,
+        user.getId().toPrimitive(),
+      );
+
+    return {
+      access_token: signedAccessToken,
+      token_type: TOKEN_TYPE,
+      expires_in: ACCESS_TOKEN_EXPIRES_IN_SECONDS,
+      refresh_token: signedRefreshToken,
+    };
   }
 }

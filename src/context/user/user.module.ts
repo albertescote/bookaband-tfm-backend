@@ -6,6 +6,7 @@ import PrismaService from "../shared/infrastructure/db/prisma.service";
 import { UserQueryHandler } from "./service/user.queryHandler";
 import { CqrsModule } from "@nestjs/cqrs";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
+import { CreateUserFromGoogleCommandHandler } from "./service/createUserFromGoogle.commandHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -16,6 +17,7 @@ import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
     PrismaService,
     UserQueryHandler,
     ModuleConnectors,
+    CreateUserFromGoogleCommandHandler,
   ],
   exports: [UserService, UserQueryHandler],
 })
