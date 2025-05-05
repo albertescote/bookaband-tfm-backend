@@ -22,7 +22,7 @@ export class UserRepository {
         },
       });
       return user;
-    } catch {
+    } catch (e) {
       return undefined;
     }
   }
@@ -35,7 +35,9 @@ export class UserRepository {
     return result
       ? User.fromPrimitives({
           ...result,
-          emailVerified: result.emailVerification.verified,
+          emailVerified: result.password
+            ? result.emailVerification.verified
+            : true,
         })
       : undefined;
   }
@@ -48,7 +50,9 @@ export class UserRepository {
     return result
       ? User.fromPrimitives({
           ...result,
-          emailVerified: result.emailVerification.verified,
+          emailVerified: result.password
+            ? result.emailVerification.verified
+            : true,
         })
       : undefined;
   }
@@ -60,7 +64,7 @@ export class UserRepository {
     return result.map((user) => {
       return User.fromPrimitives({
         ...user,
-        emailVerified: user.emailVerification.verified,
+        emailVerified: user.password ? user.emailVerification.verified : true,
       });
     });
   }

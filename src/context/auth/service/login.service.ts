@@ -15,6 +15,7 @@ import { Role } from "../../shared/domain/role";
 import { FRONTEND_URL } from "../../../config";
 import { GoogleEmailNotVerifiedException } from "../exceptions/googleEmailNotVerifiedException";
 import { UserNotRegisteredYetException } from "../exceptions/userNotRegisteredYetException";
+import { UserAlreadyRegisteredException } from "../exceptions/userAlreadyRegisteredException";
 
 export interface LoginRequest {
   id: string;
@@ -129,6 +130,14 @@ export class LoginService {
     );
     if (!decodedToken.email_verified) {
       throw new GoogleEmailNotVerifiedException();
+    }
+
+    const existingUser = await this.moduleConnectors.obtainUserInformation(
+      undefined,
+      decodedToken.email,
+    );
+    if (!existingUser) {
+      throw new UserAlreadyRegisteredException(decodedToken.email);
     }
 
     const user = await this.moduleConnectors.createUserFromGoogle(

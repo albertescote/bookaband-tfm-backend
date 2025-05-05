@@ -4,9 +4,9 @@ import { CreateUserFromGoogleCommand } from "./createUserFromGoogle.command";
 import { Role } from "../../shared/domain/role";
 import { InvalidRoleException } from "../../shared/exceptions/invalidRoleException";
 import User from "../../shared/domain/user";
-import UserId from "../../shared/domain/userId";
 import { NotAbleToExecuteUserDbTransactionException } from "../exception/notAbleToExecuteUserDbTransactionException";
 import { UserRepository } from "../infrastructure/user.repository";
+import UserId from "../../shared/domain/userId";
 
 @Injectable()
 @CommandHandler(CreateUserFromGoogleCommand)
@@ -21,7 +21,7 @@ export class CreateUserFromGoogleCommandHandler
       throw new InvalidRoleException(command.role);
     }
     const user = new User(
-      UserId.generate(),
+      new UserId(command.id),
       command.firstName,
       command.familyName,
       command.email,
