@@ -136,7 +136,7 @@ export class LoginService {
       undefined,
       decodedToken.email,
     );
-    if (!existingUser) {
+    if (existingUser) {
       throw new UserAlreadyRegisteredException(decodedToken.email);
     }
 

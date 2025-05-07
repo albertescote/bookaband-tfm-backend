@@ -1,4 +1,5 @@
 export enum Role {
-  Musician = 'Musician',
-  Client = 'Client',
+  Musician = "Musician",
+  Client = "Client",
+  Provider = "Provider",
 }

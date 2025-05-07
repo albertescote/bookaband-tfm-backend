@@ -43,7 +43,7 @@ export class BookingService {
     return storedBooking.toPrimitives();
   }
 
-  @RoleAuth([Role.Musician, Role.Client])
+  @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async getById(
     userAuthInfo: UserAuthInfo,
     id: string,

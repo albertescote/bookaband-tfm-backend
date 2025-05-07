@@ -106,7 +106,7 @@ export class UserService {
     };
   }
 
-  @RoleAuth([Role.Musician, Role.Client])
+  @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async getById(_: UserAuthInfo, id: string): Promise<UserResponse> {
     const storedUser = await this.userRepository.getUserById(new UserId(id));
     if (!storedUser) {
@@ -124,7 +124,7 @@ export class UserService {
     };
   }
 
-  @RoleAuth([Role.Musician, Role.Client])
+  @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async getAll(_: UserAuthInfo): Promise<UserResponse[]> {
     const users = await this.userRepository.getAllUsers();
     return users.map((user) => {
@@ -141,7 +141,7 @@ export class UserService {
     });
   }
 
-  @RoleAuth([Role.Musician, Role.Client])
+  @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async update(
     userAuthInfo: UserAuthInfo,
     id: string,
@@ -183,7 +183,7 @@ export class UserService {
     };
   }
 
-  @RoleAuth([Role.Musician, Role.Client])
+  @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async deleteById(userAuthInfo: UserAuthInfo, id: string): Promise<void> {
     const oldUser = await this.userRepository.getUserById(new UserId(id));
     if (!oldUser) {

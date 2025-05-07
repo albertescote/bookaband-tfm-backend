@@ -117,7 +117,7 @@ export class BandService {
     return storedBandPrimitives;
   }
 
-  @RoleAuth([Role.Musician, Role.Client])
+  @RoleAuth([Role.Musician, Role.Client, Role.Provider, Role.Provider])
   async getViewById(id: string): Promise<BandResponse> {
     const storedBand = await this.bandRepository.getBandById(new BandId(id));
     if (!storedBand) {

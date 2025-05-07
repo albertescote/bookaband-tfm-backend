@@ -132,7 +132,7 @@ export class OfferService {
     return;
   }
 
-  @RoleAuth([Role.Musician, Role.Client])
+  @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async getOfferDetails(_: UserAuthInfo, id: string): Promise<OfferDetails> {
     const storedOffer = await this.offerRepository.getOfferDetailsById(
       new OfferId(id),

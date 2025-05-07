@@ -111,12 +111,12 @@ export class AuthController {
   @Post("/federation/signup/google")
   @HttpCode(201)
   async signUpWithGoogle(
-    @Body() loginWithGoogleRequestDto: SignUpWithGoogleRequestDto,
+    @Body() signUpWithGoogleRequestDto: SignUpWithGoogleRequestDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<LoginResponseDto> {
     const loginResponse = await this.loginService.signUpWithGoogle(
-      loginWithGoogleRequestDto.code,
-      loginWithGoogleRequestDto.role,
+      signUpWithGoogleRequestDto.code,
+      signUpWithGoogleRequestDto.role,
     );
     response.cookie("access_token", loginResponse.access_token, {
       httpOnly: true,

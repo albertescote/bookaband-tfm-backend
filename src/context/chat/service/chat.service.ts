@@ -55,7 +55,7 @@ export class ChatService {
     return createdChat.toPrimitives();
   }
 
-  @RoleAuth([Role.Musician, Role.Client])
+  @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async getChatHistory(
     authorized: UserAuthInfo,
     chatId: string,
