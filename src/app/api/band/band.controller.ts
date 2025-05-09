@@ -37,8 +37,11 @@ export class BandController {
   @Get("/:id/view")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
-  async getViewById(@Param() idParamDto: IdParamDto): Promise<BandResponseDto> {
-    return this.bandService.getViewById(idParamDto.id);
+  async getViewById(
+    @Param() idParamDto: IdParamDto,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BandResponseDto> {
+    return this.bandService.getViewById(req.user, idParamDto.id);
   }
 
   @Get("/:id/details")

@@ -21,6 +21,7 @@ interface MessageRequest {
   senderId: string;
   recipientId: string;
   message: string;
+  timestamp: string | Date;
 }
 
 @WebSocketGateway({ cors: { origin: FRONTEND_URL } })

@@ -44,17 +44,16 @@ export class UserController {
     return await this.userService.create(body);
   }
 
-  @Get("/:id")
+  @Get("/")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
   async getById(
-    @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
   ): Promise<UserResponseDto> {
-    return this.userService.getById(req.user, idParamDto.id);
+    return this.userService.getById(req.user);
   }
 
-  @Get("/")
+  @Get("/all")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
   async getAllUsers(

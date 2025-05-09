@@ -107,10 +107,12 @@ export class UserService {
   }
 
   @RoleAuth([Role.Musician, Role.Client, Role.Provider])
-  async getById(_: UserAuthInfo, id: string): Promise<UserResponse> {
-    const storedUser = await this.userRepository.getUserById(new UserId(id));
+  async getById(userAuthInfo: UserAuthInfo): Promise<UserResponse> {
+    const storedUser = await this.userRepository.getUserById(
+      new UserId(userAuthInfo.id),
+    );
     if (!storedUser) {
-      throw new UserNotFoundException(id);
+      throw new UserNotFoundException(userAuthInfo.id);
     }
     const userPrimitives = storedUser.toPrimitives();
     return {
