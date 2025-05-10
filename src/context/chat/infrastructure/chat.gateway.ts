@@ -12,7 +12,11 @@ import Message from "../domain/message";
 import MessageId from "../domain/messageId";
 import { ChatRepository } from "./chat.repository";
 import ChatId from "../domain/chatId";
-import { FRONTEND_URL } from "../../../config";
+import {
+  FRONTEND_APP_URL,
+  FRONTEND_AUTH_URL,
+  FRONTEND_PAGE_URL,
+} from "../../../config";
 import { InvalidMessageActorsException } from "../exceptions/invalidMessageActorsException";
 import { ChatIdNotFoundException } from "../exceptions/chatIdNotFoundException";
 
@@ -24,7 +28,19 @@ interface MessageRequest {
   timestamp: string | Date;
 }
 
-@WebSocketGateway({ cors: { origin: FRONTEND_URL } })
+const allowedOrigins = [FRONTEND_AUTH_URL, FRONTEND_PAGE_URL, FRONTEND_APP_URL];
+
+@WebSocketGateway({
+  cors: {
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  },
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

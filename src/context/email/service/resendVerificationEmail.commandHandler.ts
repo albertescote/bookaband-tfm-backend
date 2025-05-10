@@ -1,7 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { Resend } from "resend";
-import { FRONTEND_URL } from "../../../config";
 import { JoseWrapper } from "../../shared/infrastructure/joseWrapper";
 import UserId from "../../shared/domain/userId";
 import { EmailVerificationRepository } from "../infrastructure/emailVerification.repository";
@@ -11,6 +10,7 @@ import { getEmailVerificationTemplate } from "../domain/templates/templateResolv
 import { ResendVerificationEmailCommand } from "./resendVerificationEmail.command";
 import { EmailVerificationNotFoundException } from "../exceptions/emailVerificationNotFoundException";
 import { EmailAlreadyVerifiedException } from "../exceptions/emailAlreadyVerifiedException";
+import { FRONTEND_AUTH_URL } from "../../../config";
 
 const TOKEN_ISSUER = "BookaBand";
 const TOKEN_EXPIRATION = 3600;
@@ -70,7 +70,7 @@ export class ResendVerificationEmailCommandHandler
       TOKEN_EXPIRATION,
     );
 
-    const verificationUrl = `${FRONTEND_URL}/${lng.toPrimitive()}/verify-email?token=${token}`;
+    const verificationUrl = `${FRONTEND_AUTH_URL}/${lng.toPrimitive()}/verify-email?token=${token}`;
     const template = getEmailVerificationTemplate(lng.toPrimitive());
 
     await this.resend.emails.send({
