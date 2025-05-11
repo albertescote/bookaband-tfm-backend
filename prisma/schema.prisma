@@ -50,11 +50,33 @@ model band {
   name     String  @db.VarChar(255)
   genre    String  @db.VarChar(255)
   imageUrl String? @db.VarChar(255)
+  location String? @db.VarChar(255)
+
+  rating      Float   @default(0)
+  reviewCount Int     @default(0)
+  featured    Boolean @default(false)
+  bandSize    String  @db.VarChar(255)
 
   offer       offer?
   members     user[]       @relation("UserBands")
   chats       chat[]       @relation("BandChats")
   invitations invitation[]
+
+  equipment       equipment[] @relation("BandEquipment")
+  availableEvents eventType[] @relation("BandEvents")
+}
+
+model eventType {
+  id    String @id @default(uuid()) @db.VarChar(36)
+  type  String @unique @db.VarChar(255)
+  bands band[] @relation("BandEvents")
+}
+
+model equipment {
+  id     String @id @default(uuid()) @db.VarChar(36)
+  type   String @db.VarChar(255)
+  band   band   @relation("BandEquipment", fields: [bandId], references: [id])
+  bandId String @db.VarChar(36)
 }
 
 model message {

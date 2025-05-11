@@ -17,6 +17,8 @@ import { BookingModule } from "../context/booking/booking.module";
 import { EmailModule } from "../context/email/email.module";
 import { EmailController } from "./api/email/email.controller";
 import { CqrsModule } from "@nestjs/cqrs";
+import { EventTypeController } from "./api/eventType/eventType.controller";
+import { EventTypeModule } from "../context/eventType/eventType.module";
 
 @Module({
   imports: [
@@ -29,6 +31,7 @@ import { CqrsModule } from "@nestjs/cqrs";
     InvitationModule,
     BookingModule,
     EmailModule,
+    EventTypeModule,
   ],
   controllers: [
     HealthcheckController,
@@ -40,6 +43,7 @@ import { CqrsModule } from "@nestjs/cqrs";
     InvitationController,
     BookingController,
     EmailController,
+    EventTypeController,
   ],
 })
 export class AppModule {}

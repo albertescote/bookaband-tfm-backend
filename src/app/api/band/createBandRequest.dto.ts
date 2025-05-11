@@ -6,6 +6,7 @@ import {
   IsString,
 } from "class-validator";
 import { MusicGenre } from "../../../context/band/domain/musicGenre";
+import { BandSize } from "../../../context/band/domain/bandSize";
 
 export class CreateBandRequestDto {
   @IsNotEmpty()
@@ -15,6 +16,18 @@ export class CreateBandRequestDto {
   @IsNotEmpty()
   @IsEnum(MusicGenre)
   genre: MusicGenre;
+
+  @IsNotEmpty()
+  @IsString()
+  location: string;
+
+  @IsNotEmpty()
+  @IsEnum(BandSize)
+  bandSize: BandSize;
+
+  @IsNotEmpty()
+  @IsArray()
+  eventTypeIds: string[];
 
   @IsOptional()
   @IsArray()

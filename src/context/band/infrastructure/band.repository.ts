@@ -23,23 +23,36 @@ export class BandRepository {
   constructor(private prismaService: PrismaService) {}
 
   async addBand(band: Band): Promise<Band> {
-    const bandPrimitives = band.toPrimitives();
+    const primitives = band.toPrimitives();
+
     try {
       await this.prismaService.band.create({
         data: {
-          id: bandPrimitives.id,
-          name: bandPrimitives.name,
-          genre: bandPrimitives.genre,
-          imageUrl: bandPrimitives.imageUrl,
+          id: primitives.id,
+          name: primitives.name,
+          genre: primitives.genre,
+          imageUrl: primitives.imageUrl,
+          location: primitives.location,
+          rating: primitives.rating,
+          reviewCount: primitives.reviewCount,
+          featured: primitives.featured,
+          bandSize: primitives.bandSize,
           members: {
-            connect: bandPrimitives.membersId.map((memberId: string) => ({
-              id: memberId,
+            connect: primitives.membersId.map((id) => ({ id })),
+          },
+          availableEvents: {
+            connect: primitives.eventTypeIds.map((id) => ({ id })),
+          },
+          equipment: {
+            create: primitives.equipment.map((e) => ({
+              id: e.id,
+              type: e.type,
             })),
           },
         },
       });
       return band;
-    } catch (e) {
+    } catch {
       return undefined;
     }
   }
@@ -49,48 +62,73 @@ export class BandRepository {
       where: { id: id.toPrimitive() },
       include: {
         members: true,
+        availableEvents: true,
+        equipment: true,
       },
     });
+
     return band
       ? Band.fromPrimitives({
           id: band.id,
           name: band.name,
-          membersId: band.members.map((member) => member.id),
           genre: MusicGenre[band.genre],
+          membersId: band.members.map((m) => m.id),
           imageUrl: band.imageUrl,
+          location: band.location,
+          rating: band.rating,
+          reviewCount: band.reviewCount,
+          featured: band.featured,
+          bandSize: band.bandSize,
+          eventTypeIds: band.availableEvents.map((eventType) => eventType.id),
+          equipment: band.equipment,
         })
       : undefined;
   }
 
-  async getBandWithDetailsById(id: BandId): Promise<BandWithDetails> {
-    const band = await this.prismaService.band.findFirst({
-      where: { id: id.toPrimitive() },
-      include: {
-        members: {
-          select: {
-            id: true,
-            firstName: true,
-            familyName: true,
-            imageUrl: true,
+  async updateBand(updatedBand: Band): Promise<Band> {
+    const primitives = updatedBand.toPrimitives();
+
+    try {
+      await this.prismaService.band.update({
+        where: { id: primitives.id },
+        data: {
+          name: primitives.name,
+          genre: primitives.genre,
+          imageUrl: primitives.imageUrl,
+          location: primitives.location,
+          rating: primitives.rating,
+          reviewCount: primitives.reviewCount,
+          featured: primitives.featured,
+          bandSize: primitives.bandSize,
+          members: {
+            set: primitives.membersId.map((id) => ({ id })),
+          },
+          availableEvents: {
+            set: primitives.eventTypeIds.map((id) => ({ id })),
+          },
+          equipment: {
+            deleteMany: {},
+            create: primitives.equipment.map((e) => ({
+              id: e.id,
+              type: e.type,
+            })),
           },
         },
-      },
-    });
-    return band
-      ? BandWithDetails.fromPrimitives({
-          id: band.id,
-          name: band.name,
-          members: band.members.map((member) => {
-            return {
-              id: member.id,
-              userName: member.firstName + " " + member.familyName,
-              imageUrl: member.imageUrl,
-            };
-          }),
-          genre: MusicGenre[band.genre],
-          imageUrl: band.imageUrl,
-        })
-      : undefined;
+      });
+
+      return updatedBand;
+    } catch {
+      return undefined;
+    }
+  }
+
+  async deleteBand(id: BandId): Promise<boolean> {
+    try {
+      await this.prismaService.band.delete({ where: { id: id.toPrimitive() } });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async getUserBands(userId: UserId): Promise<UserBand[]> {
@@ -108,40 +146,37 @@ export class BandRepository {
         offer: true,
       },
     });
+
     return bands ?? [];
   }
 
-  async updateBand(updatedBand: Band): Promise<Band> {
-    try {
-      const bandPrimitives = updatedBand.toPrimitives();
-      await this.prismaService.band.update({
-        where: { id: bandPrimitives.id },
-        data: {
-          id: bandPrimitives.id,
-          name: bandPrimitives.name,
-          genre: bandPrimitives.genre,
-          imageUrl: bandPrimitives.imageUrl,
-          members: {
-            connect: bandPrimitives.membersId.map((memberId: string) => ({
-              id: memberId,
-            })),
+  async getBandWithDetailsById(id: BandId): Promise<BandWithDetails> {
+    const band = await this.prismaService.band.findFirst({
+      where: { id: id.toPrimitive() },
+      include: {
+        members: {
+          select: {
+            id: true,
+            firstName: true,
+            familyName: true,
+            imageUrl: true,
           },
         },
-      });
-      return updatedBand;
-    } catch {
-      return undefined;
-    }
-  }
+      },
+    });
 
-  async deleteBand(id: BandId): Promise<boolean> {
-    try {
-      await this.prismaService.band.delete({
-        where: { id: id.toPrimitive() },
-      });
-      return true;
-    } catch {
-      return false;
-    }
+    return band
+      ? BandWithDetails.fromPrimitives({
+          id: band.id,
+          name: band.name,
+          members: band.members.map((member) => ({
+            id: member.id,
+            userName: `${member.firstName} ${member.familyName}`,
+            imageUrl: member.imageUrl,
+          })),
+          genre: MusicGenre[band.genre],
+          imageUrl: band.imageUrl,
+        })
+      : undefined;
   }
 }

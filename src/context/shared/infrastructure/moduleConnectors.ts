@@ -16,6 +16,8 @@ import { ResetPasswordSessionPrimitives } from "../../email/domain/resetPassword
 import UserId from "../domain/userId";
 import { CreateUserFromGoogleCommand } from "../../user/service/createUserFromGoogle.command";
 import { Role } from "../domain/role";
+import { GetAllEventTypesQuery } from "../../eventType/service/getAllEventTypes.query";
+import { EventTypePrimitives } from "../domain/eventType";
 
 @Injectable()
 class ModuleConnectors {
@@ -26,6 +28,11 @@ class ModuleConnectors {
 
   async obtainUserInformation(id?: string, email?: string): Promise<User> {
     const userQuery = new UserQuery(id, email);
+    return await this.queryBus.execute(userQuery);
+  }
+
+  async getAllEventTypes(): Promise<EventTypePrimitives[]> {
+    const userQuery = new GetAllEventTypesQuery();
     return await this.queryBus.execute(userQuery);
   }
 
