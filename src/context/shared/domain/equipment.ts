@@ -7,14 +7,14 @@ export enum EquipmentType {
 export interface EquipmentPrimitives {
   id: string;
   type: string;
-  bandId: string;
+  offerId: string;
 }
 
 export class Equipment {
   constructor(
     private readonly id: string,
     private readonly type: EquipmentType,
-    private readonly bandId: string,
+    private readonly offerId: string,
   ) {}
 
   public static fromPrimitives(primitives: EquipmentPrimitives): Equipment {
@@ -27,7 +27,7 @@ export class Equipment {
     return new Equipment(
       primitives.id,
       primitives.type as EquipmentType,
-      primitives.bandId,
+      primitives.offerId,
     );
   }
 
@@ -35,7 +35,7 @@ export class Equipment {
     return {
       id: this.id,
       type: this.type,
-      bandId: this.bandId,
+      offerId: this.offerId,
     };
   }
 
@@ -47,7 +47,7 @@ export class Equipment {
     return this.type;
   }
 
-  public getBandId(): string {
-    return this.bandId;
+  public getOfferId(): string {
+    return this.offerId;
   }
 }

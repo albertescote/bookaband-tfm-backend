@@ -1,10 +1,12 @@
 import {
+  IsArray,
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
 } from "class-validator";
+import { BandSize } from "../../../context/offer/domain/bandSize";
 
 export class OfferRequestDto {
   @IsNotEmpty()
@@ -16,10 +18,22 @@ export class OfferRequestDto {
   price: number;
 
   @IsNotEmpty()
+  @IsString()
+  description: string;
+
+  @IsNotEmpty()
+  @IsString()
+  location: string;
+
+  @IsNotEmpty()
   @IsBoolean()
   visible: boolean;
 
-  @IsOptional()
-  @IsString()
-  description: string;
+  @IsNotEmpty()
+  @IsEnum(BandSize)
+  bandSize: BandSize;
+
+  @IsNotEmpty()
+  @IsArray()
+  eventTypeIds: string[];
 }

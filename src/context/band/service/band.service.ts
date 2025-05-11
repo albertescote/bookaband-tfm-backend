@@ -12,17 +12,10 @@ import { MusicGenre } from "../domain/musicGenre";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { MemberIdNotFoundException } from "../exceptions/memberIdNotFoundException";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
-import { BandSize } from "../domain/bandSize";
-import { NoEventTypesRegisteredException } from "../exceptions/noEventTypesRegisteredException";
-import { EventTypeIdNotFoundException } from "../exceptions/eventTypeIdNotFoundException";
-import { Equipment } from "../../shared/domain/equipment";
 
 export interface BandRequest {
   name: string;
   genre: MusicGenre;
-  location: string;
-  bandSize: BandSize;
-  eventTypeIds: string[];
   membersId?: string[];
   imageUrl?: string;
 }
@@ -75,15 +68,10 @@ export class BandService {
       request.membersId,
       userAuthInfo.id,
     );
-    await this.checkEventTypeIds(request.eventTypeIds);
     const band = Band.create(
       request.name,
       membersId,
       request.genre,
-      request.location,
-      request.bandSize,
-      request.eventTypeIds,
-      [],
       request.imageUrl,
     );
     const storedBand = await this.bandRepository.addBand(band);
@@ -162,19 +150,13 @@ export class BandService {
       request.membersId,
       userAuthInfo.id,
     );
-    await this.checkEventTypeIds(request.eventTypeIds);
     const updatedBand = await this.bandRepository.updateBand(
       new Band(
         new BandId(id),
         request.name,
         membersId,
         request.genre,
-        request.location,
         oldBandPrimitives.reviewCount,
-        oldBandPrimitives.featured,
-        request.bandSize,
-        request.eventTypeIds,
-        oldBandPrimitives.equipment.map(Equipment.fromPrimitives),
         request.imageUrl,
         oldBandPrimitives.rating,
       ),
@@ -205,20 +187,6 @@ export class BandService {
       );
     }
     return;
-  }
-
-  private async checkEventTypeIds(eventTypeIds: string[]) {
-    const allEventTypes = await this.moduleConnectors.getAllEventTypes();
-    if (!allEventTypes) {
-      throw new NoEventTypesRegisteredException();
-    }
-    const eventTypeNotFound = eventTypeIds.some((id) => {
-      return !allEventTypes.find((eventType) => id === eventType.id);
-    });
-
-    if (eventTypeNotFound) {
-      throw new EventTypeIdNotFoundException();
-    }
   }
 
   private async checkMembersIdExistence(membersId: string[], userId: string) {

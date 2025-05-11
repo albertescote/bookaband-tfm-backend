@@ -38,45 +38,43 @@ model offer {
   id          String  @id(map: "offer_PK") @db.VarChar(36)
   bandId      String  @unique @db.VarChar(36)
   price       Int
-  description String? @db.VarChar(255)
+  description String  @db.VarChar(255)
+  location    String  @db.VarChar(255)
+  featured    Boolean @default(false)
+  bandSize    String  @db.VarChar(255)
   visible     Boolean @default(true)
 
-  band     band      @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
-  bookings booking[]
+  band       band        @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
+  bookings   booking[]
+  equipment  equipment[] @relation("OfferEquipment")
+  eventTypes eventType[] @relation("OfferEvents")
 }
 
 model band {
-  id       String  @id(map: "band_PK") @db.VarChar(36)
-  name     String  @db.VarChar(255)
-  genre    String  @db.VarChar(255)
-  imageUrl String? @db.VarChar(255)
-  location String? @db.VarChar(255)
-
+  id          String  @id(map: "band_PK") @db.VarChar(36)
+  name        String  @db.VarChar(255)
+  genre       String  @db.VarChar(255)
   rating      Float   @default(0)
   reviewCount Int     @default(0)
-  featured    Boolean @default(false)
-  bandSize    String  @db.VarChar(255)
+  imageUrl    String? @db.VarChar(255)
 
   offer       offer?
   members     user[]       @relation("UserBands")
   chats       chat[]       @relation("BandChats")
   invitations invitation[]
-
-  equipment       equipment[] @relation("BandEquipment")
-  availableEvents eventType[] @relation("BandEvents")
 }
 
 model eventType {
-  id    String @id @default(uuid()) @db.VarChar(36)
-  type  String @unique @db.VarChar(255)
-  bands band[] @relation("BandEvents")
+  id     String  @id @default(uuid()) @db.VarChar(36)
+  type   String  @unique @db.VarChar(255)
+  offers offer[] @relation("OfferEvents")
 }
 
 model equipment {
-  id     String @id @default(uuid()) @db.VarChar(36)
-  type   String @db.VarChar(255)
-  band   band   @relation("BandEquipment", fields: [bandId], references: [id])
-  bandId String @db.VarChar(36)
+  id      String @id @default(uuid()) @db.VarChar(36)
+  type    String @db.VarChar(255)
+  offer   offer  @relation("OfferEquipment", fields: [offerId], references: [id])
+  offerId String @db.VarChar(36)
 }
 
 model message {

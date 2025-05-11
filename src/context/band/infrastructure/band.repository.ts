@@ -32,22 +32,10 @@ export class BandRepository {
           name: primitives.name,
           genre: primitives.genre,
           imageUrl: primitives.imageUrl,
-          location: primitives.location,
           rating: primitives.rating,
           reviewCount: primitives.reviewCount,
-          featured: primitives.featured,
-          bandSize: primitives.bandSize,
           members: {
             connect: primitives.membersId.map((id) => ({ id })),
-          },
-          availableEvents: {
-            connect: primitives.eventTypeIds.map((id) => ({ id })),
-          },
-          equipment: {
-            create: primitives.equipment.map((e) => ({
-              id: e.id,
-              type: e.type,
-            })),
           },
         },
       });
@@ -62,8 +50,6 @@ export class BandRepository {
       where: { id: id.toPrimitive() },
       include: {
         members: true,
-        availableEvents: true,
-        equipment: true,
       },
     });
 
@@ -74,13 +60,8 @@ export class BandRepository {
           genre: MusicGenre[band.genre],
           membersId: band.members.map((m) => m.id),
           imageUrl: band.imageUrl,
-          location: band.location,
           rating: band.rating,
           reviewCount: band.reviewCount,
-          featured: band.featured,
-          bandSize: band.bandSize,
-          eventTypeIds: band.availableEvents.map((eventType) => eventType.id),
-          equipment: band.equipment,
         })
       : undefined;
   }
@@ -95,23 +76,10 @@ export class BandRepository {
           name: primitives.name,
           genre: primitives.genre,
           imageUrl: primitives.imageUrl,
-          location: primitives.location,
           rating: primitives.rating,
           reviewCount: primitives.reviewCount,
-          featured: primitives.featured,
-          bandSize: primitives.bandSize,
           members: {
             set: primitives.membersId.map((id) => ({ id })),
-          },
-          availableEvents: {
-            set: primitives.eventTypeIds.map((id) => ({ id })),
-          },
-          equipment: {
-            deleteMany: {},
-            create: primitives.equipment.map((e) => ({
-              id: e.id,
-              type: e.type,
-            })),
           },
         },
       });

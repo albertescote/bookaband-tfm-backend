@@ -17,6 +17,7 @@ import { IdParamDto } from "./idParam.dto";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { OfferDetailsResponseDto } from "./offerDetailsResponse.dto";
+import { JwtOptionalGuard } from "../../../context/auth/guards/jwt-optional.guard";
 
 @Controller("offers")
 export class OfferController {
@@ -75,8 +76,20 @@ export class OfferController {
   }
 
   @Get("/")
+  @UseGuards(JwtOptionalGuard)
   @HttpCode(200)
-  async getAllOffers(): Promise<OfferDetailsResponseDto[]> {
-    return this.offerService.getAll();
+  async getAllOffers(
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<OfferDetailsResponseDto[]> {
+    return this.offerService.getAll(req.user.id);
+  }
+
+  @Get("/featured")
+  @UseGuards(JwtOptionalGuard)
+  @HttpCode(200)
+  async getFeaturedOffers(
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<OfferDetailsResponseDto[]> {
+    return this.offerService.getFeatured(req.user.id);
   }
 }

@@ -12,27 +12,44 @@ import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import { OfferAlreadyExistsException } from "../exceptions/offerAlreadyExistsException";
 import { OfferDetails } from "../domain/offerDetails";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
+import { BandSize } from "../domain/bandSize";
+import { NoEventTypesRegisteredException } from "../exceptions/noEventTypesRegisteredException";
+import { EventTypeIdNotFoundException } from "../exceptions/eventTypeIdNotFoundException";
+import BandId from "../../shared/domain/bandId";
+import OfferPrice from "../domain/offerPrice";
+import { EquipmentPrimitives } from "../../shared/domain/equipment";
 
 export interface CreateOfferRequest {
   bandId: string;
   price: number;
+  description: string;
+  location: string;
+  bandSize: BandSize;
+  eventTypeIds: string[];
   visible: boolean;
-  description?: string;
 }
 
 export interface UpdateOfferRequest {
   bandId: string;
   price: number;
+  description: string;
+  location: string;
+  bandSize: BandSize;
+  eventTypeIds: string[];
   visible: boolean;
-  description?: string;
 }
 
 export interface OfferResponse {
   id: string;
-  price: number;
   bandId: string;
+  price: number;
+  description: string;
+  location: string;
+  bandSize: string;
+  eventTypeIds: string[];
+  equipment: EquipmentPrimitives[];
+  featured: boolean;
   visible: boolean;
-  description?: string;
 }
 
 @Injectable()
@@ -49,10 +66,15 @@ export class OfferService {
   ): Promise<OfferResponse> {
     await this.checkBandMembership(request.bandId, userAuthInfo.id);
     await this.checkExistingOffersForBandId(request.bandId);
+    await this.checkEventTypeIds(request.eventTypeIds);
     const offer = Offer.create(
-      request.bandId,
-      request.price,
+      new BandId(request.bandId),
+      new OfferPrice(request.price),
       request.description,
+      request.location,
+      request.bandSize,
+      request.eventTypeIds,
+      [],
       request.visible,
     );
     const storedOffer = await this.offerRepository.addOffer(offer);
@@ -96,12 +118,18 @@ export class OfferService {
     if (oldOfferPrimitives.bandId !== request.bandId) {
       await this.checkBandMembership(request.bandId, userAuthInfo.id);
     }
+    await this.checkEventTypeIds(request.eventTypeIds);
     const updatedOffer = await this.offerRepository.updateOffer(
       Offer.fromPrimitives({
         id,
         bandId: request.bandId,
         price: request.price,
         description: request.description,
+        location: request.location,
+        bandSize: request.bandSize,
+        eventTypeIds: request.eventTypeIds,
+        equipment: [],
+        featured: oldOfferPrimitives.featured,
         visible: request.visible,
       }),
     );
@@ -143,8 +171,37 @@ export class OfferService {
     return storedOffer;
   }
 
-  async getAll(): Promise<OfferDetails[]> {
-    return await this.offerRepository.getAllOffersDetails();
+  async getAll(userId: string): Promise<OfferDetails[]> {
+    const allOffers = await this.offerRepository.getAllOffersDetails();
+    if (userId) return allOffers;
+    return allOffers.map((offer) => {
+      return {
+        id: offer.id,
+        bandId: offer.bandId,
+        bandName: offer.bandName,
+        genre: offer.genre,
+        bookingDates: offer.bookingDates,
+        description: offer.description,
+        imageUrl: offer.imageUrl,
+      };
+    });
+  }
+
+  async getFeatured(userId: string): Promise<OfferDetails[]> {
+    const featuredOffers =
+      await this.offerRepository.getFeaturedOffersDetails();
+    if (userId) return featuredOffers;
+    return featuredOffers.map((featuredOffer) => {
+      return {
+        id: featuredOffer.id,
+        bandId: featuredOffer.bandId,
+        bandName: featuredOffer.bandName,
+        genre: featuredOffer.genre,
+        bookingDates: featuredOffer.bookingDates,
+        description: featuredOffer.description,
+        imageUrl: featuredOffer.imageUrl,
+      };
+    });
   }
 
   private async checkExistingOffersForBandId(bandId: string) {
@@ -169,6 +226,20 @@ export class OfferService {
       })
     ) {
       throw new WrongPermissionsException("create or update offer");
+    }
+  }
+
+  private async checkEventTypeIds(eventTypeIds: string[]) {
+    const allEventTypes = await this.moduleConnectors.getAllEventTypes();
+    if (!allEventTypes) {
+      throw new NoEventTypesRegisteredException();
+    }
+    const eventTypeNotFound = eventTypeIds.some((id) => {
+      return !allEventTypes.find((eventType) => id === eventType.id);
+    });
+
+    if (eventTypeNotFound) {
+      throw new EventTypeIdNotFoundException();
     }
   }
 }
