@@ -200,6 +200,9 @@ export class OfferRepository {
           bookings: true,
           equipment: true,
         },
+        orderBy: {
+          featured: "desc",
+        },
         skip,
         take,
       }),
