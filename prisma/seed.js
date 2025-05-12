@@ -2,7 +2,116 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
+async function insertFeaturedArtists() {
+  const featuredMusicians = [
+    {
+      user: {
+        id: "b86ba6cb-71a9-4e8b-92de-7007379aed70",
+        firstName: "Alex",
+        familyName: "Romero",
+        email: "alex.romero@example.com",
+      },
+      bandId: "5448f0c7-05ed-4720-991a-043c06d088bc",
+      offerId: "ff88067f-aef5-4b4c-889f-2eba40b87589",
+      genre: "Techno",
+      description:
+        "DJ especializado en ritmos electrónicos intensos y atmósferas hipnóticas.",
+      bandName: "Alex Romero",
+      location: "Ibiza",
+      price: 300,
+    },
+    {
+      user: {
+        id: "6313fa47-f3f6-4eb3-9f5d-50aea8a21ca9",
+        firstName: "James",
+        familyName: "Reed",
+        email: "james.reed@example.com",
+      },
+      bandId: "78f5162a-194a-40a0-8ec9-6152ba6d272e",
+      offerId: "2986e0a1-0556-4cca-806c-a6448bdb4d33",
+      genre: "Jazz",
+      description: "Cautiva al público con melodías suaves.",
+      bandName: "James Reed Quartet",
+      location: "Valencia",
+      price: 250,
+    },
+    {
+      user: {
+        id: "99f6c413-5981-483c-8907-854c921843fb",
+        firstName: "Sophia",
+        familyName: "Lane",
+        email: "sophia.lane@example.com",
+      },
+      bandId: "5c9a6f36-8343-4591-ba36-63f18a267a41",
+      offerId: "cb910337-a270-465e-ad74-941db7f95c35",
+      genre: "Pop",
+      description: "Crea melodías pegajosas y ritmos dinámicos.",
+      bandName: "Sophia Lane",
+      location: "Madrid",
+      price: 400,
+    },
+  ];
+
+  for (const musician of featuredMusicians) {
+    const {
+      user,
+      genre,
+      description,
+      bandName,
+      location,
+      price,
+      bandId,
+      offerId,
+    } = musician;
+
+    await prisma.user.create({
+      data: {
+        ...user,
+        password:
+          "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2", // default hash
+        role: "Musician",
+      },
+    });
+
+    await prisma.band.create({
+      data: {
+        id: bandId,
+        name: bandName,
+        genre,
+        imageUrl: user.imageUrl,
+        rating: 4.7,
+        reviewCount: 30,
+        members: {
+          connect: [{ id: user.id }],
+        },
+      },
+    });
+
+    await prisma.offer.create({
+      data: {
+        id: offerId,
+        bandId: bandId,
+        price,
+        location,
+        description,
+        featured: true,
+        visible: true,
+        bandSize: "solo",
+        equipment: {
+          create: [{ type: "sound" }, { type: "microphone" }],
+        },
+        eventTypeIds: [
+          "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+          "4d36abfe-0ce7-4ac5-a888-ce31d22cff8c",
+        ],
+      },
+    });
+  }
+}
+
 async function main() {
+  await insertFeaturedArtists();
+
   await prisma.user.createMany({
     data: [
       {

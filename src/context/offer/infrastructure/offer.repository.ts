@@ -192,36 +192,34 @@ export class OfferRepository {
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
-    const [offers, total] = await Promise.all([
-      this.prismaService.offer.findMany({
-        where: whereClause,
-        include: {
-          band: true,
-          bookings: true,
-          equipment: true,
-        },
-        orderBy: {
-          featured: "desc",
-        },
-        skip,
-        take,
-      }),
-      this.prismaService.offer.count({
-        where: whereClause,
-      }),
-    ]);
+    const allOffers = await this.prismaService.offer.findMany({
+      where: whereClause,
+      include: {
+        band: true,
+        bookings: true,
+        equipment: true,
+      },
+      orderBy: {
+        featured: "desc",
+      },
+    });
 
     const filteredOffers = filters?.date
-      ? offers.filter((offer) =>
-          offer.bookings.some(
-            (b) =>
-              b.status === "ACCEPTED" &&
-              b.date.toISOString().split("T")[0] === filters.date,
-          ),
+      ? allOffers.filter(
+          (offer) =>
+            !offer.bookings.some(
+              (b) =>
+                b.status === "ACCEPTED" &&
+                b.date.toISOString().split("T")[0] === filters.date,
+            ),
         )
-      : offers;
+      : allOffers;
 
-    const mappedOffers: OfferDetails[] = filteredOffers.map((offer) => ({
+    const total = filteredOffers.length;
+
+    const pagedOffers = filteredOffers.slice(skip, skip + take);
+
+    const mappedOffers: OfferDetails[] = pagedOffers.map((offer) => ({
       id: offer.id,
       bandId: offer.band.id,
       bandName: offer.band.name,

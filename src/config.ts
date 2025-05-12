@@ -24,10 +24,18 @@ const RESEND_API_KEY = checkStrVar(
   "RESEND_API_KEY",
 );
 
+enum MONGODB_COLLECTIONS {
+  EVENT_TYPES = "event_types",
+}
+
 const REDIS = {
   URL: checkStrVar(process.env.REDIS_URL, "REDIS_URL"),
   PORT: checkStrVar(process.env.REDIS_PORT, "REDIS_PORT"),
 };
+
+const MONGO_DB_NAME = checkStrVar(process.env.MONGO_DB_NAME, "MONGO_DB_NAME");
+
+const MONGO_DB_URL = checkStrVar(process.env.MONGO_DB_URL, "MONGO_DB_URL");
 
 export {
   FRONTEND_PAGE_URL,
@@ -35,4 +43,7 @@ export {
   FRONTEND_APP_URL,
   RESEND_API_KEY,
   REDIS,
+  MONGO_DB_NAME,
+  MONGO_DB_URL,
+  MONGODB_COLLECTIONS,
 };
