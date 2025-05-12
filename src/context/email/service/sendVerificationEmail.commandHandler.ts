@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { SendVerificationEmailCommand } from "./sendVerificationEmail.command";
 import { Resend } from "resend";
-import { FRONTEND_URL } from "../../../config";
+import { FRONTEND_AUTH_URL } from "../../../config";
 import { JoseWrapper } from "../../shared/infrastructure/joseWrapper";
 import { EmailVerification } from "../domain/emailVerification";
 import UserId from "../../shared/domain/userId";
@@ -65,7 +65,7 @@ export class SendVerificationEmailCommandHandler
       TOKEN_EXPIRATION,
     );
 
-    const verificationUrl = `${FRONTEND_URL}/${lng}/verify-email?token=${token}`;
+    const verificationUrl = `${FRONTEND_AUTH_URL}/${lng}/verify-email?token=${token}`;
     const template = getEmailVerificationTemplate(lng);
 
     await this.resend.emails.send({

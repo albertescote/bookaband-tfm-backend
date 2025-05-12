@@ -1,7 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { Resend } from "resend";
-import { FRONTEND_URL } from "../../../config";
 import { JoseWrapper } from "../../shared/infrastructure/joseWrapper";
 import { Languages } from "../../shared/domain/languages";
 import { getResetPasswordTemplate } from "../domain/templates/templateResolver";
@@ -10,6 +9,7 @@ import { ResetPasswordRepository } from "../infrastructure/resetPassword.reposit
 import { ResetPasswordSession } from "../domain/resetPasswordSession";
 import SessionId from "../domain/sessionId";
 import UserId from "../../shared/domain/userId";
+import { FRONTEND_AUTH_URL } from "../../../config";
 
 const TOKEN_ISSUER = "BookaBand";
 const TOKEN_EXPIRATION = 1800;
@@ -56,7 +56,7 @@ export class SendResetPasswordEmailCommandHandler
       TOKEN_EXPIRATION,
     );
 
-    const verificationUrl = `${FRONTEND_URL}/${lng}/reset-password?token=${token}`;
+    const verificationUrl = `${FRONTEND_AUTH_URL}/${lng}/reset-password?token=${token}`;
     const template = getResetPasswordTemplate(lng);
 
     await this.resend.emails.send({

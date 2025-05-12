@@ -12,7 +12,7 @@ import { TokenService } from "./token.service";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { GoogleAuthService } from "../infrastructure/googleAuthService";
 import { Role } from "../../shared/domain/role";
-import { FRONTEND_URL } from "../../../config";
+import { FRONTEND_AUTH_URL } from "../../../config";
 import { GoogleEmailNotVerifiedException } from "../exceptions/googleEmailNotVerifiedException";
 import { UserNotRegisteredYetException } from "../exceptions/userNotRegisteredYetException";
 import { UserAlreadyRegisteredException } from "../exceptions/userAlreadyRegisteredException";
@@ -71,7 +71,7 @@ export class LoginService {
     );
     const tokenResponse = await googleAuthService.exchangeCodeForToken(
       code,
-      `${FRONTEND_URL}/federation/callback/google`,
+      `${FRONTEND_AUTH_URL}/federation/callback/google`,
     );
 
     const decodedToken = googleAuthService.getTokenPayload(
@@ -122,7 +122,7 @@ export class LoginService {
     );
     const tokenResponse = await googleAuthService.exchangeCodeForToken(
       code,
-      `${FRONTEND_URL}/federation/callback/google?role=${role}`,
+      `${FRONTEND_AUTH_URL}/federation/callback/google?role=${role}`,
     );
 
     const decodedToken = googleAuthService.getTokenPayload(
