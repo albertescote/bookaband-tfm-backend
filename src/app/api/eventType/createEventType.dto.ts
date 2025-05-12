@@ -1,14 +1,10 @@
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from "class-validator";
-import { EventTypeName } from "../../../context/shared/domain/eventType";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateEventTypeRequestDto {
-  @IsString()
   @IsNotEmpty()
-  @IsUUID()
-  id: string;
+  label: Record<string, string>;
 
-  @IsString()
   @IsNotEmpty()
-  @IsEnum(EventTypeName)
-  type: EventTypeName;
+  @IsString()
+  icon: string;
 }

@@ -1,41 +1,41 @@
-import { InvalidEventTypeNameException } from "../../eventType/exceptions/invalidEventTypeNameException";
 import EventTypeId from "../../eventType/domain/eventTypeId";
-
-export enum EventTypeName {
-  weddings = "weddings",
-  privateParties = "privateParties",
-  festivals = "festivals",
-  restaurantsHotels = "restaurantsHotels",
-  businesses = "businesses",
-}
+import { EventTypeIcon } from "../../eventType/domain/eventTypeIcon";
+import { EventTypeLabel } from "../../eventType/domain/eventTypeLabel";
 
 export interface EventTypePrimitives {
   id: string;
-  type: string;
+  label: Record<string, string>;
+  icon: string;
 }
 
 export class EventType {
   constructor(
     private readonly id: EventTypeId,
-    private readonly type: EventTypeName,
+    private readonly label: EventTypeLabel,
+    private readonly icon: EventTypeIcon,
   ) {}
 
-  public static create(type: EventTypeName): EventType {
-    return new EventType(EventTypeId.generate(), type);
+  public static fromPrimitives(primitives: EventTypePrimitives): EventType {
+    return new EventType(
+      new EventTypeId(primitives.id),
+      new EventTypeLabel(primitives.label),
+      new EventTypeIcon(primitives.icon),
+    );
   }
 
-  public static fromPrimitives(primitives: EventTypePrimitives): EventType {
-    const eventTypeName: EventTypeName = EventTypeName[primitives.type];
-    if (!eventTypeName) {
-      throw new InvalidEventTypeNameException(primitives.type);
-    }
-    return new EventType(new EventTypeId(primitives.id), eventTypeName);
+  static create(label: Record<string, string>, icon: string): EventType {
+    return new EventType(
+      EventTypeId.generate(),
+      new EventTypeLabel(label),
+      new EventTypeIcon(icon),
+    );
   }
 
   public toPrimitives(): EventTypePrimitives {
     return {
       id: this.id.toPrimitive(),
-      type: this.type,
+      label: this.label.toPrimitives(),
+      icon: this.icon.toPrimitives(),
     };
   }
 
@@ -43,7 +43,11 @@ export class EventType {
     return this.id;
   }
 
-  public getType(): EventTypeName {
-    return this.type;
+  public getLabel(): EventTypeLabel {
+    return this.label;
+  }
+
+  public getIcon(): EventTypeIcon {
+    return this.icon;
   }
 }

@@ -3,7 +3,8 @@ import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import Offer from "../domain/offer";
 import OfferId from "../../shared/domain/offerId";
 import { OfferDetails } from "../domain/offerDetails";
-import { BookingStatus } from "../../booking/domain/bookingStatus";
+import { OfferOverview } from "../domain/offerOverview";
+import { BandSize } from "../domain/bandSize";
 
 @Injectable()
 export class OfferRepository {
@@ -22,9 +23,7 @@ export class OfferRepository {
           featured: offerPrimitives.featured,
           bandSize: offerPrimitives.bandSize,
           visible: offerPrimitives.visible,
-          eventTypes: {
-            connect: offerPrimitives.eventTypeIds.map((id) => ({ id })),
-          },
+          eventTypeIds: offerPrimitives.eventTypeIds,
           equipment: {
             create: offerPrimitives.equipment.map((e) => ({
               id: e.id,
@@ -43,7 +42,6 @@ export class OfferRepository {
     const offer = await this.prismaService.offer.findFirst({
       where: { id: id.toPrimitive() },
       include: {
-        eventTypes: true,
         equipment: true,
       },
     });
@@ -56,7 +54,7 @@ export class OfferRepository {
           location: offer.location,
           featured: offer.featured,
           bandSize: offer.bandSize,
-          eventTypeIds: offer.eventTypes.map((eventType) => eventType.id),
+          eventTypeIds: offer.eventTypeIds,
           equipment: offer.equipment,
           visible: offer.visible,
         })
@@ -66,7 +64,6 @@ export class OfferRepository {
   async getAllOffers(): Promise<Offer[]> {
     const offers = await this.prismaService.offer.findMany({
       include: {
-        eventTypes: true,
         equipment: true,
       },
     });
@@ -79,7 +76,7 @@ export class OfferRepository {
         location: offer.location,
         featured: offer.featured,
         bandSize: offer.bandSize,
-        eventTypeIds: offer.eventTypes.map((eventType) => eventType.id),
+        eventTypeIds: offer.eventTypeIds,
         equipment: offer.equipment,
         visible: offer.visible,
       });
@@ -97,9 +94,7 @@ export class OfferRepository {
           description: primitives.description,
           location: primitives.location,
           bandSize: primitives.bandSize,
-          eventTypes: {
-            set: primitives.eventTypeIds.map((id) => ({ id })),
-          },
+          eventTypeIds: primitives.eventTypeIds,
           equipment: {
             deleteMany: {},
             create: primitives.equipment.map((e) => ({
@@ -128,77 +123,166 @@ export class OfferRepository {
     }
   }
 
-  async getOfferDetailsById(id: OfferId): Promise<OfferDetails> {
+  async getOfferDetailsById(id: OfferId): Promise<OfferDetails | undefined> {
     const offer = await this.prismaService.offer.findFirst({
       where: { id: id.toPrimitive(), visible: true },
       include: {
         band: true,
         bookings: true,
+        equipment: true,
       },
     });
-    return offer
-      ? {
-          id: offer.id,
-          price: offer.price,
-          bandId: offer.band.id,
-          bandName: offer.band.name,
-          genre: offer.band.genre,
-          bookingDates: offer.bookings
-            .filter((booking) => booking.status === BookingStatus.ACCEPTED)
-            .map((booking) => booking.date.toISOString()),
-          description: offer.description,
-          imageUrl: offer.band.imageUrl,
-        }
-      : undefined;
+
+    if (!offer) return undefined;
+
+    return {
+      id: offer.id,
+      bandId: offer.band.id,
+      bandName: offer.band.name,
+      genre: offer.band.genre,
+      bookingDates: offer.bookings
+        .filter((booking) => booking.status === "ACCEPTED")
+        .map((booking) => booking.date.toISOString()),
+      description: offer.description,
+      location: offer.location,
+      featured: offer.featured,
+      bandSize: offer.bandSize as BandSize,
+      equipment: offer.equipment.map((eq) => eq.type),
+      eventTypeIds: offer.eventTypeIds,
+      reviewCount: offer.band.reviewCount,
+      price: offer.price,
+      imageUrl: offer.band.imageUrl || undefined,
+      rating: offer.band.rating || undefined,
+    };
   }
 
-  async getAllOffersDetails(): Promise<OfferDetails[]> {
-    const offers = await this.prismaService.offer.findMany({
-      where: { visible: true },
-      include: {
-        band: true,
-        bookings: true,
-      },
-    });
-    if (!offers) return [];
-    return offers.map((offer) => {
-      return {
+  async getFilteredOffersDetails(
+    page: number,
+    pageSize: number,
+    filters?: { date?: string; location?: string; searchQuery?: string },
+  ): Promise<{ offers: OfferDetails[]; total: number }> {
+    const whereClause: any = {
+      visible: true,
+      ...(filters?.location && {
+        location: {
+          contains: filters.location,
+          mode: "insensitive",
+        },
+      }),
+      ...(filters?.searchQuery && {
+        band: {
+          OR: [
+            {
+              name: {
+                contains: filters.searchQuery,
+                mode: "insensitive",
+              },
+            },
+            {
+              genre: {
+                contains: filters.searchQuery,
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+      }),
+    };
+
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    const [offers, total] = await Promise.all([
+      this.prismaService.offer.findMany({
+        where: whereClause,
+        include: {
+          band: true,
+          bookings: true,
+          equipment: true,
+        },
+        skip,
+        take,
+      }),
+      this.prismaService.offer.count({
+        where: whereClause,
+      }),
+    ]);
+
+    const filteredOffers = filters?.date
+      ? offers.filter((offer) =>
+          offer.bookings.some(
+            (b) =>
+              b.status === "ACCEPTED" &&
+              b.date.toISOString().split("T")[0] === filters.date,
+          ),
+        )
+      : offers;
+
+    const mappedOffers: OfferDetails[] = filteredOffers.map((offer) => ({
+      id: offer.id,
+      bandId: offer.band.id,
+      bandName: offer.band.name,
+      genre: offer.band.genre,
+      bookingDates: offer.bookings
+        .filter((b) => b.status === "ACCEPTED")
+        .map((b) => b.date.toISOString()),
+      description: offer.description,
+      location: offer.location,
+      featured: offer.featured,
+      bandSize: offer.bandSize as BandSize,
+      equipment: offer.equipment.map((e) => e.type),
+      eventTypeIds: offer.eventTypeIds,
+      reviewCount: offer.band.reviewCount,
+      price: offer.price,
+      imageUrl: offer.band.imageUrl || undefined,
+      rating: offer.band.rating || undefined,
+    }));
+
+    return {
+      offers: mappedOffers,
+      total,
+    };
+  }
+
+  async getFeaturedOffersOverview(
+    page: number,
+    pageSize: number,
+  ): Promise<{ offers: OfferOverview[]; total: number }> {
+    const whereClause: any = {
+      visible: true,
+      featured: true,
+    };
+
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    const [offers, total] = await Promise.all([
+      this.prismaService.offer.findMany({
+        where: whereClause,
+        include: {
+          band: true,
+          bookings: true,
+        },
+        skip,
+        take,
+      }),
+      this.prismaService.offer.count({
+        where: whereClause,
+      }),
+    ]);
+
+    return {
+      offers: offers.map((offer) => ({
         id: offer.id,
         price: offer.price,
         bandId: offer.band.id,
         bandName: offer.band.name,
         genre: offer.band.genre,
-        bookingDates: offer.bookings.map((booking) =>
-          booking.date.toISOString(),
-        ),
+        bookingDates: offer.bookings.map((b) => b.date.toISOString()),
         description: offer.description,
         imageUrl: offer.band.imageUrl,
-      };
-    });
-  }
-
-  async getFeaturedOffersDetails(): Promise<OfferDetails[]> {
-    const offers = await this.prismaService.offer.findMany({
-      where: { visible: true, featured: true },
-      include: {
-        band: true,
-        bookings: true,
-      },
-    });
-    if (!offers) return [];
-    return offers.map((offer) => {
-      return {
-        id: offer.id,
-        price: offer.price,
-        bandId: offer.band.id,
-        bandName: offer.band.name,
-        genre: offer.band.genre,
-        bookingDates: offer.bookings.map((booking) =>
-          booking.date.toISOString(),
-        ),
-        description: offer.description,
-        imageUrl: offer.band.imageUrl,
-      };
-    });
+      })),
+      total,
+    };
   }
 }

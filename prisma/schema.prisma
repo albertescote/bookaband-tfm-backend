@@ -3,18 +3,18 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlserver"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model user {
-  id         String  @id(map: "user_PK") @db.VarChar(36)
-  firstName  String  @db.VarChar(255)
-  familyName String  @db.VarChar(255)
-  email      String  @unique @db.VarChar(255)
-  role       String  @db.VarChar(255)
-  password   String? @db.VarChar(255)
-  imageUrl   String? @db.VarChar(255)
+  id         String  @id
+  firstName  String
+  familyName String
+  email      String  @unique
+  role       String
+  password   String?
+  imageUrl   String?
 
   refreshTokens     refreshToken[]
   bands             band[]             @relation("UserBands")
@@ -25,9 +25,9 @@ model user {
 }
 
 model refreshToken {
-  id        String   @id(map: "refresToken_PK") @db.VarChar(36)
+  id        String   @id
   token     String   @unique
-  userId    String   @db.VarChar(36)
+  userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
 
@@ -35,28 +35,28 @@ model refreshToken {
 }
 
 model offer {
-  id          String  @id(map: "offer_PK") @db.VarChar(36)
-  bandId      String  @unique @db.VarChar(36)
-  price       Int
-  description String  @db.VarChar(255)
-  location    String  @db.VarChar(255)
-  featured    Boolean @default(false)
-  bandSize    String  @db.VarChar(255)
-  visible     Boolean @default(true)
+  id           String   @id
+  bandId       String   @unique
+  price        Int
+  description  String
+  location     String
+  featured     Boolean  @default(false)
+  bandSize     String
+  visible      Boolean  @default(true)
+  eventTypeIds String[]
 
-  band       band        @relation(fields: [bandId], references: [id], map: "FK_Owner_Band", onDelete: Cascade)
-  bookings   booking[]
-  equipment  equipment[] @relation("OfferEquipment")
-  eventTypes eventType[] @relation("OfferEvents")
+  band      band        @relation(fields: [bandId], references: [id], onDelete: Cascade)
+  bookings  booking[]
+  equipment equipment[] @relation("OfferEquipment")
 }
 
 model band {
-  id          String  @id(map: "band_PK") @db.VarChar(36)
-  name        String  @db.VarChar(255)
-  genre       String  @db.VarChar(255)
+  id          String  @id
+  name        String
+  genre       String
   rating      Float   @default(0)
   reviewCount Int     @default(0)
-  imageUrl    String? @db.VarChar(255)
+  imageUrl    String?
 
   offer       offer?
   members     user[]       @relation("UserBands")
@@ -64,24 +64,18 @@ model band {
   invitations invitation[]
 }
 
-model eventType {
-  id     String  @id @default(uuid()) @db.VarChar(36)
-  type   String  @unique @db.VarChar(255)
-  offers offer[] @relation("OfferEvents")
-}
-
 model equipment {
-  id      String @id @default(uuid()) @db.VarChar(36)
-  type    String @db.VarChar(255)
+  id      String @id @default(uuid())
+  type    String
   offer   offer  @relation("OfferEquipment", fields: [offerId], references: [id])
-  offerId String @db.VarChar(36)
+  offerId String
 }
 
 model message {
-  id          String   @id(map: "message_PK") @db.VarChar(36)
-  senderId    String   @db.VarChar(36)
-  recipientId String   @db.VarChar(36)
-  chatId      String   @db.VarChar(36)
+  id          String   @id
+  senderId    String
+  recipientId String
+  chatId      String
   content     String
   timestamp   DateTime @default(now())
   isRead      Boolean
@@ -90,45 +84,45 @@ model message {
 }
 
 model chat {
-  id        String   @id @default(uuid()) @db.VarChar(36)
-  userId    String   @db.VarChar(36)
-  bandId    String   @db.VarChar(36)
+  id        String   @id @default(uuid())
+  userId    String
+  bandId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user     user      @relation("UserChats", fields: [userId], references: [id], map: "FK_Chat_User", onDelete: NoAction, onUpdate: NoAction)
-  band     band      @relation("BandChats", fields: [bandId], references: [id], map: "FK_Chat_Band", onDelete: NoAction, onUpdate: NoAction)
+  user     user      @relation("UserChats", fields: [userId], references: [id])
+  band     band      @relation("BandChats", fields: [bandId], references: [id])
   messages message[]
 }
 
 model invitation {
-  id        String   @id @default(uuid()) @db.VarChar(36)
-  bandId    String   @db.VarChar(36)
-  userId    String   @db.VarChar(36)
-  status    String   @db.VarChar(50)
+  id        String   @id @default(uuid())
+  bandId    String
+  userId    String
+  status    String
   createdAt DateTime @default(now())
 
-  band band @relation(fields: [bandId], references: [id], map: "FK_Invitation_Band", onDelete: Cascade)
-  user user @relation(fields: [userId], references: [id], map: "FK_Invitation_User", onDelete: Cascade)
+  band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model booking {
-  id        String   @id @default(uuid()) @db.VarChar(36)
-  offerId   String   @db.VarChar(36)
-  userId    String   @db.VarChar(36)
-  status    String   @db.VarChar(50)
+  id        String   @id @default(uuid())
+  offerId   String
+  userId    String
+  status    String
   date      DateTime
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
-  offer offer @relation(fields: [offerId], references: [id], map: "FK_Booking_Offer", onDelete: Cascade)
-  user  user  @relation(fields: [userId], references: [id], map: "FK_Booking_User", onDelete: Cascade)
+  offer offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  user  user  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model emailVerification {
-  id              String   @id(map: "emailVerification_PK") @db.VarChar(36)
-  userId          String   @unique @db.VarChar(36)
-  language        String   @db.VarChar(2)
+  id              String   @id
+  userId          String   @unique
+  language        String
   verified        Boolean  @default(false)
   lastEmailSentAt DateTime
   createdAt       DateTime @default(now())

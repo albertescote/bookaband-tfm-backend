@@ -18,6 +18,7 @@ import { EventTypeIdNotFoundException } from "../exceptions/eventTypeIdNotFoundE
 import BandId from "../../shared/domain/bandId";
 import OfferPrice from "../domain/offerPrice";
 import { EquipmentPrimitives } from "../../shared/domain/equipment";
+import { OfferOverview } from "../domain/offerOverview";
 
 export interface CreateOfferRequest {
   bandId: string;
@@ -50,6 +51,18 @@ export interface OfferResponse {
   equipment: EquipmentPrimitives[];
   featured: boolean;
   visible: boolean;
+}
+
+export interface OffersDetailsResponse {
+  offers: OfferDetails[];
+  hasMore: boolean;
+  total: number;
+}
+
+export interface OffersOverviewResponse {
+  offers: OfferOverview[];
+  hasMore: boolean;
+  total: number;
 }
 
 @Injectable()
@@ -171,37 +184,43 @@ export class OfferService {
     return storedOffer;
   }
 
-  async getAll(userId: string): Promise<OfferDetails[]> {
-    const allOffers = await this.offerRepository.getAllOffersDetails();
-    if (userId) return allOffers;
-    return allOffers.map((offer) => {
-      return {
-        id: offer.id,
-        bandId: offer.bandId,
-        bandName: offer.bandName,
-        genre: offer.genre,
-        bookingDates: offer.bookingDates,
-        description: offer.description,
-        imageUrl: offer.imageUrl,
-      };
-    });
+  async getFilteredOffersDetails(
+    userId: string,
+    page: number,
+    pageSize: number,
+    filters?: { date: string; searchQuery: string; location: string },
+  ): Promise<OffersDetailsResponse> {
+    const { offers, total } =
+      await this.offerRepository.getFilteredOffersDetails(
+        page,
+        pageSize,
+        filters,
+      );
+
+    const shaped = userId ? offers : offers.map(({ price, ...rest }) => rest);
+
+    return {
+      offers: shaped,
+      hasMore: page * pageSize < total,
+      total,
+    };
   }
 
-  async getFeatured(userId: string): Promise<OfferDetails[]> {
-    const featuredOffers =
-      await this.offerRepository.getFeaturedOffersDetails();
-    if (userId) return featuredOffers;
-    return featuredOffers.map((featuredOffer) => {
-      return {
-        id: featuredOffer.id,
-        bandId: featuredOffer.bandId,
-        bandName: featuredOffer.bandName,
-        genre: featuredOffer.genre,
-        bookingDates: featuredOffer.bookingDates,
-        description: featuredOffer.description,
-        imageUrl: featuredOffer.imageUrl,
-      };
-    });
+  async getFeatured(
+    userId: string,
+    page: number,
+    pageSize: number,
+  ): Promise<OffersOverviewResponse> {
+    const { offers, total } =
+      await this.offerRepository.getFeaturedOffersOverview(page, pageSize);
+
+    const shaped = userId ? offers : offers.map(({ price, ...rest }) => rest);
+
+    return {
+      offers: shaped,
+      hasMore: page * pageSize < total,
+      total,
+    };
   }
 
   private async checkExistingOffersForBandId(bandId: string) {

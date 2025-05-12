@@ -68,13 +68,16 @@ async function main() {
     ],
   });
 
+  // Create bands
   await prisma.band.create({
     data: {
       id: "63ae2224-74e0-4a83-8aec-90cfb1d96a2e",
       name: "Rock Legends",
-      genre: "ROCK",
+      genre: "rock",
       imageUrl:
         "https://img.freepik.com/free-photo/music-band-guitarist-performing-repetition-recording-studio_53876-138054.jpg",
+      rating: 4.5,
+      reviewCount: 88,
       members: { connect: [{ id: "8721e564-997d-47cd-8d46-6a41e468dadb" }] },
     },
   });
@@ -83,9 +86,11 @@ async function main() {
     data: {
       id: "80cead79-df8a-4c8a-a08b-d187e718d71e",
       name: "Pop Icons",
-      genre: "POP",
+      genre: "pop",
       imageUrl:
         "https://img.freepik.com/free-photo/band-musicians-playing-music-local-event_23-2149188063.jpg",
+      rating: 4.8,
+      reviewCount: 102,
       members: { connect: [{ id: "5cbbf2a4-7cf4-482d-8b96-940ecdfcc9fc" }] },
     },
   });
@@ -94,35 +99,77 @@ async function main() {
     data: {
       id: "2b7e3d4a-8749-4c3c-b6f5-172c1a6c8e62",
       name: "Jazz Masters",
-      genre: "JAZZ",
+      genre: "jazz",
       imageUrl:
         "https://img.freepik.com/free-photo/medium-shot-people-playing-together_23-2149223634.jpg",
+      rating: 4.6,
+      reviewCount: 95,
       members: { connect: [{ id: "bf9ef9b4-f46e-47b8-b2b1-12f8b12433bb" }] },
     },
   });
 
-  await prisma.offer.createMany({
-    data: [
-      {
-        id: "db0185c6-6a12-4825-9620-c13b8bde082e",
-        bandId: "63ae2224-74e0-4a83-8aec-90cfb1d96a2e",
-        price: 100,
-        description: "Special rock performance for our first customers!",
+  // Create offers with new schema
+  await prisma.offer.create({
+    data: {
+      id: "db0185c6-6a12-4825-9620-c13b8bde082e",
+      bandId: "63ae2224-74e0-4a83-8aec-90cfb1d96a2e",
+      price: 100,
+      location: "Barcelona",
+      description: "Special rock performance for our first customers!",
+      featured: true,
+      bandSize: "band",
+      visible: true,
+      equipment: {
+        create: [
+          { type: "sound" },
+          { type: "lighting" },
+          { type: "microphone" },
+        ],
       },
-      {
-        id: "3cd7e8f5-9b9d-43d2-b5a3-038b8a2c4b3e",
-        bandId: "2b7e3d4a-8749-4c3c-b6f5-172c1a6c8e62",
-        price: 120,
-        description: "Exclusive jazz night experience!",
-      },
-      {
-        id: "29f0d965-864a-4187-9189-6a3b243a7b65",
-        bandId: "80cead79-df8a-4c8a-a08b-d187e718d71e",
-        price: 500,
-      },
-    ],
+      eventTypeIds: [
+        "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+        "4d36abfe-0ce7-4ac5-a888-ce31d22cff8c",
+      ],
+    },
   });
 
+  await prisma.offer.create({
+    data: {
+      id: "3cd7e8f5-9b9d-43d2-b5a3-038b8a2c4b3e",
+      bandId: "2b7e3d4a-8749-4c3c-b6f5-172c1a6c8e62",
+      price: 120,
+      location: "Seville",
+      description: "Exclusive jazz night experience!",
+      featured: false,
+      bandSize: "trio",
+      visible: true,
+      equipment: {
+        create: [{ type: "sound" }, { type: "microphone" }],
+      },
+      eventTypeIds: [
+        "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+        "7c223ed2-e955-4007-ac8a-f23235127ac5",
+        "ec30f141-5914-46e3-a482-39d55a097e9b",
+        "d28c8f50-ef20-4e23-9992-1a6f1e540a09",
+        "4d36abfe-0ce7-4ac5-a888-ce31d22cff8c",
+      ],
+    },
+  });
+
+  await prisma.offer.create({
+    data: {
+      id: "29f0d965-864a-4187-9189-6a3b243a7b65",
+      bandId: "80cead79-df8a-4c8a-a08b-d187e718d71e",
+      price: 500,
+      location: "Madrid",
+      description: "Pop night package with full lighting",
+      featured: false,
+      bandSize: "duo",
+      visible: true,
+    },
+  });
+
+  // Bookings
   await prisma.booking.createMany({
     data: [
       {
@@ -130,18 +177,19 @@ async function main() {
         offerId: "db0185c6-6a12-4825-9620-c13b8bde082e",
         userId: "0e3d0435-b60c-433f-bc5d-2c4e18c94fdc",
         status: "ACCEPTED",
-        date: new Date("2025-03-22 20:00:00.000"),
+        date: new Date("2025-03-22T20:00:00.000Z"),
       },
       {
         id: "a8f75d13-2fd9-4e3f-8394-d83f3f981b8a",
         offerId: "3cd7e8f5-9b9d-43d2-b5a3-038b8a2c4b3e",
         userId: "ad1c5d2a-49c8-4b0e-9d93-92d5ad728c13",
         status: "PENDING",
-        date: new Date("2025-04-10 19:00:00.000"),
+        date: new Date("2025-04-10T19:00:00.000Z"),
       },
     ],
   });
 
+  // Chat & messages
   await prisma.chat.create({
     data: {
       id: "6f258d1d-9448-44f7-b1b5-047b1976ee16",
@@ -171,6 +219,7 @@ async function main() {
     ],
   });
 
+  // Email verifications
   await prisma.emailVerification.createMany({
     data: [
       {
@@ -211,7 +260,7 @@ async function main() {
     ],
   });
 
-  console.log("Database seeded successfully!");
+  console.log("✅ Database seeded successfully with the updated schema!");
 }
 
 main()

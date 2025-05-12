@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Request,
   UseGuards,
 } from "@nestjs/common";
@@ -18,10 +19,54 @@ import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { OfferDetailsResponseDto } from "./offerDetailsResponse.dto";
 import { JwtOptionalGuard } from "../../../context/auth/guards/jwt-optional.guard";
+import { OfferOverviewResponseDto } from "./offerOverviewResponse.dto";
+import { ParseIntPipeCustom } from "../../pipes/parse-int.pipe";
+import { SanitizeTextPipe } from "../../pipes/sanitize-text.pipe";
+import { ValidateLocationPipe } from "../../pipes/validate-location.pipe";
+import { ValidateSearchQueryPipe } from "../../pipes/validate-serch-query.pipe";
+import { ValidateDatePipe } from "../../pipes/validate-date.pipe";
+import { OfferFilteredDetailsResponseDto } from "./offerFilteredDetailsResponse.dto";
 
 @Controller("offers")
 export class OfferController {
   constructor(private readonly offerService: OfferService) {}
+
+  @Get("/details")
+  @UseGuards(JwtOptionalGuard)
+  @HttpCode(200)
+  async getFilteredOffersDetails(
+    @Request() req: { user: UserAuthInfo },
+    @Query("page", ParseIntPipeCustom) page = 1,
+    @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
+    @Query("location", new SanitizeTextPipe(), new ValidateLocationPipe())
+    location?: string,
+    @Query("searchQuery", new SanitizeTextPipe(), new ValidateSearchQueryPipe())
+    searchQuery?: string,
+    @Query("date", new SanitizeTextPipe(), new ValidateDatePipe())
+    date?: string,
+  ): Promise<OfferFilteredDetailsResponseDto> {
+    return this.offerService.getFilteredOffersDetails(
+      req.user.id,
+      page,
+      pageSize,
+      {
+        location,
+        searchQuery,
+        date,
+      },
+    );
+  }
+
+  @Get("/featured")
+  @UseGuards(JwtOptionalGuard)
+  @HttpCode(200)
+  async getFeaturedOffers(
+    @Request() req: { user: UserAuthInfo },
+    @Query("page", ParseIntPipeCustom) page = 1,
+    @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
+  ): Promise<OfferOverviewResponseDto> {
+    return this.offerService.getFeatured(req.user.id, page, pageSize);
+  }
 
   @Post("/")
   @UseGuards(JwtCustomGuard)
@@ -31,6 +76,16 @@ export class OfferController {
     @Body() body: OfferRequestDto,
   ): Promise<OfferResponseDto> {
     return await this.offerService.create(req.user, body);
+  }
+
+  @Get("/:id/details")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async getOfferDetails(
+    @Param() idParamDto: IdParamDto,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<OfferDetailsResponseDto> {
+    return this.offerService.getOfferDetails(req.user, idParamDto.id);
   }
 
   @Get("/:id")
@@ -63,33 +118,5 @@ export class OfferController {
   ): Promise<void> {
     await this.offerService.deleteById(req.user, idParamDto.id);
     return;
-  }
-
-  @Get("/:id/details")
-  @UseGuards(JwtCustomGuard)
-  @HttpCode(200)
-  async getOfferDetails(
-    @Param() idParamDto: IdParamDto,
-    @Request() req: { user: UserAuthInfo },
-  ): Promise<OfferDetailsResponseDto> {
-    return this.offerService.getOfferDetails(req.user, idParamDto.id);
-  }
-
-  @Get("/")
-  @UseGuards(JwtOptionalGuard)
-  @HttpCode(200)
-  async getAllOffers(
-    @Request() req: { user: UserAuthInfo },
-  ): Promise<OfferDetailsResponseDto[]> {
-    return this.offerService.getAll(req.user.id);
-  }
-
-  @Get("/featured")
-  @UseGuards(JwtOptionalGuard)
-  @HttpCode(200)
-  async getFeaturedOffers(
-    @Request() req: { user: UserAuthInfo },
-  ): Promise<OfferDetailsResponseDto[]> {
-    return this.offerService.getFeatured(req.user.id);
   }
 }

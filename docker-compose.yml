@@ -1,17 +1,37 @@
 version: "3.9"
 services:
-  sqldb-music-manager-local:
-    container_name: sqldb-bookaband-local
-    image: mcr.microsoft.com/azure-sql-edge
+  postgres-db:
+    container_name: postgres-bookaband
+    image: postgres
+    restart: always
     environment:
-      ACCEPT_EULA: 1
-      SA_PASSWORD: C33#8nstkKjkwQ
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bookaband
     ports:
-      - "1434:1433"
-    hostname: "sqldb-bookaband-local"
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    hostname: "postgres-bookaband-local"
+
+  mongo:
+    container_name: mongodb-bookaband
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: bookaband
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
   redis:
     container_name: redis-bookaband
     image: redis
     ports:
       - "6380:6379"
+
+volumes:
+  pgdata:

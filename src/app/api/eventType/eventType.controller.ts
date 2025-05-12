@@ -17,7 +17,8 @@ import { JwtAdminGuard } from "../../../context/auth/guards/jwt-admin.guard";
 
 export interface EventTypeResponseDto {
   id: string;
-  type: string;
+  label: Record<string, string>;
+  icon: string;
 }
 
 @Controller("/event-types")
@@ -34,7 +35,6 @@ export class EventTypeController {
   }
 
   @Get("/")
-  @UseGuards(JwtAdminGuard)
   @HttpCode(200)
   async getAll(): Promise<EventTypeResponseDto[]> {
     return this.service.getAll();
@@ -54,7 +54,7 @@ export class EventTypeController {
     @Param("id") id: string,
     @Body() body: UpdateEventTypeRequestDto,
   ): Promise<EventTypeResponseDto> {
-    return this.service.update({ id, type: body.type });
+    return this.service.update({ ...body, id });
   }
 
   @Delete("/:id")

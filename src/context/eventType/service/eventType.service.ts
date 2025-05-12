@@ -1,19 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import {
-  EventType,
-  EventTypeName,
-  EventTypePrimitives,
-} from "../../shared/domain/eventType";
+import { EventType, EventTypePrimitives } from "../../shared/domain/eventType";
 import { EventTypeRepository } from "../infrastructure/eventType.repository";
 import EventTypeId from "../domain/eventTypeId";
 
 export interface CreateEventTypeRequest {
-  type: EventTypeName;
+  label: Record<string, string>;
+  icon: string;
 }
 
 export interface UpdateEventTypeRequest {
   id: string;
-  type: string;
+  label: Record<string, string>;
+  icon: string;
 }
 
 @Injectable()
@@ -24,7 +22,10 @@ export class EventTypeService {
     createEventTypeRequest: CreateEventTypeRequest,
   ): Promise<EventTypePrimitives> {
     const createdEventType = await this.repository.create(
-      EventType.create(createEventTypeRequest.type),
+      EventType.create(
+        createEventTypeRequest.label,
+        createEventTypeRequest.icon,
+      ),
     );
     return createdEventType.toPrimitives();
   }

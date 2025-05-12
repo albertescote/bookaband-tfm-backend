@@ -1,40 +1,83 @@
-import { PrismaClient } from "@prisma/client";
 import { EventType } from "../../shared/domain/eventType";
 import EventTypeId from "../domain/eventTypeId";
+import MongoCollectionService from "../../shared/infrastructure/db/mongoCollection.service";
+import { MONGODB_COLLECTIONS } from "../../../config";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class EventTypeRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(
+    private readonly mongoCollectionService: MongoCollectionService,
+  ) {}
 
   async create(type: EventType): Promise<EventType> {
-    const createdEventType = await this.prisma.eventType.create({
-      data: type.toPrimitives(),
-    });
-    return EventType.fromPrimitives(createdEventType);
+    const primitives = type.toPrimitives();
+
+    await this.mongoCollectionService.insertOne(
+      MONGODB_COLLECTIONS.EVENT_TYPES,
+      {
+        id: primitives.id,
+        label: primitives.label,
+        icon: primitives.icon,
+      },
+    );
+
+    return type;
   }
 
-  async getById(id: EventTypeId): Promise<EventType> {
-    const result = await this.prisma.eventType.findFirst({
-      where: { id: id.toPrimitive() },
+  async getById(id: EventTypeId): Promise<EventType | undefined> {
+    const query = { id: id.toPrimitive() };
+
+    const result = await this.mongoCollectionService.findOne(
+      MONGODB_COLLECTIONS.EVENT_TYPES,
+      query,
+    );
+
+    if (!result) return undefined;
+
+    return EventType.fromPrimitives({
+      id: result.id,
+      label: result.label,
+      icon: result.icon,
     });
-    return EventType.fromPrimitives(result);
   }
 
   async getAll(): Promise<EventType[]> {
-    const result = await this.prisma.eventType.findMany();
-    return result.map((eventType) => {
-      return EventType.fromPrimitives(eventType);
-    });
+    const result = await this.mongoCollectionService.findMany(
+      MONGODB_COLLECTIONS.EVENT_TYPES,
+      {},
+    );
+
+    return result.map((doc) =>
+      EventType.fromPrimitives({
+        id: doc.id,
+        label: doc.label,
+        icon: doc.icon,
+      }),
+    );
   }
 
   async update(type: EventType): Promise<EventType> {
-    const updatedEventType = await this.prisma.eventType.update({
-      where: { id: type.getId().toPrimitive() },
-      data: type.toPrimitives,
-    });
-    return EventType.fromPrimitives(updatedEventType);
+    const primitives = type.toPrimitives();
+
+    await this.mongoCollectionService.updateOne(
+      MONGODB_COLLECTIONS.EVENT_TYPES,
+      { id: primitives.id },
+      {
+        $set: {
+          label: primitives.label,
+          icon: primitives.icon,
+        },
+      },
+    );
+
+    return type;
   }
 
   async delete(id: EventTypeId): Promise<void> {
-    await this.prisma.eventType.delete({ where: { id: id.toPrimitive() } });
+    await this.mongoCollectionService.deleteOne(
+      MONGODB_COLLECTIONS.EVENT_TYPES,
+      { id: id.toPrimitive() },
+    );
   }
 }

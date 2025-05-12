@@ -1,9 +1,10 @@
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
-import { EventTypeName } from "../../../context/shared/domain/eventType";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class UpdateEventTypeRequestDto {
-  @IsString()
   @IsNotEmpty()
-  @IsEnum(EventTypeName)
-  type: string;
+  label: Record<string, string>;
+
+  @IsNotEmpty()
+  @IsString()
+  icon: string;
 }
