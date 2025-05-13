@@ -10,6 +10,8 @@ async function insertFeaturedArtists() {
         firstName: "Alex",
         familyName: "Romero",
         email: "alex.romero@example.com",
+        imageUrl:
+          "https://images.pexels.com/photos/12250627/pexels-photo-12250627.jpeg",
       },
       bandId: "5448f0c7-05ed-4720-991a-043c06d088bc",
       offerId: "ff88067f-aef5-4b4c-889f-2eba40b87589",
@@ -26,6 +28,8 @@ async function insertFeaturedArtists() {
         firstName: "James",
         familyName: "Reed",
         email: "james.reed@example.com",
+        imageUrl:
+          "https://images.pexels.com/photos/3018075/pexels-photo-3018075.jpeg",
       },
       bandId: "78f5162a-194a-40a0-8ec9-6152ba6d272e",
       offerId: "2986e0a1-0556-4cca-806c-a6448bdb4d33",
@@ -41,6 +45,8 @@ async function insertFeaturedArtists() {
         firstName: "Sophia",
         familyName: "Lane",
         email: "sophia.lane@example.com",
+        imageUrl:
+          "https://images.pexels.com/photos/8041144/pexels-photo-8041144.jpeg",
       },
       bandId: "5c9a6f36-8343-4591-ba36-63f18a267a41",
       offerId: "cb910337-a270-465e-ad74-941db7f95c35",
@@ -49,6 +55,40 @@ async function insertFeaturedArtists() {
       bandName: "Sophia Lane",
       location: "Madrid",
       price: 400,
+    },
+    {
+      user: {
+        id: "8d5b4a62-d5e2-4e76-8ad3-a1b9f3870d13",
+        firstName: "Leo",
+        familyName: "Martinez",
+        email: "leo.martinez@example.com",
+        imageUrl:
+          "https://images.pexels.com/photos/1365167/pexels-photo-1365167.jpeg",
+      },
+      bandId: "f2a7c3e4-1e48-42c6-9014-fbb50dc97b9c",
+      offerId: "d4f5c6a7-13c8-4f69-9f02-bf5e7c189822",
+      genre: "Jazz",
+      description: "Improvisación elegante con un toque moderno.",
+      bandName: "Leo & The Groove",
+      location: "Valencia",
+      price: 550,
+    },
+    {
+      user: {
+        id: "7b4f3e29-b10d-43f5-ae6e-2b78a8c927f4",
+        firstName: "Clara",
+        familyName: "Ríos",
+        email: "clara.rios@example.com",
+        imageUrl:
+          "https://images.pexels.com/photos/3769099/pexels-photo-3769099.jpeg",
+      },
+      bandId: "a9e1d2f3-51b9-49b8-afe2-33c7a6a77a2c",
+      offerId: "b3d48a62-88e5-4b93-87cf-18e19b49fc0c",
+      genre: "Rock",
+      description: "Energía en vivo con clásicos y temas originales.",
+      bandName: "Clara Ríos Band",
+      location: "Barcelona",
+      price: 600,
     },
   ];
 
