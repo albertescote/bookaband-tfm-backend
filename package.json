@@ -21,7 +21,7 @@
     "db-generate-modules": "prisma generate",
     "db-post-schema": "prisma db push",
     "db-get-schema": "prisma db pull",
-    "db-primsa-seed": "node prisma/seed.js"
+    "db-primsa-seed": "ts-node prisma/seed/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

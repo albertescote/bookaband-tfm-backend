@@ -1,0 +1,45 @@
+import { PrismaClient } from "@prisma/client";
+import { seedUsers } from "./seedUsers";
+import { seedBands } from "./seedBands";
+import { seedOffers } from "./seedOffers";
+import { seedBillingAddresses } from "./seedBillingAddresses";
+import { seedPaymentMethods } from "./seedPaymentMethods";
+import { seedEmailVerifications } from "./seedEmailVerifications";
+import { seedBookings } from "./seedBookings";
+import { seedChats } from "./seedChats";
+
+const prisma = new PrismaClient();
+
+async function clearDatabase() {
+  await prisma.message.deleteMany();
+  await prisma.chat.deleteMany();
+  await prisma.equipment.deleteMany();
+  await prisma.booking.deleteMany();
+  await prisma.paymentMethod.deleteMany();
+  await prisma.billingAddress.deleteMany();
+  await prisma.offer.deleteMany();
+  await prisma.band.deleteMany();
+  await prisma.emailVerification.deleteMany();
+  await prisma.user.deleteMany();
+}
+
+async function main() {
+  console.log("🧹 Clearing database...");
+  await clearDatabase();
+
+  console.log("🌱 Seeding data...");
+  await seedUsers();
+  await seedEmailVerifications();
+  await seedBands();
+  await seedOffers();
+  await seedBillingAddresses();
+  await seedPaymentMethods();
+  await seedBookings();
+  await seedChats();
+
+  console.log("✅ Modular seed executed successfully");
+}
+
+main()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());
