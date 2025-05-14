@@ -8,20 +8,50 @@ datasource db {
 }
 
 model user {
-  id         String  @id
+  id         String   @id
   firstName  String
   familyName String
-  email      String  @unique
+  email      String   @unique
   role       String
   password   String?
   imageUrl   String?
+  bio        String?
+  joinedDate DateTime @default(now())
 
+  billingAddress    billingAddress?
+  paymentMethods    paymentMethod[]
   refreshTokens     refreshToken[]
   bands             band[]             @relation("UserBands")
   chats             chat[]             @relation("UserChats")
   invitations       invitation[]
   bookings          booking[]
   emailVerification emailVerification?
+}
+
+model paymentMethod {
+  id         String   @id @default(uuid())
+  userId     String
+  provider   String
+  providerId String
+  type       String
+  brand      String?
+  lastFour   String
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model billingAddress {
+  id           String  @id @default(uuid())
+  userId       String  @unique
+  country      String
+  city         String
+  postalCode   String
+  addressLine1 String
+  addressLine2 String?
+
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model refreshToken {
