@@ -18,6 +18,8 @@ import { CreateUserFromGoogleCommand } from "../../user/service/createUserFromGo
 import { Role } from "../domain/role";
 import { GetAllEventTypesQuery } from "../../eventType/service/getAllEventTypes.query";
 import { EventTypePrimitives } from "../domain/eventType";
+import { GetUserIdByBookingIdQuery } from "../../booking/service/getUserIdByBookingId.query";
+import { CreateVerificationRecordCommand } from "../../email/service/createVerificationRecord.command";
 
 @Injectable()
 class ModuleConnectors {
@@ -28,6 +30,16 @@ class ModuleConnectors {
 
   async obtainUserInformation(id?: string, email?: string): Promise<User> {
     const userQuery = new UserQuery(id, email);
+    return await this.queryBus.execute(userQuery);
+  }
+
+  async obtainUserIdByBookingId(id: string): Promise<string> {
+    const userQuery = new GetUserIdByBookingIdQuery(id);
+    return await this.queryBus.execute(userQuery);
+  }
+
+  async obtainBookingIdByContractId(id: string): Promise<string> {
+    const userQuery = new GetUserIdByBookingIdQuery(id);
     return await this.queryBus.execute(userQuery);
   }
 
@@ -53,6 +65,21 @@ class ModuleConnectors {
 
   async joinBand(bandId: string, userId: string): Promise<void> {
     const joinBandCommand = new JoinBandCommand(bandId, userId);
+    await this.commandBus.execute(joinBandCommand);
+  }
+
+  async createVerificationRecord(
+    email: string,
+    userId: string,
+    lng: Languages,
+    verified: boolean,
+  ): Promise<void> {
+    const joinBandCommand = new CreateVerificationRecordCommand(
+      email,
+      userId,
+      lng,
+      verified,
+    );
     await this.commandBus.execute(joinBandCommand);
   }
 

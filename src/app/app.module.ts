@@ -23,6 +23,10 @@ import { BillingAddressModule } from "../context/billingAddress/billingAddress.m
 import { BillingAddressController } from "./api/billingAddress/billingAddress.controller";
 import { PaymentMethodModule } from "../context/paymentMethod/paymentMethod.module";
 import { PaymentMethodController } from "./api/paymentMethod/paymentMethod.controller";
+import { ContractModule } from "../context/contract/contract.module";
+import { InvoiceModule } from "../context/invoice/invoice.module";
+import { ContractController } from "./api/contract/contract.controller";
+import { InvoiceController } from "./api/invoice/invoice.controller";
 
 @Module({
   imports: [
@@ -38,6 +42,8 @@ import { PaymentMethodController } from "./api/paymentMethod/paymentMethod.contr
     EventTypeModule,
     BillingAddressModule,
     PaymentMethodModule,
+    ContractModule,
+    InvoiceModule,
   ],
   controllers: [
     HealthcheckController,
@@ -52,6 +58,8 @@ import { PaymentMethodController } from "./api/paymentMethod/paymentMethod.contr
     EventTypeController,
     BillingAddressController,
     PaymentMethodController,
+    ContractController,
+    InvoiceController,
   ],
 })
 export class AppModule {}

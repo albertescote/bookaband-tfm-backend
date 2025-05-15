@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
-import BookingId from "../domain/bookingId";
+import BookingId from "../../shared/domain/bookingId";
 import { Booking } from "../domain/booking";
 import { BookingStatus } from "../domain/bookingStatus";
 import UserId from "../../shared/domain/userId";

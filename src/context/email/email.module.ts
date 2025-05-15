@@ -13,6 +13,7 @@ import { SendResetPasswordEmailCommandHandler } from "./service/sendResetPasswor
 import { ResetPasswordRepository } from "./infrastructure/resetPassword.repository";
 import RedisService from "../shared/infrastructure/redis/redis.service";
 import { GetResetPasswordSessionQueryHandler } from "./service/getResetPasswordSession.queryHandler";
+import { CreateVerificationRecordCommandHandler } from "./service/createVerificationRecord.commandHandler";
 
 const ResendApiKey = {
   provide: "resend-api-key",
@@ -49,6 +50,7 @@ const redisConfig = {
         return new JoseWrapper(AUTHORIZE_SERVICE_PRIVATE_KEY);
       },
     },
+    CreateVerificationRecordCommandHandler,
   ],
   exports: [
     VerifyEmailService,
@@ -56,6 +58,7 @@ const redisConfig = {
     ResendVerificationEmailCommandHandler,
     SendResetPasswordEmailCommandHandler,
     GetResetPasswordSessionQueryHandler,
+    CreateVerificationRecordCommandHandler,
   ],
 })
 export class EmailModule {}

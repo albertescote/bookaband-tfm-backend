@@ -1,7 +1,7 @@
 import { BookingStatus } from "./bookingStatus";
 import OfferId from "../../shared/domain/offerId";
 import UserId from "../../shared/domain/userId";
-import BookingId from "./bookingId";
+import BookingId from "../../shared/domain/bookingId";
 
 export interface BookingPrimitives {
   id: string;

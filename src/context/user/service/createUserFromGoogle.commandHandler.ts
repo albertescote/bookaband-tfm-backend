@@ -7,13 +7,18 @@ import User from "../../shared/domain/user";
 import { NotAbleToExecuteUserDbTransactionException } from "../exception/notAbleToExecuteUserDbTransactionException";
 import { UserRepository } from "../infrastructure/user.repository";
 import UserId from "../../shared/domain/userId";
+import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
+import { Languages } from "../../shared/domain/languages";
 
 @Injectable()
 @CommandHandler(CreateUserFromGoogleCommand)
 export class CreateUserFromGoogleCommandHandler
   implements ICommandHandler<CreateUserFromGoogleCommand>
 {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private moduleConnectors: ModuleConnectors,
+  ) {}
 
   async execute(command: CreateUserFromGoogleCommand): Promise<void> {
     const role = Role[command.role];
@@ -27,7 +32,7 @@ export class CreateUserFromGoogleCommandHandler
       command.email,
       role,
       true,
-      undefined,
+      new Date(),
       command.imageUrl,
     );
 
@@ -35,5 +40,12 @@ export class CreateUserFromGoogleCommandHandler
     if (!storedUser) {
       throw new NotAbleToExecuteUserDbTransactionException(`store user`);
     }
+
+    await this.moduleConnectors.createVerificationRecord(
+      command.email,
+      storedUser.getId().toPrimitive(),
+      Languages.ENGLISH,
+      true,
+    );
   }
 }

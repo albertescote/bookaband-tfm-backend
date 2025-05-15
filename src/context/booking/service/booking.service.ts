@@ -4,7 +4,7 @@ import { BookingRepository } from "../infrastructure/booking.repository";
 import { Injectable } from "@nestjs/common";
 import OfferId from "../../shared/domain/offerId";
 import UserId from "../../shared/domain/userId";
-import BookingId from "../domain/bookingId";
+import BookingId from "../../shared/domain/bookingId";
 import { Role } from "../../shared/domain/role";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { BookingNotFoundException } from "../exceptions/bookingNotFoundException";

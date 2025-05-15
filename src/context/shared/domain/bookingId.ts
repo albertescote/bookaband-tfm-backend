@@ -1,5 +1,5 @@
 import { v4 as uuidv4, validate } from "uuid";
-import { InvalidBookingIdFormatException } from "../exceptions/invalidBookingIdFormatException";
+import { InvalidBookingIdFormatException } from "../../booking/exceptions/invalidBookingIdFormatException";
 
 export default class BookingId {
   constructor(private value: string) {

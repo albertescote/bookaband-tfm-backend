@@ -7,6 +7,8 @@ import { seedPaymentMethods } from "./seedPaymentMethods";
 import { seedEmailVerifications } from "./seedEmailVerifications";
 import { seedBookings } from "./seedBookings";
 import { seedChats } from "./seedChats";
+import { seedContracts } from "./seedContracts";
+import { seedInvoices } from "./seedInvoices";
 
 const prisma = new PrismaClient();
 
@@ -21,6 +23,8 @@ async function clearDatabase() {
   await prisma.band.deleteMany();
   await prisma.emailVerification.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.contract.deleteMany();
+  await prisma.invoice.deleteMany();
 }
 
 async function main() {
@@ -36,6 +40,8 @@ async function main() {
   await seedPaymentMethods();
   await seedBookings();
   await seedChats();
+  await seedContracts();
+  await seedInvoices();
 
   console.log("✅ Modular seed executed successfully");
 }

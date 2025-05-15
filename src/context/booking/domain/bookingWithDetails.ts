@@ -1,5 +1,5 @@
 import { BookingStatus } from "./bookingStatus";
-import BookingId from "./bookingId";
+import BookingId from "../../shared/domain/bookingId";
 import OfferId from "../../shared/domain/offerId";
 import UserId from "../../shared/domain/userId";
 

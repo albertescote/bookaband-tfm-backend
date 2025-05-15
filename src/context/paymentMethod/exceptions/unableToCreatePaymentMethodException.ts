@@ -1,6 +1,6 @@
-import { NotFoundException } from "../../../app/exceptions/notFoundException";
+import { InternalServerErrorException } from "../../../app/exceptions/internalServerErrorException";
 
-export class UnableToCreatePaymentMethodException extends NotFoundException {
+export class UnableToCreatePaymentMethodException extends InternalServerErrorException {
   constructor() {
     super(`Unable to create billing address`);
   }

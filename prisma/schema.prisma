@@ -146,8 +146,31 @@ model booking {
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
-  offer offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
-  user  user  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  offer    offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  user     user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contract contract?
+}
+
+model contract {
+  id        String   @id @default(uuid())
+  bookingId String   @unique
+  date      DateTime
+  status    String
+  createdAt DateTime @default(now())
+
+  booking booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  invoice invoice?
+}
+
+model invoice {
+  id         String   @id @default(uuid())
+  contractId String   @unique
+  date       DateTime
+  amount     Float
+  status     String
+  createdAt  DateTime @default(now())
+
+  contract contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
 }
 
 model emailVerification {
