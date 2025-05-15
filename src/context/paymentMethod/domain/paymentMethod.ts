@@ -11,6 +11,7 @@ export interface PaymentMethodPrimitives {
   isDefault: boolean;
   createdAt: Date;
   brand?: string;
+  alias?: string;
 }
 
 export class PaymentMethod {
@@ -24,6 +25,7 @@ export class PaymentMethod {
     private isDefault: boolean,
     private createdAt: Date,
     private brand?: string,
+    private alias?: string,
   ) {}
 
   static fromPrimitives(primitives: PaymentMethodPrimitives): PaymentMethod {
@@ -37,6 +39,7 @@ export class PaymentMethod {
       primitives.isDefault,
       primitives.createdAt,
       primitives.brand,
+      primitives.alias,
     );
   }
 
@@ -48,6 +51,7 @@ export class PaymentMethod {
     lastFour: string,
     isDefault: boolean,
     brand?: string,
+    alias?: string,
   ): PaymentMethod {
     return new PaymentMethod(
       PaymentMethodId.generate(),
@@ -59,6 +63,7 @@ export class PaymentMethod {
       isDefault,
       new Date(),
       brand,
+      alias,
     );
   }
 
@@ -73,6 +78,7 @@ export class PaymentMethod {
       isDefault: this.isDefault,
       createdAt: this.createdAt,
       brand: this.brand,
+      alias: this.alias,
     };
   }
 }

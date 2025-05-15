@@ -32,4 +32,8 @@ export class CreateUserRequestDto {
   @IsOptional()
   @IsEnum(Languages)
   lng: Languages;
+
+  @IsOptional()
+  @IsString()
+  bio: string;
 }

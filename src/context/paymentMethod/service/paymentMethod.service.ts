@@ -16,12 +16,8 @@ import { UnableToCreateBillingAddressException } from "../../billingAddress/exce
 
 export interface UpdatePaymentMethodRequest {
   id: string;
-  provider: string;
-  providerId: string;
-  type: string;
-  lastFour: string;
   isDefault: boolean;
-  brand?: string;
+  alias?: string;
 }
 
 export interface CreatePaymentMethodRequest {
@@ -31,6 +27,7 @@ export interface CreatePaymentMethodRequest {
   lastFour: string;
   isDefault: boolean;
   brand?: string;
+  alias?: string;
 }
 
 @Injectable()
@@ -50,6 +47,7 @@ export class PaymentMethodService {
       request.lastFour,
       request.isDefault,
       request.brand,
+      request.alias,
     );
     const saved = await this.repository.create(method);
     if (!saved) throw new UnableToCreatePaymentMethodException();
@@ -93,9 +91,9 @@ export class PaymentMethodService {
     this.checkOwnership(primitives, userAuthInfo.id);
     const paymentMethod = await this.repository.update(
       PaymentMethod.fromPrimitives({
-        ...updatePaymentMethodRequest,
-        userId: userAuthInfo.id,
-        createdAt: primitives.createdAt,
+        ...primitives,
+        isDefault: updatePaymentMethodRequest.isDefault,
+        alias: updatePaymentMethodRequest.alias,
       }),
     );
     if (!paymentMethod) {

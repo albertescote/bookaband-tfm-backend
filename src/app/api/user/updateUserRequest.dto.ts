@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class UpdateUserRequestDto {
   @IsNotEmpty()
@@ -9,11 +9,7 @@ export class UpdateUserRequestDto {
   @IsString()
   familyName: string;
 
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  role: string;
+  bio: string;
 }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreatePaymentMethodRequestDto {
   @IsNotEmpty()
@@ -18,10 +18,14 @@ export class CreatePaymentMethodRequestDto {
   lastFour: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsBoolean()
   isDefault: boolean;
 
   @IsOptional()
   @IsString()
   brand?: string;
+
+  @IsOptional()
+  @IsString()
+  alias?: string;
 }

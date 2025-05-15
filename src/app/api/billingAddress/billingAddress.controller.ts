@@ -27,7 +27,7 @@ interface BillingAddressResponseDto {
   addressLine2?: string;
 }
 
-@Controller("billing-address")
+@Controller("/billing-address")
 export class BillingAddressController {
   constructor(private readonly service: BillingAddressService) {}
 
@@ -61,14 +61,15 @@ export class BillingAddressController {
     return this.service.findById(req.user, id);
   }
 
-  @Put("/")
+  @Put("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
   async update(
     @Request() req: { user: UserAuthInfo },
     @Body() body: UpdateBillingAddressRequestDto,
+    @Param("id", ParseUUIDPipe) id: string,
   ): Promise<BillingAddressResponseDto> {
-    return this.service.update(req.user, body);
+    return this.service.update(req.user, { ...body, id });
   }
 
   @Delete("/:id")

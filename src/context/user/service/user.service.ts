@@ -6,7 +6,6 @@ import { PasswordService } from "../../shared/utils/password.service";
 import { Role } from "../../shared/domain/role";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import { UserNotFoundException } from "../exception/userNotFoundException";
-import { WrongPermissionsException } from "../exception/wrongPermissionsException";
 import { EmailAlreadyExistsException } from "../exception/emailAlreadyExistsException";
 import { NotAbleToExecuteUserDbTransactionException } from "../exception/notAbleToExecuteUserDbTransactionException";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
@@ -14,6 +13,7 @@ import { PasswordNotSecureException } from "../exception/passwordNotSecureExcept
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { Languages } from "../../shared/domain/languages";
 import { InvalidRoleException } from "../../shared/exceptions/invalidRoleException";
+import { UserProfileDetails } from "../domain/userProfileDetails";
 
 export interface CreateUserRequest {
   firstName: string;
@@ -23,13 +23,13 @@ export interface CreateUserRequest {
   role: Role;
   imageUrl?: string;
   lng?: Languages;
+  bio?: string;
 }
 
 export interface UpdateUserRequest {
   firstName: string;
   familyName: string;
-  email: string;
-  role: string;
+  bio?: string;
 }
 
 export interface UserResponse {
@@ -40,6 +40,7 @@ export interface UserResponse {
   role: string;
   emailVerified: boolean;
   imageUrl?: string;
+  bio?: string;
 }
 
 export interface ResetPasswordRequest {
@@ -67,15 +68,14 @@ export class UserService {
       throw new InvalidRoleException(request.role);
     }
     await this.checkExistingEmail(request.email);
-    const user = new User(
-      UserId.generate(),
+    const user = User.create(
       request.firstName,
       request.familyName,
       request.email,
-      role,
-      false,
+      request.role,
       encryptedPassword,
       request.imageUrl,
+      request.bio,
     );
 
     const storedUser = await this.userRepository.addUser(user);
@@ -126,6 +126,19 @@ export class UserService {
     };
   }
 
+  @RoleAuth([Role.Client])
+  async getUserProfileDetails(
+    userAuthInfo: UserAuthInfo,
+  ): Promise<UserProfileDetails> {
+    const userProfileDetails = await this.userRepository.getUserProfileDetails(
+      new UserId(userAuthInfo.id),
+    );
+    if (!userProfileDetails) {
+      throw new UserNotFoundException(userAuthInfo.id);
+    }
+    return userProfileDetails;
+  }
+
   @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async getAll(_: UserAuthInfo): Promise<UserResponse[]> {
     const users = await this.userRepository.getAllUsers();
@@ -146,31 +159,30 @@ export class UserService {
   @RoleAuth([Role.Musician, Role.Client, Role.Provider])
   async update(
     userAuthInfo: UserAuthInfo,
-    id: string,
     request: UpdateUserRequest,
   ): Promise<UserResponse> {
-    const oldUser = await this.userRepository.getUserById(new UserId(id));
+    const oldUser = await this.userRepository.getUserById(
+      new UserId(userAuthInfo.id),
+    );
     if (!oldUser) {
-      throw new UserNotFoundException(id);
+      throw new UserNotFoundException(userAuthInfo.id);
     }
-    if (oldUser.toPrimitives().id !== userAuthInfo.id) {
-      throw new WrongPermissionsException("update user");
-    }
-    if (oldUser.toPrimitives().email !== request.email) {
-      await this.checkExistingEmail(request.email);
-    }
+    const oldUserPrimitives = oldUser.toPrimitives();
     const updatedUser = await this.userRepository.updateUser(
-      new UserId(id),
+      new UserId(userAuthInfo.id),
       User.fromPrimitives({
         ...request,
-        id,
-        emailVerified: oldUser.toPrimitives().emailVerified,
-        password: oldUser.toPrimitives().password,
+        id: userAuthInfo.id,
+        emailVerified: oldUserPrimitives.emailVerified,
+        role: oldUserPrimitives.role,
+        password: oldUserPrimitives.password,
+        email: oldUserPrimitives.email,
+        joinedDate: oldUserPrimitives.joinedDate,
       }),
     );
     if (!updatedUser) {
       throw new NotAbleToExecuteUserDbTransactionException(
-        `update user (${id})`,
+        `update user (${userAuthInfo.id})`,
       );
     }
     const userPrimitives = updatedUser.toPrimitives();
@@ -186,18 +198,19 @@ export class UserService {
   }
 
   @RoleAuth([Role.Musician, Role.Client, Role.Provider])
-  async deleteById(userAuthInfo: UserAuthInfo, id: string): Promise<void> {
-    const oldUser = await this.userRepository.getUserById(new UserId(id));
+  async deleteById(userAuthInfo: UserAuthInfo): Promise<void> {
+    const oldUser = await this.userRepository.getUserById(
+      new UserId(userAuthInfo.id),
+    );
     if (!oldUser) {
-      throw new UserNotFoundException(id);
+      throw new UserNotFoundException(userAuthInfo.id);
     }
-    if (oldUser.toPrimitives().id !== userAuthInfo.id) {
-      throw new WrongPermissionsException("delete user");
-    }
-    const deleted = await this.userRepository.deleteUser(new UserId(id));
+    const deleted = await this.userRepository.deleteUser(
+      new UserId(userAuthInfo.id),
+    );
     if (!deleted) {
       throw new NotAbleToExecuteUserDbTransactionException(
-        `delete user (${id})`,
+        `delete user (${userAuthInfo.id})`,
       );
     }
     return;

@@ -35,6 +35,7 @@ model paymentMethod {
   providerId String
   type       String
   brand      String?
+  alias      String?
   lastFour   String
   isDefault  Boolean  @default(false)
   createdAt  DateTime @default(now())

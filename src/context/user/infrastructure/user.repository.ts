@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import User from "../../shared/domain/user";
 import UserId from "../../shared/domain/userId";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
+import { UserProfileDetails } from "../domain/userProfileDetails";
 
 @Injectable()
 export class UserRepository {
@@ -17,8 +18,10 @@ export class UserRepository {
           familyName: userPrimitives.familyName,
           email: userPrimitives.email,
           password: userPrimitives.password,
+          joinedDate: userPrimitives.joinedDate,
           role: userPrimitives.role.toString(),
           imageUrl: userPrimitives.imageUrl,
+          bio: userPrimitives.bio,
         },
       });
       return user;
@@ -38,6 +41,7 @@ export class UserRepository {
           emailVerified: result.password
             ? result.emailVerification.verified
             : true,
+          joinedDate: result.joinedDate.toISOString(),
         })
       : undefined;
   }
@@ -53,8 +57,66 @@ export class UserRepository {
           emailVerified: result.password
             ? result.emailVerification.verified
             : true,
+          joinedDate: result.joinedDate.toISOString(),
         })
       : undefined;
+  }
+
+  async getUserProfileDetails(
+    id: UserId,
+  ): Promise<UserProfileDetails | undefined> {
+    const result = await this.prismaService.user.findUnique({
+      where: { id: id.toPrimitive() },
+      include: {
+        emailVerification: { select: { verified: true } },
+        billingAddress: true,
+        paymentMethods: true,
+        bookings: true,
+        chats: true,
+      },
+    });
+
+    if (!result) return undefined;
+
+    const billingAddress = result.billingAddress
+      ? {
+          id: result.billingAddress.id,
+          country: result.billingAddress.country,
+          city: result.billingAddress.city,
+          postalCode: result.billingAddress.postalCode,
+          addressLine1: result.billingAddress.addressLine1,
+          addressLine2: result.billingAddress.addressLine2 ?? undefined,
+        }
+      : undefined;
+
+    const paymentMethods = result.paymentMethods.map((pm) => ({
+      id: pm.id,
+      type: pm.type,
+      lastFour: pm.lastFour,
+      isDefault: pm.isDefault,
+      createdAt: pm.createdAt,
+      brand: pm.brand ?? undefined,
+      alias: pm.alias ?? undefined,
+    }));
+
+    const activitySummary = {
+      musiciansContacted: result.chats.length,
+      eventsOrganized: result.bookings.length,
+    };
+
+    return {
+      id: result.id,
+      firstName: result.firstName,
+      familyName: result.familyName,
+      email: result.email,
+      role: result.role,
+      joinedDate: result.joinedDate,
+      billingAddress,
+      paymentMethods,
+      activitySummary,
+      imageUrl: result.imageUrl ?? undefined,
+      bio: result.bio ?? undefined,
+    };
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -65,6 +127,7 @@ export class UserRepository {
       return User.fromPrimitives({
         ...user,
         emailVerified: user.password ? user.emailVerification.verified : true,
+        joinedDate: user.joinedDate.toISOString(),
       });
     });
   }
@@ -80,8 +143,10 @@ export class UserRepository {
           familyName: userPrimitives.familyName,
           email: userPrimitives.email,
           password: userPrimitives.password,
+          joinedDate: userPrimitives.joinedDate,
           role: userPrimitives.role.toString(),
           imageUrl: userPrimitives.imageUrl,
+          bio: userPrimitives.bio,
         },
       });
       return updatedUser;

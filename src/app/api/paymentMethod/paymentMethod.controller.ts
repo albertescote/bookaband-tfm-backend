@@ -27,9 +27,10 @@ interface PaymentMethodResponseDto {
   isDefault: boolean;
   createdAt: Date;
   brand?: string;
+  alias?: string;
 }
 
-@Controller("payment-method")
+@Controller("/payment-method")
 export class PaymentMethodController {
   constructor(private readonly service: PaymentMethodService) {}
 
@@ -63,14 +64,15 @@ export class PaymentMethodController {
     return this.service.findById(req.user, id);
   }
 
-  @Put("/")
+  @Put("/:id")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
   async update(
     @Request() req: { user: UserAuthInfo },
     @Body() body: UpdatePaymentMethodRequestDto,
+    @Param("id", ParseUUIDPipe) id: string,
   ): Promise<PaymentMethodResponseDto> {
-    return this.service.update(req.user, body);
+    return this.service.update(req.user, { ...body, id });
   }
 
   @Delete("/:id")

@@ -9,8 +9,10 @@ export interface UserPrimitives {
   email: string;
   role: string;
   emailVerified: boolean;
+  joinedDate: string;
   password?: string;
   imageUrl?: string;
+  bio?: string;
 }
 
 export default class User {
@@ -21,9 +23,34 @@ export default class User {
     private email: string,
     private role: Role,
     private emailVerified: boolean = false,
+    private joinedDate: Date,
     private password?: string,
     private imageUrl?: string,
+    private bio?: string,
   ) {}
+
+  static create(
+    firstName: string,
+    familyName: string,
+    email: string,
+    role: Role,
+    encryptedPassword: string,
+    imageUrl?: string,
+    bio?: string,
+  ) {
+    return new User(
+      UserId.generate(),
+      firstName,
+      familyName,
+      email,
+      role,
+      false,
+      new Date(),
+      encryptedPassword,
+      imageUrl,
+      bio,
+    );
+  }
 
   static fromPrimitives(user: UserPrimitives): User {
     const role = Role[user.role];
@@ -37,8 +64,10 @@ export default class User {
       user.email,
       role,
       user.emailVerified,
+      new Date(user.joinedDate),
       user.password,
       user.imageUrl,
+      user.bio,
     );
   }
 
@@ -50,8 +79,10 @@ export default class User {
       email: this.email,
       role: this.role.toString(),
       emailVerified: this.emailVerified,
+      joinedDate: this.joinedDate.toISOString(),
       password: this.password,
       imageUrl: this.imageUrl,
+      bio: this.bio,
     };
   }
 
