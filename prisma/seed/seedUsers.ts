@@ -20,7 +20,7 @@ export async function seedUsers() {
         id: "bb496cb6-15d3-4739-93bf-4a790f0668f2",
         firstName: "Sofia",
         familyName: "Martínez",
-        email: "sofia.martínez@example.com",
+        email: "sofia.martinez@example.com",
         imageUrl:
           "https://images.pexels.com/photos/8041144/pexels-photo-8041144.jpeg",
         password:
@@ -53,7 +53,7 @@ export async function seedUsers() {
         id: "f268b4b2-9146-4f60-8cce-96e6daae0d5d",
         firstName: "Carlos",
         familyName: "Díaz",
-        email: "carlos.díaz@example.com",
+        email: "carlos.diaz@example.com",
         imageUrl:
           "https://images.pexels.com/photos/1365167/pexels-photo-1365167.jpeg",
         password:
@@ -64,7 +64,7 @@ export async function seedUsers() {
         id: "23c678d2-2137-4758-bfc3-4a26afcd38c3",
         firstName: "Lucía",
         familyName: "Gómez",
-        email: "lucía.gómez@example.com",
+        email: "lucia.gomez@example.com",
         imageUrl:
           "https://img.freepik.com/free-photo/young-beautiful-blonde-woman-wearing-casual-striped-tshirt-isolated-white-background-looking-away-side-with-smile-face-natural-expression-laughing-confident_839833-30463.jpg",
         password:

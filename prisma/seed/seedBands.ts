@@ -9,7 +9,7 @@ export async function seedBands() {
       name: "The Electric Waves",
       genre: "Electronic",
       imageUrl:
-        "https://images.pexels.com/photos/1309240/pexels-photo-1309240.jpeg",
+        "https://images.pexels.com/photos/12250627/pexels-photo-12250627.jpeg",
       rating: 4.5,
       reviewCount: 30,
       members: {
@@ -23,7 +23,7 @@ export async function seedBands() {
       name: "Sax & Soul",
       genre: "Jazz",
       imageUrl:
-        "https://images.pexels.com/photos/5650950/pexels-photo-5650950.jpeg",
+        "https://images.pexels.com/photos/3018075/pexels-photo-3018075.jpeg",
       rating: 4.6,
       reviewCount: 40,
       members: {
@@ -51,7 +51,7 @@ export async function seedBands() {
       name: "Clásicos de Cámara",
       genre: "Classical",
       imageUrl:
-        "https://images.pexels.com/photos/2960156/pexels-photo-2960156.jpeg",
+        "https://images.pexels.com/photos/3769099/pexels-photo-3769099.jpeg",
       rating: 4.8,
       reviewCount: 60,
       members: {
@@ -65,7 +65,7 @@ export async function seedBands() {
       name: "Funkadelic Vibes",
       genre: "Funk",
       imageUrl:
-        "https://images.pexels.com/photos/5648444/pexels-photo-5648444.jpeg",
+        "https://images.pexels.com/photos/1365167/pexels-photo-1365167.jpeg",
       rating: 4.9,
       reviewCount: 70,
       members: {
