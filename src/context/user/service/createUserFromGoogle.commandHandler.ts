@@ -33,6 +33,7 @@ export class CreateUserFromGoogleCommandHandler
       role,
       true,
       new Date(),
+      undefined,
       command.imageUrl,
     );
 

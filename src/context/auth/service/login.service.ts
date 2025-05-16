@@ -30,6 +30,7 @@ export interface LoginResponse {
   token_type: string;
   expires_in: number;
   refresh_token: string;
+  role: string;
 }
 
 @Injectable()
@@ -61,6 +62,7 @@ export class LoginService {
       token_type: TOKEN_TYPE,
       expires_in: ACCESS_TOKEN_EXPIRES_IN_SECONDS,
       refresh_token: signedRefreshToken,
+      role: user.role,
     };
   }
 
@@ -112,6 +114,7 @@ export class LoginService {
       token_type: TOKEN_TYPE,
       expires_in: ACCESS_TOKEN_EXPIRES_IN_SECONDS,
       refresh_token: signedRefreshToken,
+      role: user.getRole(),
     };
   }
 
@@ -171,6 +174,7 @@ export class LoginService {
       token_type: TOKEN_TYPE,
       expires_in: ACCESS_TOKEN_EXPIRES_IN_SECONDS,
       refresh_token: signedRefreshToken,
+      role: user.getRole(),
     };
   }
 }

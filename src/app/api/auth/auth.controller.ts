@@ -49,6 +49,7 @@ export class AuthController {
     return {
       token_type: loginResponse.token_type,
       expires_in: loginResponse.expires_in,
+      role: loginResponse.role,
     };
   }
 
@@ -58,7 +59,7 @@ export class AuthController {
     return this.refreshTokenService.logout(body.refreshToken);
   }
 
-  @Post("/refresh")
+  @Post("refresh")
   @HttpCode(201)
   async refreshToken(
     @Body() refreshTokenRequest: RefreshTokenRequestDto,
@@ -105,6 +106,7 @@ export class AuthController {
     return {
       token_type: loginResponse.token_type,
       expires_in: loginResponse.expires_in,
+      role: loginResponse.role,
     };
   }
 
@@ -134,6 +136,7 @@ export class AuthController {
     return {
       token_type: loginResponse.token_type,
       expires_in: loginResponse.expires_in,
+      role: loginResponse.role,
     };
   }
 }
