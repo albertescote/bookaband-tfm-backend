@@ -19,6 +19,8 @@ import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { BandService } from "../../../context/band/service/band.service";
 import { GetUserBandsResponse } from "./getUserBandsResponse.dto";
 import { BandWithDetailsResponseDto } from "./bandWithDetailsResponse.dto";
+import { BandProfileResponseDto } from "./bandProfileResponse.dto";
+import { JwtOptionalGuard } from "../../../context/auth/guards/jwt-optional.guard";
 
 @Controller("bands")
 export class BandController {
@@ -52,6 +54,16 @@ export class BandController {
     @Request() req: { user: UserAuthInfo },
   ): Promise<BandWithDetailsResponseDto> {
     return this.bandService.getDetailsById(req.user, idParamDto.id);
+  }
+
+  @Get("/:id/profile")
+  @UseGuards(JwtOptionalGuard)
+  @HttpCode(200)
+  async getBandProfile(
+    @Param() idParamDto: IdParamDto,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BandProfileResponseDto> {
+    return this.bandService.getBandProfile(req.user, idParamDto.id);
   }
 
   @Get("/:id")

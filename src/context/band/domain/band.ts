@@ -8,8 +8,12 @@ export interface BandPrimitives {
   membersId: string[];
   genre: MusicGenre;
   reviewCount: number;
+  followers: number;
+  following: number;
+  createdAt: Date;
   rating?: number;
   imageUrl?: string;
+  bio?: string;
 }
 
 export default class Band {
@@ -19,17 +23,34 @@ export default class Band {
     private membersId: UserId[],
     private genre: MusicGenre,
     private reviewCount: number,
+    private followers: number,
+    private following: number,
+    private createdAt: Date,
     private imageUrl?: string | undefined,
     private rating?: number | undefined,
+    private bio?: string | undefined,
   ) {}
 
   static create(
     name: string,
     membersId: UserId[],
     genre: MusicGenre,
-    imageUrl: string,
+    imageUrl?: string,
+    bio?: string,
   ): Band {
-    return new Band(BandId.generate(), name, membersId, genre, 0, imageUrl);
+    return new Band(
+      BandId.generate(),
+      name,
+      membersId,
+      genre,
+      0,
+      0,
+      0,
+      new Date(),
+      imageUrl,
+      undefined,
+      bio,
+    );
   }
 
   static fromPrimitives(primitives: BandPrimitives): Band {
@@ -39,8 +60,12 @@ export default class Band {
       primitives.membersId.map((id) => new UserId(id)),
       primitives.genre,
       primitives.reviewCount,
+      primitives.followers,
+      primitives.following,
+      primitives.createdAt,
       primitives.imageUrl,
       primitives.rating,
+      primitives.bio,
     );
   }
 
@@ -51,8 +76,12 @@ export default class Band {
       membersId: this.membersId.map((id) => id.toPrimitive()),
       genre: this.genre,
       reviewCount: this.reviewCount,
+      followers: this.followers,
+      following: this.following,
+      createdAt: this.createdAt,
       imageUrl: this.imageUrl,
       rating: this.rating,
+      bio: this.bio,
     };
   }
 

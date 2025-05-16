@@ -5,5 +5,10 @@ export interface BandResponseDto {
   name: string;
   genre: MusicGenre;
   membersId: string[];
+  followers: number;
+  following: number;
+  reviewCount: number;
+  rating?: number;
   imageUrl?: string;
+  bio?: string;
 }

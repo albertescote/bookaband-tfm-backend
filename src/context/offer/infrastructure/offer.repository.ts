@@ -127,7 +127,7 @@ export class OfferRepository {
     const offer = await this.prismaService.offer.findFirst({
       where: { id: id.toPrimitive(), visible: true },
       include: {
-        band: true,
+        band: { include: { artistReview: true } },
         bookings: true,
         equipment: true,
       },
@@ -149,7 +149,7 @@ export class OfferRepository {
       bandSize: offer.bandSize as BandSize,
       equipment: offer.equipment.map((eq) => eq.type),
       eventTypeIds: offer.eventTypeIds,
-      reviewCount: offer.band.reviewCount,
+      reviewCount: offer.band.artistReview.length,
       price: offer.price,
       imageUrl: offer.band.imageUrl || undefined,
       rating: offer.band.rating || undefined,
@@ -195,7 +195,11 @@ export class OfferRepository {
     const allOffers = await this.prismaService.offer.findMany({
       where: whereClause,
       include: {
-        band: true,
+        band: {
+          include: {
+            artistReview: true,
+          },
+        },
         bookings: true,
         equipment: true,
       },
@@ -233,7 +237,7 @@ export class OfferRepository {
       bandSize: offer.bandSize as BandSize,
       equipment: offer.equipment.map((e) => e.type),
       eventTypeIds: offer.eventTypeIds,
-      reviewCount: offer.band.reviewCount,
+      reviewCount: offer.band.artistReview.length,
       price: offer.price,
       imageUrl: offer.band.imageUrl || undefined,
       rating: offer.band.rating || undefined,

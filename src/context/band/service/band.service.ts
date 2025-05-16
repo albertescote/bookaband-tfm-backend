@@ -12,12 +12,14 @@ import { MusicGenre } from "../domain/musicGenre";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { MemberIdNotFoundException } from "../exceptions/memberIdNotFoundException";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
+import { BandProfile } from "../domain/bandProfile";
 
 export interface BandRequest {
   name: string;
   genre: MusicGenre;
   membersId?: string[];
   imageUrl?: string;
+  bio?: string;
 }
 
 export interface BandResponse {
@@ -25,7 +27,12 @@ export interface BandResponse {
   name: string;
   genre: MusicGenre;
   membersId: string[];
+  followers: number;
+  following: number;
+  reviewCount: number;
+  rating?: number;
   imageUrl?: string;
+  bio?: string;
 }
 
 export interface BandWithDetailsResponse {
@@ -73,6 +80,7 @@ export class BandService {
       membersId,
       request.genre,
       request.imageUrl,
+      request.bio,
     );
     const storedBand = await this.bandRepository.addBand(band);
     if (!storedBand) {
@@ -157,8 +165,12 @@ export class BandService {
         membersId,
         request.genre,
         oldBandPrimitives.reviewCount,
+        oldBandPrimitives.followers,
+        oldBandPrimitives.following,
+        oldBandPrimitives.createdAt,
         request.imageUrl,
         oldBandPrimitives.rating,
+        request.bio,
       ),
     );
     if (!updatedBand) {
@@ -187,6 +199,19 @@ export class BandService {
       );
     }
     return;
+  }
+
+  async getBandProfile(
+    userAuthInfo: UserAuthInfo,
+    id: string,
+  ): Promise<BandProfile> {
+    const bandId = new BandId(id);
+    const bandProfile = await this.bandRepository.getBandProfileById(bandId);
+    if (!bandProfile) {
+      throw new BandNotFoundException(id);
+    }
+    const { price, ...shaped } = bandProfile;
+    return userAuthInfo.id ? bandProfile : shaped;
   }
 
   private async checkMembersIdExistence(membersId: string[], userId: string) {

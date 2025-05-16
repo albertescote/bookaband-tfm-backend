@@ -23,4 +23,8 @@ export class UpdateBandRequestDto {
   @IsOptional()
   @IsString()
   imageUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  bio?: string;
 }

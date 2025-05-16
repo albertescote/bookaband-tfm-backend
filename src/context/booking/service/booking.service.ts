@@ -20,6 +20,15 @@ import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 export interface CreateBookingRequest {
   offerId: string;
   date: string;
+  name: string;
+  country: string;
+  city: string;
+  venue: string;
+  postalCode: string;
+  addressLine1: string;
+  addressLine2?: string;
+  eventTypeId?: string;
+  isPublic?: boolean;
 }
 
 @Injectable()
@@ -38,6 +47,15 @@ export class BookingService {
       new OfferId(request.offerId),
       new UserId(userAuthInfo.id),
       new Date(request.date),
+      request.name,
+      request.country,
+      request.city,
+      request.venue,
+      request.postalCode,
+      request.addressLine1,
+      request.addressLine2,
+      request.eventTypeId,
+      request.isPublic,
     );
     const storedBooking = await this.bookingRepository.save(newBooking);
     return storedBooking.toPrimitives();

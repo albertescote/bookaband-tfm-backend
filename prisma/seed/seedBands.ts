@@ -11,12 +11,16 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/12250627/pexels-photo-12250627.jpeg",
       rating: 4.5,
-      reviewCount: 30,
+      bio: "An electrifying experience of synths and beats.",
+      followers: 1200,
+      following: 85,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "f2f272b4-e902-4677-a709-ab333e3d280c" }],
       },
     },
   });
+
   await prisma.band.create({
     data: {
       id: "824863a8-1e09-4d69-9e5d-8e0bff068129",
@@ -25,12 +29,16 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/3018075/pexels-photo-3018075.jpeg",
       rating: 4.6,
-      reviewCount: 40,
+      bio: "Smooth jazz vibes with soulful improvisations.",
+      followers: 980,
+      following: 60,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "892b48de-a91a-4c30-9c89-3162f7aa815c" }],
       },
     },
   });
+
   await prisma.band.create({
     data: {
       id: "eef58ab1-c216-4d23-81cd-432ab1637caa",
@@ -39,12 +47,16 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/8639009/pexels-photo-8639009.jpeg",
       rating: 4.7,
-      reviewCount: 50,
+      bio: "Traditional Mexican music with a modern twist.",
+      followers: 1500,
+      following: 40,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "f268b4b2-9146-4f60-8cce-96e6daae0d5d" }],
       },
     },
   });
+
   await prisma.band.create({
     data: {
       id: "0795cc24-7738-4ab4-8e1c-510d30c32c86",
@@ -53,12 +65,16 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/3769099/pexels-photo-3769099.jpeg",
       rating: 4.8,
-      reviewCount: 60,
+      bio: "Chamber music at its finest, blending strings and soul.",
+      followers: 800,
+      following: 35,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "995cf05d-f641-4874-8bed-31742212cddd" }],
       },
     },
   });
+
   await prisma.band.create({
     data: {
       id: "2f71420b-c2ed-4eed-a8c6-02a061b95958",
@@ -67,12 +83,16 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/1365167/pexels-photo-1365167.jpeg",
       rating: 4.9,
-      reviewCount: 70,
+      bio: "Booty-shaking funk grooves from the underground.",
+      followers: 2000,
+      following: 90,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "97295898-f96d-4e30-b706-38c351165d0c" }],
       },
     },
   });
+
   await prisma.band.create({
     data: {
       id: "724382b4-6878-4f84-b177-9668b88cc6d9",
@@ -81,7 +101,10 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/3807093/pexels-photo-3807093.jpeg",
       rating: 5.0,
-      reviewCount: 80,
+      bio: "Late-night rock anthems that shake the stage.",
+      followers: 2500,
+      following: 100,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "1eb2a6cf-0102-4b93-84e5-69d9a26ab519" }],
       },
@@ -96,7 +119,10 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/1778810/pexels-photo-1778810.jpeg",
       rating: 4.4,
-      reviewCount: 25,
+      bio: "Introspective indie tunes with shimmering guitars.",
+      followers: 1100,
+      following: 70,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "892b48de-a91a-4c30-9c89-3162f7aa815c" }],
       },
@@ -111,7 +137,10 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/9009561/pexels-photo-9009561.jpeg",
       rating: 4.3,
-      reviewCount: 18,
+      bio: "A collective of groovers playing soulful tunes.",
+      followers: 760,
+      following: 42,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "bb496cb6-15d3-4739-93bf-4a790f0668f2" }],
       },
@@ -126,7 +155,10 @@ export async function seedBands() {
       imageUrl:
         "https://images.pexels.com/photos/6031335/pexels-photo-6031335.jpeg",
       rating: 4.6,
-      reviewCount: 32,
+      bio: "Classic soul reimagined for the modern era.",
+      followers: 1340,
+      following: 58,
+      createdAt: new Date(),
       members: {
         connect: [{ id: "f2f272b4-e902-4677-a709-ab333e3d280c" }],
       },

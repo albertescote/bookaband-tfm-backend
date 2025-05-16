@@ -87,7 +87,8 @@ export async function seedUsers() {
         firstName: "Isabella",
         familyName: "Vega",
         email: "isabella.vega@example.com",
-        imageUrl: "https://example.com/isabella.jpg",
+        imageUrl:
+          "https://images.pexels.com/photos/11319542/pexels-photo-11319542.jpeg",
         password:
           "$2b$10$rGiVe3S8m0O9KUJ9i1hip.04IoWAE3Ws5B2FUxFXaYdfxdKnqUjT2",
         role: "Client",

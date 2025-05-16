@@ -23,4 +23,8 @@ export class CreateBandRequestDto {
   @IsOptional()
   @IsString()
   imageUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  bio?: string;
 }

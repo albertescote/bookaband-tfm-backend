@@ -5,6 +5,8 @@ import BandId from "../../shared/domain/bandId";
 import { MusicGenre } from "../domain/musicGenre";
 import UserId from "../../shared/domain/userId";
 import BandWithDetails from "../domain/bandWithDetails";
+import { BandProfile } from "../domain/bandProfile";
+import { BandSize } from "../../offer/domain/bandSize";
 
 export interface UserBand {
   id: string;
@@ -32,8 +34,11 @@ export class BandRepository {
           name: primitives.name,
           genre: primitives.genre,
           imageUrl: primitives.imageUrl,
+          bio: primitives.bio,
+          followers: primitives.followers,
+          following: primitives.following,
+          createdAt: primitives.createdAt,
           rating: primitives.rating,
-          reviewCount: primitives.reviewCount,
           members: {
             connect: primitives.membersId.map((id) => ({ id })),
           },
@@ -50,6 +55,7 @@ export class BandRepository {
       where: { id: id.toPrimitive() },
       include: {
         members: true,
+        artistReview: true,
       },
     });
 
@@ -61,7 +67,11 @@ export class BandRepository {
           membersId: band.members.map((m) => m.id),
           imageUrl: band.imageUrl,
           rating: band.rating,
-          reviewCount: band.reviewCount,
+          reviewCount: band.artistReview.length,
+          bio: band.bio,
+          followers: band.followers,
+          following: band.following,
+          createdAt: band.createdAt,
         })
       : undefined;
   }
@@ -77,7 +87,9 @@ export class BandRepository {
           genre: primitives.genre,
           imageUrl: primitives.imageUrl,
           rating: primitives.rating,
-          reviewCount: primitives.reviewCount,
+          bio: primitives.bio,
+          followers: primitives.followers,
+          following: primitives.following,
           members: {
             set: primitives.membersId.map((id) => ({ id })),
           },
@@ -146,5 +158,92 @@ export class BandRepository {
           imageUrl: band.imageUrl,
         })
       : undefined;
+  }
+
+  async getBandProfileById(id: BandId): Promise<BandProfile | undefined> {
+    const band = await this.prismaService.band.findFirst({
+      where: { id: id.toPrimitive() },
+      include: {
+        offer: {
+          include: {
+            equipment: true,
+            bookings: true,
+          },
+        },
+        media: true,
+        socialLink: true,
+        artistReview: {
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+                imageUrl: true,
+              },
+            },
+          },
+        },
+        members: true,
+      },
+    });
+
+    if (!band) return undefined;
+
+    return {
+      id: band.id,
+      bandId: band.id,
+      bandName: band.name,
+      genre: band.genre,
+      membersId: band.members.map((m) => m.id),
+      bookingDates: band.offer?.bookings.map((b) => b.date.toISOString()) ?? [],
+      description: band.offer?.description ?? "",
+      location: band.offer?.location ?? "",
+      featured: band.offer?.featured ?? false,
+      bandSize: band.offer ? BandSize[band.offer.bandSize] : undefined,
+      equipment: band.offer?.equipment.map((e) => e.type) ?? [],
+      eventTypeIds: band.offer?.eventTypeIds ?? [],
+      reviewCount: band.artistReview.length,
+      createdDate: band.createdAt,
+      price: band.offer?.price,
+      imageUrl: band.imageUrl,
+      rating: band.rating,
+      bio: band.bio,
+      followers: band.followers,
+      following: band.following,
+
+      reviews: band.artistReview.map((review) => ({
+        id: review.id,
+        rating: review.rating,
+        comment: review.comment,
+        date: review.date.toISOString(),
+        reviewer: {
+          name: `${review.user.firstName} ${review.user.familyName}`,
+          imageUrl: review.user.imageUrl,
+        },
+      })),
+
+      media: band.media.map((m) => ({
+        id: m.id,
+        url: m.url,
+        type: m.type,
+      })),
+
+      socialLinks: band.socialLink.map((s) => ({
+        platform: s.platform,
+        url: s.url,
+      })),
+
+      events:
+        band.offer?.bookings.map((booking) => ({
+          id: booking.id,
+          name: booking.name,
+          date: booking.date.toISOString(),
+          eventTypeId: booking.eventTypeId,
+          city: booking.city,
+          country: booking.country,
+          venue: booking.venue,
+          isPublic: booking.isPublic ?? false,
+        })) ?? [],
+    };
   }
 }
