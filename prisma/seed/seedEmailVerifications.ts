@@ -6,6 +6,20 @@ export async function seedEmailVerifications() {
   await prisma.emailVerification.createMany({
     data: [
       {
+        id: "dffc70bf-882e-4ab7-8d1b-d8937625d662",
+        userId: "f2f272b4-e902-4677-a709-ab333e3d280c", // Alex
+        language: "es",
+        verified: true,
+        lastEmailSentAt: new Date(),
+      },
+      {
+        id: "95f70416-0ca2-4c6c-8f28-ffe5440a9530",
+        userId: "892b48de-a91a-4c30-9c89-3162f7aa815c", // Liam
+        language: "es",
+        verified: true,
+        lastEmailSentAt: new Date(),
+      },
+      {
         id: "01ea885c-f3e5-47c3-a2ed-3b4a59dc2a01",
         userId: "bb496cb6-15d3-4739-93bf-4a790f0668f2", // Sofia
         language: "es",

@@ -11,13 +11,7 @@ import { BandSize } from "../../offer/domain/bandSize";
 export interface UserBand {
   id: string;
   name: string;
-  offer?: {
-    id: string;
-    bandId: string;
-    price: number;
-    visible: boolean;
-    description?: string;
-  };
+  imageUrl?: string;
 }
 
 @Injectable()
@@ -123,7 +117,7 @@ export class BandRepository {
       select: {
         id: true,
         name: true,
-        offer: true,
+        imageUrl: true,
       },
     });
 
