@@ -66,22 +66,6 @@ model refreshToken {
   user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model offer {
-  id           String   @id
-  bandId       String   @unique
-  price        Int
-  description  String
-  location     String
-  featured     Boolean  @default(false)
-  bandSize     String
-  visible      Boolean  @default(true)
-  eventTypeIds String[]
-
-  band      band        @relation(fields: [bandId], references: [id], onDelete: Cascade)
-  bookings  booking[]
-  equipment equipment[] @relation("OfferEquipment")
-}
-
 model bandMember {
   userId    String
   bandId    String
@@ -95,23 +79,34 @@ model bandMember {
 }
 
 model band {
-  id        String   @id
-  name      String
-  genre     String
-  followers Int
-  following Int
-  rating    Float?
-  bio       String?
-  imageUrl  String?
-  createdAt DateTime
+  id                 String   @id
+  name               String
+  musicalStyleIds    String[]
+  followers          Int
+  following          Int
+  createdAt          DateTime
+  price              Int
+  description        String
+  location           String
+  featured           Boolean  @default(false)
+  bandSize           String
+  visible            Boolean  @default(true)
+  eventTypeIds       String[]
+  weeklyAvailability Json
+  rating             Float?
+  bio                String?
+  imageUrl           String?
 
-  offer        offer?
-  members      bandMember[]
-  chats        chat[]         @relation("BandChats")
-  invitations  invitation[]
-  media        media[]
-  socialLink   socialLink[]
-  artistReview artistReview[]
+  members          bandMember[]
+  chats            chat[]            @relation("BandChats")
+  invitations      invitation[]
+  media            media[]
+  socialLink       socialLink[]
+  artistReview     artistReview[]
+  bookings         booking[]
+  hospitalityRider hospitalityRider?
+  technicalRider   technicalRider?
+  performanceArea  performanceArea?
 }
 
 model media {
@@ -144,11 +139,37 @@ model artistReview {
   user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model equipment {
-  id      String @id @default(uuid())
-  type    String
-  offer   offer  @relation("OfferEquipment", fields: [offerId], references: [id])
-  offerId String
+model performanceArea {
+  id                String   @id @default(uuid())
+  bandId            String   @unique
+  regions           String[]
+  travelPreferences String[]
+  restrictions      String[]
+
+  band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
+}
+
+model technicalRider {
+  id                String @id @default(uuid())
+  bandId            String @unique
+  soundSystem       String
+  microphones       String
+  backline          String
+  lighting          String
+  otherRequirements String
+
+  band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
+}
+
+model hospitalityRider {
+  id                  String @id @default(uuid())
+  bandId              String @unique
+  accommodation       String
+  catering            String
+  beverages           String
+  specialRequirements String
+
+  band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
 }
 
 model message {
@@ -188,7 +209,7 @@ model invitation {
 
 model booking {
   id           String   @id @default(uuid())
-  offerId      String
+  bandId       String
   userId       String
   status       String
   name         String
@@ -204,7 +225,7 @@ model booking {
   updatedAt    DateTime @updatedAt
   createdAt    DateTime @default(now())
 
-  offer    offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  band     band      @relation(fields: [bandId], references: [id], onDelete: Cascade)
   user     user      @relation(fields: [userId], references: [id], onDelete: Cascade)
   contract contract?
 }

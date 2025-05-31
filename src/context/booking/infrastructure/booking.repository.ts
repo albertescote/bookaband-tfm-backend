@@ -21,7 +21,7 @@ export class BookingRepository {
     return storedBooking
       ? Booking.fromPrimitives({
           id: storedBooking.id,
-          offerId: storedBooking.offerId,
+          bandId: storedBooking.bandId,
           userId: storedBooking.userId,
           status: BookingStatus[storedBooking.status],
           date: storedBooking.date,
@@ -45,7 +45,7 @@ export class BookingRepository {
     return booking
       ? Booking.fromPrimitives({
           id: booking.id,
-          offerId: booking.offerId,
+          bandId: booking.bandId,
           userId: booking.userId,
           status: BookingStatus[booking.status],
           date: booking.date,
@@ -66,14 +66,10 @@ export class BookingRepository {
     const booking = await this.prismaService.booking.findFirst({
       where: { id: bookingId.toPrimitive() },
       include: {
-        offer: {
-          include: {
-            band: {
-              select: {
-                name: true,
-                imageUrl: true,
-              },
-            },
+        band: {
+          select: {
+            name: true,
+            imageUrl: true,
           },
         },
         user: {
@@ -88,14 +84,14 @@ export class BookingRepository {
     return booking
       ? BookingWithDetails.fromPrimitives({
           id: booking.id,
-          offerId: booking.offerId,
+          bandId: booking.bandId,
           userId: booking.userId,
           status: BookingStatus[booking.status],
           date: booking.date,
           userName: booking.user.firstName + " " + booking.user.familyName,
           userImageUrl: booking.user.imageUrl,
-          bandName: booking.offer.band.name,
-          bandImageUrl: booking.offer.band.imageUrl,
+          bandName: booking.band.name,
+          bandImageUrl: booking.band.imageUrl,
         })
       : undefined;
   }
@@ -105,14 +101,10 @@ export class BookingRepository {
       where: { userId: userId.toPrimitive() },
       orderBy: { updatedAt: "desc" },
       include: {
-        offer: {
-          include: {
-            band: {
-              select: {
-                name: true,
-                imageUrl: true,
-              },
-            },
+        band: {
+          select: {
+            name: true,
+            imageUrl: true,
           },
         },
         user: {
@@ -128,14 +120,14 @@ export class BookingRepository {
       ? bookings.map((booking) => {
           return BookingWithDetails.fromPrimitives({
             id: booking.id,
-            offerId: booking.offerId,
+            bandId: booking.bandId,
             userId: booking.userId,
             status: BookingStatus[booking.status],
             date: booking.date,
             userName: booking.user.firstName + " " + booking.user.familyName,
             userImageUrl: booking.user.imageUrl,
-            bandName: booking.offer.band.name,
-            bandImageUrl: booking.offer.band.imageUrl,
+            bandName: booking.band.name,
+            bandImageUrl: booking.band.imageUrl,
           });
         })
       : undefined;
@@ -143,17 +135,13 @@ export class BookingRepository {
 
   async findAllByBandId(bandId: BandId): Promise<BookingWithDetails[]> {
     const bookings = await this.prismaService.booking.findMany({
-      where: { offer: { bandId: bandId.toPrimitive() } },
+      where: { bandId: bandId.toPrimitive() },
       orderBy: { updatedAt: "desc" },
       include: {
-        offer: {
-          include: {
-            band: {
-              select: {
-                name: true,
-                imageUrl: true,
-              },
-            },
+        band: {
+          select: {
+            name: true,
+            imageUrl: true,
           },
         },
         user: {
@@ -169,14 +157,14 @@ export class BookingRepository {
       ? bookings.map((booking) => {
           return BookingWithDetails.fromPrimitives({
             id: booking.id,
-            offerId: booking.offerId,
+            bandId: booking.bandId,
             userId: booking.userId,
             status: BookingStatus[booking.status],
             date: booking.date,
             userName: booking.user.firstName + " " + booking.user.familyName,
             userImageUrl: booking.user.imageUrl,
-            bandName: booking.offer.band.name,
-            bandImageUrl: booking.offer.band.imageUrl,
+            bandName: booking.band.name,
+            bandImageUrl: booking.band.imageUrl,
           });
         })
       : undefined;

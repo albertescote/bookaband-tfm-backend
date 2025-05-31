@@ -1,5 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import Band from "../domain/band";
+import Band, {
+  HospitalityRider,
+  PerformanceArea,
+  TechnicalRider,
+  WeeklyAvailability,
+} from "../domain/band";
 import BandId from "../../shared/domain/bandId";
 import { BandRepository } from "../infrastructure/band.repository";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
@@ -8,34 +13,55 @@ import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import { NotAbleToExecuteBandDbTransactionException } from "../exceptions/notAbleToExecuteBandDbTransactionException";
 import { Role } from "../../shared/domain/role";
 import UserId from "../../shared/domain/userId";
-import { MusicGenre } from "../domain/musicGenre";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { MemberIdNotFoundException } from "../exceptions/memberIdNotFoundException";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { BandProfile } from "../domain/bandProfile";
 import { BandRole } from "../domain/bandRole";
 import { AtLeastOneAdminRequiredException } from "../exceptions/atLeastOneAdminRequiredException";
+import { BandNotCreatedException } from "../exceptions/bandNotCreatedException";
+import { BandNotUpdatedException } from "../exceptions/bandNotUpdatedException";
 
 export interface CreateBandRequest {
   name: string;
-  genre: MusicGenre;
+  musicalStyleIds: string[];
   membersId?: string[];
   imageUrl?: string;
   bio?: string;
+  price: number;
+  description: string;
+  location: string;
+  bandSize: string;
+  eventTypeIds: string[];
+  weeklyAvailability?: WeeklyAvailability;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
+  performanceArea?: PerformanceArea;
 }
 
 export interface UpdateBandRequest {
   name: string;
-  genre: MusicGenre;
+  musicalStyleIds: string[];
   members: { id: string; role: BandRole }[];
   imageUrl?: string;
   bio?: string;
+  price: number;
+  description: string;
+  location: string;
+  bandSize: string;
+  eventTypeIds: string[];
+  featured?: boolean;
+  visible?: boolean;
+  weeklyAvailability?: WeeklyAvailability;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
+  performanceArea?: PerformanceArea;
 }
 
 export interface BandResponse {
   id: string;
   name: string;
-  genre: MusicGenre;
+  musicalStyleIds: string[];
   members: { id: string; role: BandRole }[];
   followers: number;
   following: number;
@@ -43,12 +69,19 @@ export interface BandResponse {
   rating?: number;
   imageUrl?: string;
   bio?: string;
+  price: number;
+  description: string;
+  location: string;
+  bandSize: string;
+  eventTypeIds: string[];
+  featured: boolean;
+  visible: boolean;
 }
 
 export interface BandWithDetailsResponse {
   id: string;
   name: string;
-  genre: MusicGenre;
+  musicalStyleIds: string[];
   members: {
     id: string;
     userName: string;
@@ -74,29 +107,58 @@ export class BandService {
   @RoleAuth([Role.Musician])
   async create(
     userAuthInfo: UserAuthInfo,
-    request: CreateBandRequest,
+    createBandRequest: CreateBandRequest,
   ): Promise<BandResponse> {
-    const membersId: UserId[] = await this.checkMembersIdExistence(
-      request.membersId,
-      userAuthInfo.id,
-    );
     const band = Band.create(
-      request.name,
-      membersId.map((userId) => {
-        if (userId.toPrimitive() === userAuthInfo.id) {
-          return { id: userId, role: BandRole.ADMIN };
-        }
-        return { id: userId, role: BandRole.MEMBER };
-      }),
-      request.genre,
-      request.imageUrl,
-      request.bio,
+      createBandRequest.name,
+      [
+        {
+          id: new UserId(userAuthInfo.id),
+          role: BandRole.ADMIN,
+        },
+      ],
+      createBandRequest.musicalStyleIds,
+      createBandRequest.price,
+      createBandRequest.description,
+      createBandRequest.location,
+      createBandRequest.bandSize,
+      createBandRequest.eventTypeIds,
+      createBandRequest.imageUrl,
+      createBandRequest.bio,
+      createBandRequest.weeklyAvailability,
+      createBandRequest.hospitalityRider,
+      createBandRequest.technicalRider,
+      createBandRequest.performanceArea,
     );
+
     const storedBand = await this.bandRepository.addBand(band);
     if (!storedBand) {
-      throw new NotAbleToExecuteBandDbTransactionException(`store band`);
+      throw new BandNotCreatedException();
     }
-    return storedBand.toPrimitives();
+
+    const storedBandPrimitives = storedBand.toPrimitives();
+    return {
+      id: storedBandPrimitives.id,
+      name: storedBandPrimitives.name,
+      musicalStyleIds: storedBandPrimitives.musicalStyleIds,
+      members: storedBandPrimitives.members.map((m) => ({
+        id: m.id,
+        role: m.role,
+      })),
+      followers: storedBandPrimitives.followers,
+      following: storedBandPrimitives.following,
+      reviewCount: storedBandPrimitives.reviewCount,
+      rating: storedBandPrimitives.rating,
+      imageUrl: storedBandPrimitives.imageUrl,
+      bio: storedBandPrimitives.bio,
+      price: storedBandPrimitives.price,
+      description: storedBandPrimitives.description,
+      location: storedBandPrimitives.location,
+      bandSize: storedBandPrimitives.bandSize,
+      eventTypeIds: storedBandPrimitives.eventTypeIds,
+      featured: storedBandPrimitives.featured,
+      visible: storedBandPrimitives.visible,
+    };
   }
 
   @RoleAuth([Role.Musician])
@@ -106,10 +168,35 @@ export class BandService {
       throw new BandNotFoundException(id);
     }
     const storedBandPrimitives = storedBand.toPrimitives();
-    if (!storedBandPrimitives.members.find((m) => m.id === userAuthInfo.id)) {
+    if (
+      !storedBandPrimitives.members.find(
+        (member) => member.id === userAuthInfo.id,
+      )
+    ) {
       throw new WrongPermissionsException("get band");
     }
-    return storedBandPrimitives;
+    return {
+      id: storedBandPrimitives.id,
+      name: storedBandPrimitives.name,
+      musicalStyleIds: storedBandPrimitives.musicalStyleIds,
+      members: storedBandPrimitives.members.map((m) => ({
+        id: m.id,
+        role: m.role,
+      })),
+      followers: storedBandPrimitives.followers,
+      following: storedBandPrimitives.following,
+      reviewCount: storedBandPrimitives.reviewCount,
+      rating: storedBandPrimitives.rating,
+      imageUrl: storedBandPrimitives.imageUrl,
+      bio: storedBandPrimitives.bio,
+      price: storedBandPrimitives.price,
+      description: storedBandPrimitives.description,
+      location: storedBandPrimitives.location,
+      bandSize: storedBandPrimitives.bandSize,
+      eventTypeIds: storedBandPrimitives.eventTypeIds,
+      featured: storedBandPrimitives.featured,
+      visible: storedBandPrimitives.visible,
+    };
   }
 
   @RoleAuth([Role.Musician])
@@ -134,7 +221,7 @@ export class BandService {
     return {
       id: storedBandPrimitives.id,
       name: storedBandPrimitives.name,
-      genre: storedBandPrimitives.genre,
+      musicalStyleIds: storedBandPrimitives.musicalStyleIds,
       members: storedBandPrimitives.members.map((m) => ({
         id: m.id,
         userName: m.userName,
@@ -165,49 +252,69 @@ export class BandService {
   async update(
     userAuthInfo: UserAuthInfo,
     id: string,
-    request: UpdateBandRequest,
+    updateBandRequest: UpdateBandRequest,
   ): Promise<BandResponse> {
-    const oldBand = await this.bandRepository.getBandById(new BandId(id));
-    if (!oldBand) {
+    const storedBand = await this.bandRepository.getBandById(new BandId(id));
+    if (!storedBand) {
       throw new BandNotFoundException(id);
     }
-
-    if (!oldBand.isAdmin(new UserId(userAuthInfo.id))) {
-      throw new WrongPermissionsException(
-        "update band - only admins can update band details",
-      );
+    const storedBandPrimitives = storedBand.toPrimitives();
+    if (
+      !storedBandPrimitives.members.find(
+        (member) => member.id === userAuthInfo.id,
+      )
+    ) {
+      throw new WrongPermissionsException("update band");
     }
 
-    await this.checkMembersIdExistence(
-      request.members.map((member) => member.id),
-      userAuthInfo.id,
-    );
-    await this.checkAtLeastOneAdmin(request.members);
-    const oldBandPrimitives = oldBand.toPrimitives();
-    const updatedBand = await this.bandRepository.updateBand(
-      new Band(
-        new BandId(id),
-        request.name,
-        request.members.map((member) => ({
-          id: new UserId(member.id),
-          role: member.role,
-        })),
-        request.genre,
-        oldBandPrimitives.reviewCount,
-        oldBandPrimitives.followers,
-        oldBandPrimitives.following,
-        oldBandPrimitives.createdAt,
-        request.imageUrl,
-        oldBandPrimitives.rating,
-        request.bio,
-      ),
-    );
-    if (!updatedBand) {
-      throw new NotAbleToExecuteBandDbTransactionException(
-        `update band (${id})`,
-      );
+    const updatedBand = Band.fromPrimitives({
+      ...storedBandPrimitives,
+      name: updateBandRequest.name,
+      musicalStyleIds: updateBandRequest.musicalStyleIds,
+      members: updateBandRequest.members,
+      price: updateBandRequest.price,
+      description: updateBandRequest.description,
+      location: updateBandRequest.location,
+      bandSize: updateBandRequest.bandSize,
+      eventTypeIds: updateBandRequest.eventTypeIds,
+      imageUrl: updateBandRequest.imageUrl,
+      bio: updateBandRequest.bio,
+      featured: updateBandRequest.featured,
+      visible: updateBandRequest.visible,
+      weeklyAvailability: updateBandRequest.weeklyAvailability,
+      hospitalityRider: updateBandRequest.hospitalityRider,
+      technicalRider: updateBandRequest.technicalRider,
+      performanceArea: updateBandRequest.performanceArea,
+    });
+
+    const storedUpdatedBand = await this.bandRepository.updateBand(updatedBand);
+    if (!storedUpdatedBand) {
+      throw new BandNotUpdatedException();
     }
-    return updatedBand.toPrimitives();
+
+    const storedUpdatedBandPrimitives = storedUpdatedBand.toPrimitives();
+    return {
+      id: storedUpdatedBandPrimitives.id,
+      name: storedUpdatedBandPrimitives.name,
+      musicalStyleIds: storedUpdatedBandPrimitives.musicalStyleIds,
+      members: storedUpdatedBandPrimitives.members.map((m) => ({
+        id: m.id,
+        role: m.role,
+      })),
+      followers: storedUpdatedBandPrimitives.followers,
+      following: storedUpdatedBandPrimitives.following,
+      reviewCount: storedUpdatedBandPrimitives.reviewCount,
+      rating: storedUpdatedBandPrimitives.rating,
+      imageUrl: storedUpdatedBandPrimitives.imageUrl,
+      bio: storedUpdatedBandPrimitives.bio,
+      price: storedUpdatedBandPrimitives.price,
+      description: storedUpdatedBandPrimitives.description,
+      location: storedUpdatedBandPrimitives.location,
+      bandSize: storedUpdatedBandPrimitives.bandSize,
+      eventTypeIds: storedUpdatedBandPrimitives.eventTypeIds,
+      featured: storedUpdatedBandPrimitives.featured,
+      visible: storedUpdatedBandPrimitives.visible,
+    };
   }
 
   @RoleAuth([Role.Musician])

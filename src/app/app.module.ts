@@ -1,6 +1,4 @@
 import { Module } from "@nestjs/common";
-import { OfferController } from "./api/offer/offer.controller";
-import { OfferModule } from "../context/offer/offer.module";
 import { HealthcheckController } from "./api/healthcheck/healthcheck.controller";
 import { UserModule } from "../context/user/user.module";
 import { UserController } from "./api/user/user.controller";
@@ -31,7 +29,6 @@ import { InvoiceController } from "./api/invoice/invoice.controller";
 @Module({
   imports: [
     CqrsModule,
-    OfferModule,
     UserModule,
     AuthModule,
     BandModule,
@@ -47,7 +44,6 @@ import { InvoiceController } from "./api/invoice/invoice.controller";
   ],
   controllers: [
     HealthcheckController,
-    OfferController,
     BandController,
     UserController,
     AuthController,

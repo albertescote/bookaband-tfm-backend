@@ -3,4 +3,4 @@ export enum BandSize {
   DUO = "DUO",
   TRIO = "TRIO",
   BAND = "BAND",
-}
+} 

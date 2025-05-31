@@ -1,11 +1,11 @@
 import { BookingStatus } from "./bookingStatus";
 import BookingId from "../../shared/domain/bookingId";
-import OfferId from "../../shared/domain/offerId";
 import UserId from "../../shared/domain/userId";
+import BandId from "../../shared/domain/bandId";
 
 export interface BookingWithDetailsPrimitives {
   id: string;
-  offerId: string;
+  bandId: string;
   userId: string;
   status: BookingStatus;
   date: Date;
@@ -18,7 +18,7 @@ export interface BookingWithDetailsPrimitives {
 export class BookingWithDetails {
   constructor(
     private id: BookingId,
-    private offerId: OfferId,
+    private bandId: BandId,
     private userId: UserId,
     private status: BookingStatus,
     private date: Date,
@@ -33,7 +33,7 @@ export class BookingWithDetails {
   ): BookingWithDetails {
     return new BookingWithDetails(
       new BookingId(primitives.id),
-      new OfferId(primitives.offerId),
+      new BandId(primitives.bandId),
       new UserId(primitives.userId),
       primitives.status,
       primitives.date,
@@ -47,7 +47,7 @@ export class BookingWithDetails {
   toPrimitives(): BookingWithDetailsPrimitives {
     return {
       id: this.id.toPrimitive(),
-      offerId: this.offerId.toPrimitive(),
+      bandId: this.bandId.toPrimitive(),
       userId: this.userId.toPrimitive(),
       status: this.status,
       date: this.date,
@@ -62,8 +62,8 @@ export class BookingWithDetails {
     return this.userId.toPrimitive() === userId.toPrimitive();
   }
 
-  getOfferId() {
-    return this.offerId;
+  getBandId() {
+    return this.bandId;
   }
 
   getId() {

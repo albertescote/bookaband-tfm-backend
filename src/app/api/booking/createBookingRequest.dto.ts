@@ -10,7 +10,7 @@ import { IsStringDate } from "../../validators/isStringDateConstraint";
 export class CreateBookingRequestDto {
   @IsNotEmpty()
   @IsUUID()
-  offerId: string;
+  bandId: string;
 
   @IsNotEmpty()
   @IsStringDate()

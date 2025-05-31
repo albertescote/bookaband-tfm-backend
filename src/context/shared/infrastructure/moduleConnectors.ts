@@ -6,8 +6,6 @@ import { GetBandMembersQuery } from "../../band/service/getBandMembers.query";
 import { BandPrimitives } from "../../band/domain/band";
 import { GetBandInfoQuery } from "../../band/service/getBandInfo.query";
 import { JoinBandCommand } from "../../band/service/joinBand.command";
-import { OfferPrimitives } from "../../offer/domain/offer";
-import { GetOfferInfoQuery } from "../../offer/service/getOfferInfo.query";
 import { SendVerificationEmailCommand } from "../../email/service/sendVerificationEmail.command";
 import { Languages } from "../domain/languages";
 import { SendResetPasswordEmailCommand } from "../../email/service/sendResetPasswordEmail.command";
@@ -56,11 +54,6 @@ class ModuleConnectors {
   async obtainBandInformation(id: string): Promise<BandPrimitives> {
     const getBandInfoQuery = new GetBandInfoQuery(id);
     return await this.queryBus.execute(getBandInfoQuery);
-  }
-
-  async obtainOfferInformation(id: string): Promise<OfferPrimitives> {
-    const getOfferInfoQuery = new GetOfferInfoQuery(id);
-    return await this.queryBus.execute(getOfferInfoQuery);
   }
 
   async joinBand(bandId: string, userId: string): Promise<void> {

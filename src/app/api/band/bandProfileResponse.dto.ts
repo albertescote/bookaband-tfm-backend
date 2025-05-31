@@ -1,4 +1,10 @@
-import { BandSize } from "../../../context/offer/domain/bandSize";
+import {
+  HospitalityRider,
+  PerformanceArea,
+  TechnicalRider,
+  WeeklyAvailability,
+} from "../../../context/band/domain/band";
+import { BandSize } from "../../../context/band/domain/bandSize";
 
 interface ArtistReview {
   id: string;
@@ -37,7 +43,7 @@ export interface BandProfileResponseDto {
   id: string;
   bandId: string;
   bandName: string;
-  genre: string;
+  musicalStyleIds: string[];
   membersId: string[];
   bookingDates: string[];
   description: string;
@@ -51,16 +57,15 @@ export interface BandProfileResponseDto {
   price?: number;
   imageUrl?: string;
   rating?: number;
-
   bio?: string;
   followers?: number;
   following?: number;
-
+  weeklyAvailability?: WeeklyAvailability;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
+  performanceArea?: PerformanceArea;
   reviews?: ArtistReview[];
-
   media?: Media[];
-
   events?: Event[];
-
   socialLinks?: SocialLinks[];
 }

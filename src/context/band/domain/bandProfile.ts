@@ -1,4 +1,5 @@
-import { BandSize } from "../../offer/domain/bandSize";
+import { WeeklyAvailability } from "./band";
+import { BandSize } from "./bandSize";
 
 export interface ArtistReview {
   id: string;
@@ -33,11 +34,32 @@ interface SocialLinks {
   url: string;
 }
 
+interface HospitalityRider {
+  accommodation: string;
+  catering: string;
+  beverages: string;
+  specialRequirements: string;
+}
+
+interface TechnicalRider {
+  soundSystem: string;
+  microphones: string;
+  backline: string;
+  lighting: string;
+  otherRequirements: string;
+}
+
+interface PerformanceArea {
+  regions: string[];
+  travelPreferences: string[];
+  restrictions: string[];
+}
+
 export interface BandProfile {
   id: string;
   bandId: string;
   bandName: string;
-  genre: string;
+  musicalStyleIds: string[];
   membersId: string[];
   bookingDates: string[];
   description: string;
@@ -51,16 +73,15 @@ export interface BandProfile {
   price?: number;
   imageUrl?: string;
   rating?: number;
-
   bio?: string;
   followers?: number;
   following?: number;
-
+  weeklyAvailability: WeeklyAvailability;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
+  performanceArea?: PerformanceArea;
   reviews?: ArtistReview[];
-
   media?: Media[];
-
   events?: Event[];
-
   socialLinks?: SocialLinks[];
 }

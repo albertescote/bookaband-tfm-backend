@@ -6,7 +6,6 @@ import { RemoveMemberCommand } from "./removeMember.command";
 import UserId from "../../shared/domain/userId";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import { WrongPermissionsException } from "../exceptions/wrongPermissionsException";
-import Band from "../domain/band";
 import { FailedToUpdateBandAfterLeavingException } from "../exceptions/failedToUpdateBandAfterLeavingException";
 import { BandRole } from "../domain/bandRole";
 
@@ -59,25 +58,9 @@ export class RemoveMemberCommandHandler
       }
     }
 
-    const updatedMembers = bandPrimitives.members.filter(
-      (m) => m.id !== command.memberToRemoveId,
-    );
+    band.removeMember(new UserId(command.memberToRemoveId));
 
-    const updatedBand = await this.bandRepository.updateBand(
-      new Band(
-        new BandId(command.bandId),
-        bandPrimitives.name,
-        updatedMembers.map((m) => ({ id: new UserId(m.id), role: m.role })),
-        bandPrimitives.genre,
-        bandPrimitives.reviewCount,
-        bandPrimitives.followers,
-        bandPrimitives.following,
-        bandPrimitives.createdAt,
-        bandPrimitives.imageUrl,
-        bandPrimitives.rating,
-        bandPrimitives.bio,
-      ),
-    );
+    const updatedBand = await this.bandRepository.updateBand(band);
 
     if (!updatedBand) {
       throw new FailedToUpdateBandAfterLeavingException(command.bandId);

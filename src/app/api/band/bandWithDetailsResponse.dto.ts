@@ -1,10 +1,9 @@
-import { MusicGenre } from "../../../context/band/domain/musicGenre";
 import { BandRole } from "../../../context/band/domain/bandRole";
 
 export interface BandWithDetailsResponseDto {
   id: string;
   name: string;
-  genre: MusicGenre;
+  musicalStyleIds: string[];
   members: {
     id: string;
     userName: string;

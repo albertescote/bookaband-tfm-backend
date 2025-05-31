@@ -1,11 +1,11 @@
 import { BookingStatus } from "./bookingStatus";
-import OfferId from "../../shared/domain/offerId";
 import UserId from "../../shared/domain/userId";
 import BookingId from "../../shared/domain/bookingId";
+import BandId from "../../shared/domain/bandId";
 
 export interface BookingPrimitives {
   id: string;
-  offerId: string;
+  bandId: string;
   userId: string;
   status: BookingStatus;
   date: Date;
@@ -23,7 +23,7 @@ export interface BookingPrimitives {
 export class Booking {
   constructor(
     private id: BookingId,
-    private offerId: OfferId,
+    private bandId: BandId,
     private userId: UserId,
     private status: BookingStatus,
     private date: Date,
@@ -41,7 +41,7 @@ export class Booking {
   static fromPrimitives(primitives: BookingPrimitives): Booking {
     return new Booking(
       new BookingId(primitives.id),
-      new OfferId(primitives.offerId),
+      new BandId(primitives.bandId),
       new UserId(primitives.userId),
       primitives.status,
       primitives.date,
@@ -58,7 +58,7 @@ export class Booking {
   }
 
   static create(
-    offerId: OfferId,
+    bandId: BandId,
     userId: UserId,
     date: Date,
     name: string,
@@ -73,7 +73,7 @@ export class Booking {
   ): Booking {
     return new Booking(
       BookingId.generate(),
-      offerId,
+      bandId,
       userId,
       BookingStatus.PENDING,
       date,
@@ -92,7 +92,7 @@ export class Booking {
   toPrimitives(): BookingPrimitives {
     return {
       id: this.id.toPrimitive(),
-      offerId: this.offerId.toPrimitive(),
+      bandId: this.bandId.toPrimitive(),
       userId: this.userId.toPrimitive(),
       status: this.status,
       date: this.date,
@@ -120,8 +120,8 @@ export class Booking {
     this.status = BookingStatus.DECLINED;
   }
 
-  getOfferId() {
-    return this.offerId;
+  getBandId() {
+    return this.bandId;
   }
 
   getId() {

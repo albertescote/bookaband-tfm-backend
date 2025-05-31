@@ -2,7 +2,7 @@ import { BookingStatus } from "../../../context/booking/domain/bookingStatus";
 
 export interface BookingResponseWithDetailsDto {
   id: string;
-  offerId: string;
+  bandId: string;
   userId: string;
   status: BookingStatus;
   date: Date;

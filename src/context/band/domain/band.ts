@@ -1,14 +1,44 @@
 import BandId from "../../shared/domain/bandId";
 import UserId from "../../shared/domain/userId";
-import { MusicGenre } from "./musicGenre";
 import { BandRole } from "./bandRole";
 import { BandMember } from "./bandMember";
+
+export interface WeeklyAvailability {
+  monday: boolean;
+  tuesday: boolean;
+  wednesday: boolean;
+  thursday: boolean;
+  friday: boolean;
+  saturday: boolean;
+  sunday: boolean;
+}
+
+export interface HospitalityRider {
+  accommodation: string;
+  catering: string;
+  beverages: string;
+  specialRequirements: string;
+}
+
+export interface TechnicalRider {
+  soundSystem: string;
+  microphones: string;
+  backline: string;
+  lighting: string;
+  otherRequirements: string;
+}
+
+export interface PerformanceArea {
+  regions: string[];
+  travelPreferences: string[];
+  restrictions: string[];
+}
 
 export interface BandPrimitives {
   id: string;
   name: string;
   members: { id: string; role: BandRole }[];
-  genre: MusicGenre;
+  musicalStyleIds: string[];
   reviewCount: number;
   followers: number;
   following: number;
@@ -16,6 +46,17 @@ export interface BandPrimitives {
   rating?: number;
   imageUrl?: string;
   bio?: string;
+  price: number;
+  description: string;
+  location: string;
+  bandSize: string;
+  eventTypeIds: string[];
+  featured: boolean;
+  visible: boolean;
+  weeklyAvailability: WeeklyAvailability;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
+  performanceArea?: PerformanceArea;
 }
 
 export default class Band {
@@ -23,11 +64,30 @@ export default class Band {
     private id: BandId,
     private name: string,
     private members: BandMember[],
-    private genre: MusicGenre,
-    private reviewCount: number,
+    private musicalStyleIds: string[],
     private followers: number,
     private following: number,
     private createdAt: Date,
+    private price: number,
+    private description: string,
+    private location: string,
+    private bandSize: string,
+    private eventTypeIds: string[],
+    private featured: boolean = false,
+    private visible: boolean = true,
+    private weeklyAvailability: WeeklyAvailability = {
+      monday: true,
+      tuesday: true,
+      wednesday: true,
+      thursday: true,
+      friday: true,
+      saturday: true,
+      sunday: true,
+    },
+    private hospitalityRider?: HospitalityRider | undefined,
+    private technicalRider?: TechnicalRider | undefined,
+    private performanceArea?: PerformanceArea | undefined,
+    private reviewCount: number = 0,
     private imageUrl?: string | undefined,
     private rating?: number | undefined,
     private bio?: string | undefined,
@@ -36,19 +96,39 @@ export default class Band {
   static create(
     name: string,
     members: BandMember[],
-    genre: MusicGenre,
+    musicalStyleIds: string[],
+    price: number,
+    description: string,
+    location: string,
+    bandSize: string,
+    eventTypeIds: string[],
     imageUrl?: string,
     bio?: string,
+    weeklyAvailability?: WeeklyAvailability,
+    hospitalityRider?: HospitalityRider,
+    technicalRider?: TechnicalRider,
+    performanceArea?: PerformanceArea,
   ): Band {
     return new Band(
       BandId.generate(),
       name,
       members,
-      genre,
-      0,
+      musicalStyleIds,
       0,
       0,
       new Date(),
+      price,
+      description,
+      location,
+      bandSize,
+      eventTypeIds,
+      false,
+      true,
+      weeklyAvailability,
+      hospitalityRider,
+      technicalRider,
+      performanceArea,
+      0,
       imageUrl,
       undefined,
       bio,
@@ -63,11 +143,22 @@ export default class Band {
         id: new UserId(member.id),
         role: member.role,
       })),
-      primitives.genre,
-      primitives.reviewCount,
+      primitives.musicalStyleIds,
       primitives.followers,
       primitives.following,
       primitives.createdAt,
+      primitives.price,
+      primitives.description,
+      primitives.location,
+      primitives.bandSize,
+      primitives.eventTypeIds,
+      primitives.featured,
+      primitives.visible,
+      primitives.weeklyAvailability,
+      primitives.hospitalityRider,
+      primitives.technicalRider,
+      primitives.performanceArea,
+      primitives.reviewCount,
       primitives.imageUrl,
       primitives.rating,
       primitives.bio,
@@ -82,7 +173,7 @@ export default class Band {
         id: member.id.toPrimitive(),
         role: member.role,
       })),
-      genre: this.genre,
+      musicalStyleIds: this.musicalStyleIds,
       reviewCount: this.reviewCount,
       followers: this.followers,
       following: this.following,
@@ -90,6 +181,17 @@ export default class Band {
       imageUrl: this.imageUrl,
       rating: this.rating,
       bio: this.bio,
+      price: this.price,
+      description: this.description,
+      location: this.location,
+      bandSize: this.bandSize,
+      eventTypeIds: this.eventTypeIds,
+      featured: this.featured,
+      visible: this.visible,
+      weeklyAvailability: this.weeklyAvailability,
+      hospitalityRider: this.hospitalityRider,
+      technicalRider: this.technicalRider,
+      performanceArea: this.performanceArea,
     };
   }
 
@@ -116,5 +218,22 @@ export default class Band {
 
   getMembersId(): string[] {
     return this.members.map((member) => member.id.toPrimitive());
+  }
+
+  updateWeeklyAvailability(availability: WeeklyAvailability) {
+    this.weeklyAvailability = availability;
+  }
+
+  updateRiders(hospitalityRider?: HospitalityRider, technicalRider?: TechnicalRider) {
+    if (hospitalityRider !== undefined) {
+      this.hospitalityRider = hospitalityRider;
+    }
+    if (technicalRider !== undefined) {
+      this.technicalRider = technicalRider;
+    }
+  }
+
+  updatePerformanceArea(performanceArea: PerformanceArea) {
+    this.performanceArea = performanceArea;
   }
 }

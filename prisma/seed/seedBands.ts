@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { BandRole } from "../../src/context/band/domain/bandRole";
+import { BandSize } from "../../src/context/band/domain/bandSize";
 
 const prisma = new PrismaClient();
 
@@ -8,7 +9,7 @@ export async function seedBands() {
     data: {
       id: "b4ed7600-12da-4673-960d-ff29af2606db",
       name: "The Electric Waves",
-      genre: "Electronic",
+      musicalStyleIds: ["electronic", "synthwave"],
       imageUrl:
         "https://images.pexels.com/photos/12250627/pexels-photo-12250627.jpeg",
       rating: 4.5,
@@ -16,6 +17,46 @@ export async function seedBands() {
       followers: 1200,
       following: 85,
       createdAt: new Date(),
+      price: 1500,
+      description: "Electronic music band specializing in synthwave and ambient sounds",
+      location: "Barcelona",
+      bandSize: BandSize.BAND,
+      eventTypeIds: ["wedding", "corporate", "festival"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: true
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Vegetarian options available"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "4 wireless microphones",
+          backline: "Synthesizers and drum machines",
+          lighting: "Basic stage lighting",
+          otherRequirements: "Power outlets and extension cords"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Catalonia", "Valencia", "Balearic Islands"],
+          travelPreferences: ["Prefer venues within 200km radius"],
+          restrictions: ["No outdoor events during winter"]
+        }
+      },
       members: {
         create: [
           {
@@ -31,7 +72,7 @@ export async function seedBands() {
     data: {
       id: "824863a8-1e09-4d69-9e5d-8e0bff068129",
       name: "Sax & Soul",
-      genre: "Jazz",
+      musicalStyleIds: ["jazz", "soul"],
       imageUrl:
         "https://images.pexels.com/photos/3018075/pexels-photo-3018075.jpeg",
       rating: 4.6,
@@ -39,6 +80,46 @@ export async function seedBands() {
       followers: 980,
       following: 60,
       createdAt: new Date(),
+      price: 2000,
+      description: "Jazz quartet with soul influences, perfect for sophisticated events",
+      location: "Madrid",
+      bandSize: BandSize.TRIO,
+      eventTypeIds: ["wedding", "corporate", "private"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: false
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Allergic to nuts"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "4 microphones",
+          backline: "Piano, bass, drums",
+          lighting: "Stage lighting",
+          otherRequirements: "Piano tuning required"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
+          travelPreferences: ["Prefer venues within 150km radius"],
+          restrictions: ["No outdoor events during summer"]
+        }
+      },
       members: {
         create: [
           {
@@ -54,7 +135,7 @@ export async function seedBands() {
     data: {
       id: "eef58ab1-c216-4d23-81cd-432ab1637caa",
       name: "Los Mariachis del Sol",
-      genre: "Latin",
+      musicalStyleIds: ["latin", "traditional"],
       imageUrl:
         "https://images.pexels.com/photos/8639009/pexels-photo-8639009.jpeg",
       rating: 4.7,
@@ -62,6 +143,46 @@ export async function seedBands() {
       followers: 1500,
       following: 40,
       createdAt: new Date(),
+      price: 1800,
+      description: "Traditional Mexican mariachi band with modern arrangements",
+      location: "Valencia",
+      bandSize: BandSize.BAND,
+      eventTypeIds: ["wedding", "festival", "private"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: true
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Traditional Mexican food preferred"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "6 microphones",
+          backline: "Traditional instruments provided",
+          lighting: "Stage lighting",
+          otherRequirements: "Outdoor performance space preferred"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Valencia", "Murcia", "Alicante"],
+          travelPreferences: ["Prefer venues within 100km radius"],
+          restrictions: ["No indoor venues without proper ventilation"]
+        }
+      },
       members: {
         create: [
           {
@@ -77,7 +198,7 @@ export async function seedBands() {
     data: {
       id: "0795cc24-7738-4ab4-8e1c-510d30c32c86",
       name: "Clásicos de Cámara",
-      genre: "Classical",
+      musicalStyleIds: ["classical", "chamber"],
       imageUrl:
         "https://images.pexels.com/photos/3769099/pexels-photo-3769099.jpeg",
       rating: 4.8,
@@ -85,6 +206,46 @@ export async function seedBands() {
       followers: 800,
       following: 35,
       createdAt: new Date(),
+      price: 1200,
+      description: "Chamber music ensemble specializing in classical music",
+      location: "Barcelona",
+      bandSize: BandSize.TRIO,
+      eventTypeIds: ["wedding", "corporate", "private"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: false
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Vegetarian options available"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "2 microphones",
+          backline: "String instruments",
+          lighting: "Stage lighting",
+          otherRequirements: "No loud amplification"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Barcelona", "Tarragona", "Girona"],
+          travelPreferences: ["Prefer venues within 100km radius"],
+          restrictions: ["No outdoor events during winter"]
+        }
+      },
       members: {
         create: [
           {
@@ -100,7 +261,7 @@ export async function seedBands() {
     data: {
       id: "2f71420b-c2ed-4eed-a8c6-02a061b95958",
       name: "Funkadelic Vibes",
-      genre: "Funk",
+      musicalStyleIds: ["funk", "soul"],
       imageUrl:
         "https://images.pexels.com/photos/1365167/pexels-photo-1365167.jpeg",
       rating: 4.9,
@@ -108,6 +269,46 @@ export async function seedBands() {
       followers: 2000,
       following: 90,
       createdAt: new Date(),
+      price: 2500,
+      description: "Funk and soul band with a focus on live performances",
+      location: "Madrid",
+      bandSize: BandSize.BAND,
+      eventTypeIds: ["corporate", "private", "festival"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: false
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Allergic to nuts"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "8 microphones",
+          backline: "Bass, drums, keyboards",
+          lighting: "Stage lighting",
+          otherRequirements: "Power outlets and extension cords"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
+          travelPreferences: ["Prefer venues within 150km radius"],
+          restrictions: ["No outdoor events during summer"]
+        }
+      },
       members: {
         create: [
           {
@@ -123,7 +324,7 @@ export async function seedBands() {
     data: {
       id: "724382b4-6878-4f84-b177-9668b88cc6d9",
       name: "Midnight Rockers",
-      genre: "Rock",
+      musicalStyleIds: ["rock", "late-night"],
       imageUrl:
         "https://images.pexels.com/photos/3807093/pexels-photo-3807093.jpeg",
       rating: 5.0,
@@ -131,6 +332,46 @@ export async function seedBands() {
       followers: 2500,
       following: 100,
       createdAt: new Date(),
+      price: 3000,
+      description: "Rock band known for energetic late-night performances",
+      location: "Barcelona",
+      bandSize: BandSize.BAND,
+      eventTypeIds: ["corporate", "private", "festival"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: true,
+        saturday: true,
+        sunday: true
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Allergic to nuts"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "10 microphones",
+          backline: "Guitars, bass, drums",
+          lighting: "Stage lighting",
+          otherRequirements: "Power outlets and extension cords"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Barcelona", "Tarragona", "Girona"],
+          travelPreferences: ["Prefer venues within 100km radius"],
+          restrictions: ["No outdoor events during winter"]
+        }
+      },
       members: {
         create: [
           {
@@ -146,7 +387,7 @@ export async function seedBands() {
     data: {
       id: "f5e06fc0-9a0e-4f53-a447-0374e9cb12c5",
       name: "Indie Lights",
-      genre: "Indie",
+      musicalStyleIds: ["indie", "shimmering"],
       imageUrl:
         "https://images.pexels.com/photos/1778810/pexels-photo-1778810.jpeg",
       rating: 4.4,
@@ -154,6 +395,46 @@ export async function seedBands() {
       followers: 1100,
       following: 70,
       createdAt: new Date(),
+      price: 1000,
+      description: "Indie rock band with a focus on shimmering guitar sounds",
+      location: "Barcelona",
+      bandSize: BandSize.TRIO,
+      eventTypeIds: ["corporate", "private", "festival"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: false
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Vegetarian options available"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "2 microphones",
+          backline: "Guitars, bass",
+          lighting: "Stage lighting",
+          otherRequirements: "No loud amplification"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Barcelona", "Tarragona", "Girona"],
+          travelPreferences: ["Prefer venues within 100km radius"],
+          restrictions: ["No outdoor events during winter"]
+        }
+      },
       members: {
         create: [
           {
@@ -169,7 +450,7 @@ export async function seedBands() {
     data: {
       id: "e4d27d4f-7701-4e60-bc4f-77773c2c16fc",
       name: "Groove Collective",
-      genre: "Soul",
+      musicalStyleIds: ["soul", "groove"],
       imageUrl:
         "https://images.pexels.com/photos/9009561/pexels-photo-9009561.jpeg",
       rating: 4.3,
@@ -177,6 +458,46 @@ export async function seedBands() {
       followers: 760,
       following: 42,
       createdAt: new Date(),
+      price: 1500,
+      description: "Soul and groove band with a focus on live performances",
+      location: "Madrid",
+      bandSize: BandSize.BAND,
+      eventTypeIds: ["corporate", "private", "festival"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: false
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Vegetarian options available"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "4 microphones",
+          backline: "Bass, drums",
+          lighting: "Stage lighting",
+          otherRequirements: "Power outlets and extension cords"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
+          travelPreferences: ["Prefer venues within 150km radius"],
+          restrictions: ["No outdoor events during summer"]
+        }
+      },
       members: {
         create: [
           {
@@ -192,7 +513,7 @@ export async function seedBands() {
     data: {
       id: "aac0e317-f109-4cd0-9b6d-342b41cf1b9e",
       name: "The Neo Classics",
-      genre: "Neo-Soul",
+      musicalStyleIds: ["neo-soul", "classic"],
       imageUrl:
         "https://images.pexels.com/photos/6031335/pexels-photo-6031335.jpeg",
       rating: 4.6,
@@ -200,6 +521,46 @@ export async function seedBands() {
       followers: 1340,
       following: 58,
       createdAt: new Date(),
+      price: 2000,
+      description: "Neo-soul band with a focus on classic soul music",
+      location: "Barcelona",
+      bandSize: BandSize.TRIO,
+      eventTypeIds: ["corporate", "private", "festival"],
+      featured: true,
+      visible: true,
+      weeklyAvailability: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: false
+      },
+      hospitalityRider: {
+        create: {
+          accommodation: "Hotel room for each band member",
+          catering: "Full board meals",
+          beverages: "Water, soft drinks, and alcoholic beverages",
+          specialRequirements: "Vegetarian options available"
+        }
+      },
+      technicalRider: {
+        create: {
+          soundSystem: "Professional PA system",
+          microphones: "2 microphones",
+          backline: "Bass, keyboards",
+          lighting: "Stage lighting",
+          otherRequirements: "No loud amplification"
+        }
+      },
+      performanceArea: {
+        create: {
+          regions: ["Barcelona", "Tarragona", "Girona"],
+          travelPreferences: ["Prefer venues within 100km radius"],
+          restrictions: ["No outdoor events during winter"]
+        }
+      },
       members: {
         create: [
           {

@@ -1,10 +1,9 @@
-import { MusicGenre } from "../../../context/band/domain/musicGenre";
 import { BandRole } from "../../../context/band/domain/bandRole";
 
 export interface BandResponseDto {
   id: string;
   name: string;
-  genre: MusicGenre;
+  musicalStyleIds: string[];
   members: { id: string; role: BandRole }[];
   followers: number;
   following: number;
@@ -12,4 +11,11 @@ export interface BandResponseDto {
   rating?: number;
   imageUrl?: string;
   bio?: string;
+  price: number;
+  description: string;
+  location: string;
+  bandSize: string;
+  eventTypeIds: string[];
+  featured: boolean;
+  visible: boolean;
 }

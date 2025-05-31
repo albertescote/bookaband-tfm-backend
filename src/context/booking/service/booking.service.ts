@@ -2,14 +2,12 @@ import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import { Booking, BookingPrimitives } from "../domain/booking";
 import { BookingRepository } from "../infrastructure/booking.repository";
 import { Injectable } from "@nestjs/common";
-import OfferId from "../../shared/domain/offerId";
 import UserId from "../../shared/domain/userId";
 import BookingId from "../../shared/domain/bookingId";
 import { Role } from "../../shared/domain/role";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { BookingNotFoundException } from "../exceptions/bookingNotFoundException";
 import { NotOwnerOfTheRequestedBookingException } from "../exceptions/notOwnerOfTheRequestedBookingException";
-import { OfferNotFoundException } from "../exceptions/offerNotFoundException";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import BandId from "../../shared/domain/bandId";
 import { NotOwnerOfTheRequestedBandException } from "../exceptions/notOwnerOfTheRequestedBandException";
@@ -18,7 +16,7 @@ import { BookingWithDetailsPrimitives } from "../domain/bookingWithDetails";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 
 export interface CreateBookingRequest {
-  offerId: string;
+  bandId: string;
   date: string;
   name: string;
   country: string;
@@ -44,7 +42,7 @@ export class BookingService {
     request: CreateBookingRequest,
   ): Promise<BookingPrimitives> {
     const newBooking = Booking.create(
-      new OfferId(request.offerId),
+      new BandId(request.bandId),
       new UserId(userAuthInfo.id),
       new Date(request.date),
       request.name,
@@ -74,7 +72,7 @@ export class BookingService {
     }
     const isOwner = bookingWithDetails.isOwner(new UserId(userAuthInfo.id));
     const isBandMember = await this.checkIsBandMember(
-      bookingWithDetails.getOfferId(),
+      bookingWithDetails.getBandId(),
       bookingWithDetails.getId(),
       new UserId(userAuthInfo.id),
     );
@@ -124,7 +122,7 @@ export class BookingService {
       throw new BookingNotFoundException(id);
     }
     const isBandMember = await this.checkIsBandMember(
-      booking.getOfferId(),
+      booking.getBandId(),
       booking.getId(),
       new UserId(userAuthInfo.id),
     );
@@ -150,7 +148,7 @@ export class BookingService {
       throw new BookingNotFoundException(id);
     }
     const isBandMember = await this.checkIsBandMember(
-      booking.getOfferId(),
+      booking.getBandId(),
       booking.getId(),
       new UserId(userAuthInfo.id),
     );
@@ -167,18 +165,12 @@ export class BookingService {
   }
 
   private async checkIsBandMember(
-    offerId: OfferId,
+    bandId: BandId,
     bookingId: BookingId,
     userId: UserId,
   ): Promise<boolean> {
-    const offer = await this.moduleConnectors.obtainOfferInformation(
-      offerId.toPrimitive(),
-    );
-    if (!offer) {
-      throw new OfferNotFoundException(bookingId.toPrimitive());
-    }
     const bandMembers = await this.moduleConnectors.obtainBandMembers(
-      offer.bandId,
+      bandId.toPrimitive(),
     );
     if (!bandMembers) {
       throw new BandNotFoundException(bookingId.toPrimitive());

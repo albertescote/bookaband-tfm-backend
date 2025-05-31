@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { seedUsers } from "./seedUsers";
 import { seedBands } from "./seedBands";
-import { seedOffers } from "./seedOffers";
 import { seedBillingAddresses } from "./seedBillingAddresses";
 import { seedPaymentMethods } from "./seedPaymentMethods";
 import { seedEmailVerifications } from "./seedEmailVerifications";
@@ -18,11 +17,12 @@ const prisma = new PrismaClient();
 async function clearDatabase() {
   await prisma.message.deleteMany();
   await prisma.chat.deleteMany();
-  await prisma.equipment.deleteMany();
   await prisma.booking.deleteMany();
   await prisma.paymentMethod.deleteMany();
   await prisma.billingAddress.deleteMany();
-  await prisma.offer.deleteMany();
+  await prisma.hospitalityRider.deleteMany();
+  await prisma.technicalRider.deleteMany();
+  await prisma.performanceArea.deleteMany();
   await prisma.band.deleteMany();
   await prisma.emailVerification.deleteMany();
   await prisma.user.deleteMany();
@@ -41,7 +41,6 @@ async function main() {
   await seedUsers();
   await seedEmailVerifications();
   await seedBands();
-  await seedOffers();
   await seedBillingAddresses();
   await seedPaymentMethods();
   await seedBookings();

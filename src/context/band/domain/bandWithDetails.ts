@@ -1,5 +1,4 @@
 import BandId from "../../shared/domain/bandId";
-import { MusicGenre } from "./musicGenre";
 import { BandRole } from "./bandRole";
 
 export interface Member {
@@ -13,7 +12,7 @@ export interface BandWithDetailsPrimitives {
   id: string;
   name: string;
   members: Member[];
-  genre: MusicGenre;
+  musicalStyleIds: string[];
   imageUrl?: string;
 }
 
@@ -22,7 +21,7 @@ export default class BandWithDetails {
     private id: BandId,
     private name: string,
     private members: Member[],
-    private genre: MusicGenre,
+    private musicalStyleIds: string[],
     private imageUrl?: string,
   ) {}
 
@@ -31,7 +30,7 @@ export default class BandWithDetails {
       new BandId(band.id),
       band.name,
       band.members,
-      band.genre,
+      band.musicalStyleIds,
       band.imageUrl,
     );
   }
@@ -41,7 +40,7 @@ export default class BandWithDetails {
       id: this.id.toPrimitive(),
       name: this.name,
       members: this.members,
-      genre: this.genre,
+      musicalStyleIds: this.musicalStyleIds,
       imageUrl: this.imageUrl,
     };
   }

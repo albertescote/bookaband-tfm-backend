@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from "../../../app/exceptions/internalServerErrorException";
 
-export class NoEventTypesRegisteredException extends InternalServerErrorException {
+export class BandNotUpdatedException extends InternalServerErrorException {
   constructor() {
-    super("No event types registered");
+    super("Band could not be updated");
   }
 }
