@@ -113,4 +113,8 @@ export default class Band {
   isAdmin(memberId: UserId): boolean {
     return this.getMemberRole(memberId) === BandRole.ADMIN;
   }
+
+  getMembersId(): string[] {
+    return this.members.map((member) => member.id.toPrimitive());
+  }
 }

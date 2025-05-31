@@ -8,6 +8,7 @@ import PrismaService from "../shared/infrastructure/db/prisma.service";
 import { GetBandInfoQueryHandler } from "./service/getBandInfo.queryHandler";
 import { JoinBandCommandHandler } from "./service/joinBand.commandHandler";
 import { LeaveBandCommandHandler } from "./service/leaveBand.commandHandler";
+import { RemoveMemberCommandHandler } from "./service/removeMember.commandHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -17,6 +18,7 @@ import { LeaveBandCommandHandler } from "./service/leaveBand.commandHandler";
     GetBandInfoQueryHandler,
     JoinBandCommandHandler,
     LeaveBandCommandHandler,
+    RemoveMemberCommandHandler,
     BandRepository,
     ModuleConnectors,
     PrismaService,
@@ -27,6 +29,7 @@ import { LeaveBandCommandHandler } from "./service/leaveBand.commandHandler";
     GetBandInfoQueryHandler,
     JoinBandCommandHandler,
     LeaveBandCommandHandler,
+    RemoveMemberCommandHandler,
   ],
 })
 export class BandModule {}

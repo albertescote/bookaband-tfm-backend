@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Request,
@@ -23,6 +24,7 @@ import { BandProfileResponseDto } from "./bandProfileResponse.dto";
 import { JwtOptionalGuard } from "../../../context/auth/guards/jwt-optional.guard";
 import { CommandBus } from "@nestjs/cqrs";
 import { LeaveBandCommand } from "../../../context/band/service/leaveBand.command";
+import { RemoveMemberCommand } from "../../../context/band/service/removeMember.command";
 
 @Controller("bands")
 export class BandController {
@@ -120,7 +122,21 @@ export class BandController {
     @Param() idParamDto: IdParamDto,
   ): Promise<void> {
     await this.commandBus.execute(
-      new LeaveBandCommand(idParamDto.id, req.user.id)
+      new LeaveBandCommand(idParamDto.id, req.user.id),
+    );
+    return;
+  }
+
+  @Delete("/:id/members/:memberId")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(204)
+  async removeMember(
+    @Request() req: { user: UserAuthInfo },
+    @Param("id", ParseUUIDPipe) bandId: string,
+    @Param("memberId", ParseUUIDPipe) memberId: string,
+  ): Promise<void> {
+    await this.commandBus.execute(
+      new RemoveMemberCommand(bandId, req.user.id, memberId),
     );
     return;
   }

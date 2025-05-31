@@ -16,6 +16,6 @@ export class GetBandMembersQueryHandler
     if (!band) {
       return undefined;
     }
-    return band.toPrimitives().membersId;
+    return band.getMembersId();
   }
 }
