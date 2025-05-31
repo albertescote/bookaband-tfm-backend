@@ -3,10 +3,11 @@ import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import Band from "../domain/band";
 import BandId from "../../shared/domain/bandId";
 import { MusicGenre } from "../domain/musicGenre";
-import UserId from "../../shared/domain/userId";
 import BandWithDetails from "../domain/bandWithDetails";
 import { BandProfile } from "../domain/bandProfile";
 import { BandSize } from "../../offer/domain/bandSize";
+import { BandRole } from "../domain/bandRole";
+import UserId from "../../shared/domain/userId";
 
 export interface UserBand {
   id: string;
@@ -34,7 +35,10 @@ export class BandRepository {
           createdAt: primitives.createdAt,
           rating: primitives.rating,
           members: {
-            connect: primitives.membersId.map((id) => ({ id })),
+            create: primitives.members.map((member) => ({
+              userId: member.id,
+              role: member.role,
+            })),
           },
         },
       });
@@ -58,7 +62,10 @@ export class BandRepository {
           id: band.id,
           name: band.name,
           genre: MusicGenre[band.genre],
-          membersId: band.members.map((m) => m.id),
+          members: band.members.map((m) => ({
+            id: m.userId,
+            role: m.role as BandRole,
+          })),
           imageUrl: band.imageUrl,
           rating: band.rating,
           reviewCount: band.artistReview.length,
@@ -85,7 +92,11 @@ export class BandRepository {
           followers: primitives.followers,
           following: primitives.following,
           members: {
-            set: primitives.membersId.map((id) => ({ id })),
+            deleteMany: {},
+            create: primitives.members.map((member) => ({
+              userId: member.id,
+              role: member.role,
+            })),
           },
         },
       });
@@ -110,7 +121,7 @@ export class BandRepository {
       where: {
         members: {
           some: {
-            id: userId.toPrimitive(),
+            userId: userId.toPrimitive(),
           },
         },
       },
@@ -129,11 +140,14 @@ export class BandRepository {
       where: { id: id.toPrimitive() },
       include: {
         members: {
-          select: {
-            id: true,
-            firstName: true,
-            familyName: true,
-            imageUrl: true,
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+                imageUrl: true,
+              },
+            },
           },
         },
       },
@@ -144,9 +158,10 @@ export class BandRepository {
           id: band.id,
           name: band.name,
           members: band.members.map((member) => ({
-            id: member.id,
-            userName: `${member.firstName} ${member.familyName}`,
-            imageUrl: member.imageUrl,
+            id: member.userId,
+            userName: `${member.user.firstName} ${member.user.familyName}`,
+            imageUrl: member.user.imageUrl,
+            role: member.role as BandRole,
           })),
           genre: MusicGenre[band.genre],
           imageUrl: band.imageUrl,
@@ -188,7 +203,7 @@ export class BandRepository {
       bandId: band.id,
       bandName: band.name,
       genre: band.genre,
-      membersId: band.members.map((m) => m.id),
+      membersId: band.members.map((m) => m.userId),
       bookingDates: band.offer?.bookings.map((b) => b.date.toISOString()) ?? [],
       description: band.offer?.description ?? "",
       location: band.offer?.location ?? "",

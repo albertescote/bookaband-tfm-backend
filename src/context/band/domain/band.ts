@@ -1,11 +1,13 @@
 import BandId from "../../shared/domain/bandId";
 import UserId from "../../shared/domain/userId";
 import { MusicGenre } from "./musicGenre";
+import { BandRole } from "./bandRole";
+import { BandMember } from "./bandMember";
 
 export interface BandPrimitives {
   id: string;
   name: string;
-  membersId: string[];
+  members: { id: string; role: BandRole }[];
   genre: MusicGenre;
   reviewCount: number;
   followers: number;
@@ -20,7 +22,7 @@ export default class Band {
   constructor(
     private id: BandId,
     private name: string,
-    private membersId: UserId[],
+    private members: BandMember[],
     private genre: MusicGenre,
     private reviewCount: number,
     private followers: number,
@@ -33,7 +35,7 @@ export default class Band {
 
   static create(
     name: string,
-    membersId: UserId[],
+    members: BandMember[],
     genre: MusicGenre,
     imageUrl?: string,
     bio?: string,
@@ -41,7 +43,7 @@ export default class Band {
     return new Band(
       BandId.generate(),
       name,
-      membersId,
+      members,
       genre,
       0,
       0,
@@ -57,7 +59,10 @@ export default class Band {
     return new Band(
       new BandId(primitives.id),
       primitives.name,
-      primitives.membersId.map((id) => new UserId(id)),
+      primitives.members.map((member) => ({
+        id: new UserId(member.id),
+        role: member.role,
+      })),
       primitives.genre,
       primitives.reviewCount,
       primitives.followers,
@@ -73,7 +78,10 @@ export default class Band {
     return {
       id: this.id.toPrimitive(),
       name: this.name,
-      membersId: this.membersId.map((id) => id.toPrimitive()),
+      members: this.members.map((member) => ({
+        id: member.id.toPrimitive(),
+        role: member.role,
+      })),
       genre: this.genre,
       reviewCount: this.reviewCount,
       followers: this.followers,
@@ -85,7 +93,24 @@ export default class Band {
     };
   }
 
-  addMember(newMemberId: UserId) {
-    this.membersId.push(newMemberId);
+  addMember(newMemberId: UserId, role: BandRole = BandRole.MEMBER) {
+    this.members.push({ id: newMemberId, role });
+  }
+
+  removeMember(memberId: UserId) {
+    this.members = this.members.filter(
+      (member) => member.id.toPrimitive() !== memberId.toPrimitive(),
+    );
+  }
+
+  getMemberRole(memberId: UserId): BandRole | undefined {
+    const member = this.members.find(
+      (m) => m.id.toPrimitive() === memberId.toPrimitive(),
+    );
+    return member?.role;
+  }
+
+  isAdmin(memberId: UserId): boolean {
+    return this.getMemberRole(memberId) === BandRole.ADMIN;
   }
 }
