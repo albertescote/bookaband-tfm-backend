@@ -21,10 +21,15 @@ import { GetUserBandsResponse } from "./getUserBandsResponse.dto";
 import { BandWithDetailsResponseDto } from "./bandWithDetailsResponse.dto";
 import { BandProfileResponseDto } from "./bandProfileResponse.dto";
 import { JwtOptionalGuard } from "../../../context/auth/guards/jwt-optional.guard";
+import { CommandBus } from "@nestjs/cqrs";
+import { LeaveBandCommand } from "../../../context/band/service/leaveBand.command";
 
 @Controller("bands")
 export class BandController {
-  constructor(private readonly bandService: BandService) {}
+  constructor(
+    private readonly bandService: BandService,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   @Post("/")
   @UseGuards(JwtCustomGuard)
@@ -104,6 +109,19 @@ export class BandController {
     @Param() idParamDto: IdParamDto,
   ): Promise<void> {
     await this.bandService.deleteById(req.user, idParamDto.id);
+    return;
+  }
+
+  @Post("/:id/leave")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(204)
+  async leave(
+    @Request() req: { user: UserAuthInfo },
+    @Param() idParamDto: IdParamDto,
+  ): Promise<void> {
+    await this.commandBus.execute(
+      new LeaveBandCommand(idParamDto.id, req.user.id)
+    );
     return;
   }
 }
