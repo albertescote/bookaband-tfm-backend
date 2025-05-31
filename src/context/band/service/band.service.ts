@@ -13,11 +13,21 @@ import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { MemberIdNotFoundException } from "../exceptions/memberIdNotFoundException";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { BandProfile } from "../domain/bandProfile";
+import { BandRole } from "../domain/bandRole";
+import { AtLeastOneAdminRequiredException } from "../exceptions/atLeastOneAdminRequiredException";
 
-export interface BandRequest {
+export interface CreateBandRequest {
   name: string;
   genre: MusicGenre;
   membersId?: string[];
+  imageUrl?: string;
+  bio?: string;
+}
+
+export interface UpdateBandRequest {
+  name: string;
+  genre: MusicGenre;
+  members: { id: string; role: BandRole }[];
   imageUrl?: string;
   bio?: string;
 }
@@ -26,7 +36,7 @@ export interface BandResponse {
   id: string;
   name: string;
   genre: MusicGenre;
-  membersId: string[];
+  members: { id: string; role: BandRole }[];
   followers: number;
   following: number;
   reviewCount: number;
@@ -43,6 +53,7 @@ export interface BandWithDetailsResponse {
     id: string;
     userName: string;
     imageUrl?: string;
+    role: BandRole;
   }[];
   imageUrl?: string;
 }
@@ -63,7 +74,7 @@ export class BandService {
   @RoleAuth([Role.Musician])
   async create(
     userAuthInfo: UserAuthInfo,
-    request: BandRequest,
+    request: CreateBandRequest,
   ): Promise<BandResponse> {
     const membersId: UserId[] = await this.checkMembersIdExistence(
       request.membersId,
@@ -71,7 +82,12 @@ export class BandService {
     );
     const band = Band.create(
       request.name,
-      membersId,
+      membersId.map((userId) => {
+        if (userId.toPrimitive() === userAuthInfo.id) {
+          return { id: userId, role: BandRole.ADMIN };
+        }
+        return { id: userId, role: BandRole.MEMBER };
+      }),
       request.genre,
       request.imageUrl,
       request.bio,
@@ -90,7 +106,7 @@ export class BandService {
       throw new BandNotFoundException(id);
     }
     const storedBandPrimitives = storedBand.toPrimitives();
-    if (!storedBandPrimitives.membersId.find((id) => id === userAuthInfo.id)) {
+    if (!storedBandPrimitives.members.find((m) => m.id === userAuthInfo.id)) {
       throw new WrongPermissionsException("get band");
     }
     return storedBandPrimitives;
@@ -115,7 +131,18 @@ export class BandService {
     ) {
       throw new WrongPermissionsException("get band");
     }
-    return storedBandPrimitives;
+    return {
+      id: storedBandPrimitives.id,
+      name: storedBandPrimitives.name,
+      genre: storedBandPrimitives.genre,
+      members: storedBandPrimitives.members.map((m) => ({
+        id: m.id,
+        userName: m.userName,
+        imageUrl: m.imageUrl,
+        role: m.role,
+      })),
+      imageUrl: storedBandPrimitives.imageUrl,
+    };
   }
 
   @RoleAuth([Role.Musician, Role.Client, Role.Provider])
@@ -138,25 +165,33 @@ export class BandService {
   async update(
     userAuthInfo: UserAuthInfo,
     id: string,
-    request: BandRequest,
+    request: UpdateBandRequest,
   ): Promise<BandResponse> {
     const oldBand = await this.bandRepository.getBandById(new BandId(id));
     if (!oldBand) {
       throw new BandNotFoundException(id);
     }
-    const oldBandPrimitives = oldBand.toPrimitives();
-    if (!oldBandPrimitives.membersId.find((id) => id === userAuthInfo.id)) {
-      throw new WrongPermissionsException("get band");
+
+    if (!oldBand.isAdmin(new UserId(userAuthInfo.id))) {
+      throw new WrongPermissionsException(
+        "update band - only admins can update band details",
+      );
     }
-    const membersId: UserId[] = await this.checkMembersIdExistence(
-      request.membersId,
+
+    await this.checkMembersIdExistence(
+      request.members.map((member) => member.id),
       userAuthInfo.id,
     );
+    await this.checkAtLeastOneAdmin(request.members);
+    const oldBandPrimitives = oldBand.toPrimitives();
     const updatedBand = await this.bandRepository.updateBand(
       new Band(
         new BandId(id),
         request.name,
-        membersId,
+        request.members.map((member) => ({
+          id: new UserId(member.id),
+          role: member.role,
+        })),
         request.genre,
         oldBandPrimitives.reviewCount,
         oldBandPrimitives.followers,
@@ -181,10 +216,11 @@ export class BandService {
     if (!oldBand) {
       throw new BandNotFoundException(id);
     }
-    if (
-      !oldBand.toPrimitives().membersId.find((id) => id === userAuthInfo.id)
-    ) {
-      throw new WrongPermissionsException("get band");
+
+    if (!oldBand.isAdmin(new UserId(userAuthInfo.id))) {
+      throw new WrongPermissionsException(
+        "delete band - only admins can delete the band",
+      );
     }
     const deleted = await this.bandRepository.deleteBand(new BandId(id));
     if (!deleted) {
@@ -208,8 +244,11 @@ export class BandService {
     return userAuthInfo.id ? bandProfile : shaped;
   }
 
-  private async checkMembersIdExistence(membersId: string[], userId: string) {
-    if (!membersId) {
+  private async checkMembersIdExistence(
+    membersId: string[],
+    userId: string,
+  ): Promise<UserId[]> {
+    if (!membersId || membersId.length === 0) {
       return [new UserId(userId)];
     }
     let members: UserId[] = [];
@@ -224,5 +263,15 @@ export class BandService {
       members.push(new UserId(userId));
     }
     return members;
+  }
+
+  private async checkAtLeastOneAdmin(
+    members: { id: string; role: BandRole }[],
+  ) {
+    const admins = members.filter((member) => member.role === BandRole.ADMIN);
+    if (admins.length === 0) {
+      throw new AtLeastOneAdminRequiredException();
+    }
+    return;
   }
 }

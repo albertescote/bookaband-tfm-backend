@@ -1,10 +1,12 @@
 import BandId from "../../shared/domain/bandId";
 import { MusicGenre } from "./musicGenre";
+import { BandRole } from "./bandRole";
 
 export interface Member {
   id: string;
   userName: string;
   imageUrl?: string;
+  role: BandRole;
 }
 
 export interface BandWithDetailsPrimitives {

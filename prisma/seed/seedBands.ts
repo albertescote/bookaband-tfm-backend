@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { BandRole } from "../../src/context/band/domain/bandRole";
 
 const prisma = new PrismaClient();
 
@@ -16,7 +17,12 @@ export async function seedBands() {
       following: 85,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "f2f272b4-e902-4677-a709-ab333e3d280c" }],
+        create: [
+          {
+            user: { connect: { id: "f2f272b4-e902-4677-a709-ab333e3d280c" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
@@ -34,7 +40,12 @@ export async function seedBands() {
       following: 60,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "892b48de-a91a-4c30-9c89-3162f7aa815c" }],
+        create: [
+          {
+            user: { connect: { id: "892b48de-a91a-4c30-9c89-3162f7aa815c" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
@@ -52,7 +63,12 @@ export async function seedBands() {
       following: 40,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "f268b4b2-9146-4f60-8cce-96e6daae0d5d" }],
+        create: [
+          {
+            user: { connect: { id: "f268b4b2-9146-4f60-8cce-96e6daae0d5d" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
@@ -70,7 +86,12 @@ export async function seedBands() {
       following: 35,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "995cf05d-f641-4874-8bed-31742212cddd" }],
+        create: [
+          {
+            user: { connect: { id: "995cf05d-f641-4874-8bed-31742212cddd" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
@@ -88,7 +109,12 @@ export async function seedBands() {
       following: 90,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "97295898-f96d-4e30-b706-38c351165d0c" }],
+        create: [
+          {
+            user: { connect: { id: "97295898-f96d-4e30-b706-38c351165d0c" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
@@ -106,7 +132,12 @@ export async function seedBands() {
       following: 100,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "1eb2a6cf-0102-4b93-84e5-69d9a26ab519" }],
+        create: [
+          {
+            user: { connect: { id: "1eb2a6cf-0102-4b93-84e5-69d9a26ab519" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
@@ -124,7 +155,12 @@ export async function seedBands() {
       following: 70,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "892b48de-a91a-4c30-9c89-3162f7aa815c" }],
+        create: [
+          {
+            user: { connect: { id: "892b48de-a91a-4c30-9c89-3162f7aa815c" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
@@ -142,7 +178,12 @@ export async function seedBands() {
       following: 42,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "bb496cb6-15d3-4739-93bf-4a790f0668f2" }],
+        create: [
+          {
+            user: { connect: { id: "bb496cb6-15d3-4739-93bf-4a790f0668f2" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
@@ -160,7 +201,12 @@ export async function seedBands() {
       following: 58,
       createdAt: new Date(),
       members: {
-        connect: [{ id: "f2f272b4-e902-4677-a709-ab333e3d280c" }],
+        create: [
+          {
+            user: { connect: { id: "f2f272b4-e902-4677-a709-ab333e3d280c" } },
+            role: BandRole.ADMIN,
+          },
+        ],
       },
     },
   });
