@@ -5,6 +5,7 @@ import {
   WeeklyAvailability,
 } from "../../../context/band/domain/band";
 import { BandSize } from "../../../context/band/domain/bandSize";
+import { BandRole } from "../../../context/band/domain/bandRole";
 
 interface ArtistReview {
   id: string;
@@ -42,10 +43,8 @@ interface SocialLinks {
 
 export interface BandProfileResponseDto {
   id: string;
-  bandId: string;
-  bandName: string;
+  name: string;
   musicalStyleIds: string[];
-  membersId: string[];
   bookingDates: string[];
   location: string;
   featured: boolean;
@@ -53,6 +52,7 @@ export interface BandProfileResponseDto {
   eventTypeIds: string[];
   reviewCount: number;
   createdDate: Date;
+  members?: { id: string; role: BandRole; name: string; imageUrl?: string }[];
   price?: number;
   imageUrl?: string;
   rating?: number;

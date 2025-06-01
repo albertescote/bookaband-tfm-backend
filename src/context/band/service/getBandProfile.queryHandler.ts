@@ -21,6 +21,10 @@ export class GetBandProfileQueryHandler
       throw new BandNotFoundException(id);
     }
     const { price, ...shaped } = bandProfile;
+    if (!bandProfile.members.find((member) => member.id === userId)) {
+      const { members, ...bandProfileWithoutMembers } = bandProfile;
+      return bandProfileWithoutMembers;
+    }
     return userId ? bandProfile : shaped;
   }
 }

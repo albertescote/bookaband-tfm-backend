@@ -363,6 +363,7 @@ export class BandRepository {
                 firstName: true,
                 familyName: true,
                 email: true,
+                imageUrl: true,
               },
             },
           },
@@ -377,10 +378,16 @@ export class BandRepository {
 
     return {
       id: band.id,
-      bandId: band.id,
-      bandName: band.name,
+      name: band.name,
       musicalStyleIds: band.musicalStyleIds,
-      membersId: band.members.map((m) => m.userId),
+      members: band.members.map((m) => {
+        return {
+          id: m.userId,
+          role: m.role as BandRole,
+          name: `${m.user.firstName} ${m.user.familyName}`,
+          imageUrl: m.user.imageUrl,
+        };
+      }),
       bookingDates: band.bookings.map((b) => b.date.toISOString()),
       location: band.location,
       featured: band.featured,

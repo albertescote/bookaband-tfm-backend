@@ -9,7 +9,7 @@ export async function seedBands() {
     data: {
       id: "b4ed7600-12da-4673-960d-ff29af2606db",
       name: "The Electric Waves",
-      musicalStyleIds: ["electronic", "synthwave"],
+      musicalStyleIds: ["a7b8c9d0-e1f2-0a1b-4c3d-5e6f7a8b9c0d", "a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d"],
       imageUrl:
         "https://images.pexels.com/photos/12250627/pexels-photo-12250627.jpeg",
       rating: 4.5,
@@ -20,7 +20,7 @@ export async function seedBands() {
       price: 1500,
       location: "Barcelona",
       bandSize: BandSize.BAND,
-      eventTypeIds: ["wedding", "corporate", "festival"],
+      eventTypeIds: ["680e3e8f-8e08-4921-8461-0f60971c8b5f", "4d36abfe-0ce7-4ac5-a888-ce31d22cff8c", "ec30f141-5914-46e3-a482-39d55a097e9b"],
       featured: true,
       visible: true,
       weeklyAvailability: {
@@ -71,7 +71,7 @@ export async function seedBands() {
     data: {
       id: "824863a8-1e09-4d69-9e5d-8e0bff068129",
       name: "Sax & Soul",
-      musicalStyleIds: ["jazz", "soul"],
+      musicalStyleIds: ["c3d4e5f6-a7b8-6c7d-0e9f-1a2b3c4d5e6f", "d4e5f6a7-b8c9-7d8e-1f0a-2b3c4d5e6f7a"],
       imageUrl:
         "https://images.pexels.com/photos/3018075/pexels-photo-3018075.jpeg",
       rating: 4.6,
@@ -82,7 +82,7 @@ export async function seedBands() {
       price: 2000,
       location: "Madrid",
       bandSize: BandSize.TRIO,
-      eventTypeIds: ["wedding", "corporate", "private"],
+      eventTypeIds: ["680e3e8f-8e08-4921-8461-0f60971c8b5f", "4d36abfe-0ce7-4ac5-a888-ce31d22cff8c", "7c223ed2-e955-4007-ac8a-f23235127ac5"],
       featured: true,
       visible: true,
       weeklyAvailability: {
@@ -133,7 +133,7 @@ export async function seedBands() {
     data: {
       id: "eef58ab1-c216-4d23-81cd-432ab1637caa",
       name: "Los Mariachis del Sol",
-      musicalStyleIds: ["latin", "traditional"],
+      musicalStyleIds: ["e5f6a7b8-c9d0-8e9f-2a1b-3c4d5e6f7a8b", "d0e1f2a3-b4c5-3d4e-7f6a-8b9c0d1e2f3a"],
       imageUrl:
         "https://images.pexels.com/photos/8639009/pexels-photo-8639009.jpeg",
       rating: 4.7,
@@ -144,7 +144,7 @@ export async function seedBands() {
       price: 1800,
       location: "Valencia",
       bandSize: BandSize.BAND,
-      eventTypeIds: ["wedding", "festival", "private"],
+      eventTypeIds: ["680e3e8f-8e08-4921-8461-0f60971c8b5f", "ec30f141-5914-46e3-a482-39d55a097e9b", "7c223ed2-e955-4007-ac8a-f23235127ac5"],
       featured: true,
       visible: true,
       weeklyAvailability: {
@@ -195,7 +195,7 @@ export async function seedBands() {
     data: {
       id: "0795cc24-7738-4ab4-8e1c-510d30c32c86",
       name: "Clásicos de Cámara",
-      musicalStyleIds: ["classical", "chamber"],
+      musicalStyleIds: ["f6a7b8c9-d0e1-9f0a-3b2c-4d5e6f7a8b9c", "c3d4e5f6-a7b8-6c7d-0e9f-1a2b3c4d5e6f"],
       imageUrl:
         "https://images.pexels.com/photos/3769099/pexels-photo-3769099.jpeg",
       rating: 4.8,
@@ -206,7 +206,7 @@ export async function seedBands() {
       price: 1200,
       location: "Barcelona",
       bandSize: BandSize.TRIO,
-      eventTypeIds: ["wedding", "corporate", "private"],
+      eventTypeIds: ["680e3e8f-8e08-4921-8461-0f60971c8b5f", "4d36abfe-0ce7-4ac5-a888-ce31d22cff8c", "7c223ed2-e955-4007-ac8a-f23235127ac5"],
       featured: true,
       visible: true,
       weeklyAvailability: {
