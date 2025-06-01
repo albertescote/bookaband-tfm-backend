@@ -18,6 +18,8 @@ import { GetAllEventTypesQuery } from "../../eventType/service/getAllEventTypes.
 import { EventTypePrimitives } from "../domain/eventType";
 import { GetUserIdByBookingIdQuery } from "../../booking/service/getUserIdByBookingId.query";
 import { CreateVerificationRecordCommand } from "../../email/service/createVerificationRecord.command";
+import { GetAllMusicalStylesQuery } from "../../musicalStyle/service/getAllMusicalStyles.query";
+import { MusicalStylePrimitives } from "../domain/musicalStyle";
 
 @Injectable()
 class ModuleConnectors {
@@ -44,6 +46,11 @@ class ModuleConnectors {
   async getAllEventTypes(): Promise<EventTypePrimitives[]> {
     const userQuery = new GetAllEventTypesQuery();
     return await this.queryBus.execute(userQuery);
+  }
+
+  async getAllMusicalStyles(): Promise<MusicalStylePrimitives[]> {
+    const query = new GetAllMusicalStylesQuery();
+    return await this.queryBus.execute(query);
   }
 
   async obtainBandMembers(id: string): Promise<string[]> {

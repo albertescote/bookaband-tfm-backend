@@ -25,6 +25,8 @@ import { ContractModule } from "../context/contract/contract.module";
 import { InvoiceModule } from "../context/invoice/invoice.module";
 import { ContractController } from "./api/contract/contract.controller";
 import { InvoiceController } from "./api/invoice/invoice.controller";
+import { MusicalStyleModule } from "../context/musicalStyle/musicalStyle.module";
+import { MusicalStyleController } from "./api/musicalStyle/musicalStyle.controller";
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { InvoiceController } from "./api/invoice/invoice.controller";
     PaymentMethodModule,
     ContractModule,
     InvoiceModule,
+    MusicalStyleModule,
   ],
   controllers: [
     HealthcheckController,
@@ -56,6 +59,7 @@ import { InvoiceController } from "./api/invoice/invoice.controller";
     PaymentMethodController,
     ContractController,
     InvoiceController,
+    MusicalStyleController,
   ],
 })
 export class AppModule {}
