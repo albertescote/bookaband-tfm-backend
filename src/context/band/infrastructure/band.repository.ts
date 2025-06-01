@@ -76,6 +76,22 @@ export class BandRepository {
                 },
               }
             : undefined,
+          media: primitives.media
+            ? {
+                create: primitives.media.map((media) => ({
+                  url: media.url,
+                  type: media.type,
+                })),
+              }
+            : undefined,
+          socialLink: primitives.socialLinks
+            ? {
+                create: primitives.socialLinks.map((socialLink) => ({
+                  platform: socialLink.platform,
+                  url: socialLink.url,
+                })),
+              }
+            : undefined,
           members: {
             create: primitives.members.map((member) => ({
               userId: member.id,
@@ -111,6 +127,8 @@ export class BandRepository {
         hospitalityRider: true,
         technicalRider: true,
         performanceArea: true,
+        media: true,
+        socialLink: true,
       },
     });
 
@@ -163,6 +181,16 @@ export class BandRepository {
             restrictions: band.performanceArea.restrictions,
           }
         : undefined,
+      media: band.media.map((m) => ({
+        id: m.id,
+        url: m.url,
+        type: m.type,
+      })),
+      socialLinks: band.socialLink.map((s) => ({
+        id: s.id,
+        platform: s.platform,
+        url: s.url,
+      })),
     });
   }
 
@@ -248,6 +276,22 @@ export class BandRepository {
                 },
               }
             : undefined,
+          media: {
+            deleteMany: {},
+            create:
+              primitives.media?.map((media) => ({
+                url: media.url,
+                type: media.type,
+              })) || [],
+          },
+          socialLink: {
+            deleteMany: {},
+            create:
+              primitives.socialLinks?.map((socialLink) => ({
+                platform: socialLink.platform,
+                url: socialLink.url,
+              })) || [],
+          },
           members: {
             deleteMany: {},
             create: primitives.members.map((member) => ({

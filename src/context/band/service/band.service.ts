@@ -32,6 +32,8 @@ export interface UpsertBandRequest {
   hospitalityRider?: HospitalityRider;
   technicalRider?: TechnicalRider;
   performanceArea?: PerformanceArea;
+  media?: { url: string; type: string }[];
+  socialLinks?: { platform: string; url: string }[];
 }
 
 export interface BandResponse {
@@ -77,6 +79,8 @@ export class BandService {
       createBandRequest.hospitalityRider,
       createBandRequest.technicalRider,
       createBandRequest.performanceArea,
+      createBandRequest.media,
+      createBandRequest.socialLinks,
     );
 
     const storedBand = await this.bandRepository.addBand(band);
@@ -97,6 +101,7 @@ export class BandService {
       name: storedBandPrimitives.name,
       musicalStyleIds: storedBandPrimitives.musicalStyleIds,
       members: storedBandPrimitives.members,
+      imageUrl: storedBandPrimitives.imageUrl,
       bio: storedBandPrimitives.bio,
     };
   }
@@ -142,6 +147,8 @@ export class BandService {
       hospitalityRider: updateBandRequest.hospitalityRider,
       technicalRider: updateBandRequest.technicalRider,
       performanceArea: updateBandRequest.performanceArea,
+      media: updateBandRequest.media,
+      socialLinks: updateBandRequest.socialLinks,
     });
 
     const storedUpdatedBand = await this.bandRepository.updateBand(updatedBand);

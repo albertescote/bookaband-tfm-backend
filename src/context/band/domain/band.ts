@@ -34,6 +34,18 @@ export interface PerformanceArea {
   restrictions: string[];
 }
 
+export interface Media {
+  id?: string;
+  url: string;
+  type: string;
+}
+
+export interface SocialLink {
+  id?: string;
+  platform: string;
+  url: string;
+}
+
 export interface BandPrimitives {
   id: string;
   name: string;
@@ -56,6 +68,8 @@ export interface BandPrimitives {
   hospitalityRider?: HospitalityRider;
   technicalRider?: TechnicalRider;
   performanceArea?: PerformanceArea;
+  media?: Media[];
+  socialLinks?: SocialLink[];
 }
 
 export default class Band {
@@ -89,6 +103,8 @@ export default class Band {
     private imageUrl?: string | undefined,
     private rating?: number | undefined,
     private bio?: string | undefined,
+    private media?: Media[] | undefined,
+    private socialLinks?: SocialLink[] | undefined,
   ) {}
 
   static create(
@@ -105,6 +121,8 @@ export default class Band {
     hospitalityRider?: HospitalityRider,
     technicalRider?: TechnicalRider,
     performanceArea?: PerformanceArea,
+    media?: Media[],
+    socialLinks?: SocialLink[],
   ): Band {
     return new Band(
       BandId.generate(),
@@ -128,6 +146,8 @@ export default class Band {
       imageUrl,
       undefined,
       bio,
+      media,
+      socialLinks,
     );
   }
 
@@ -157,6 +177,8 @@ export default class Band {
       primitives.imageUrl,
       primitives.rating,
       primitives.bio,
+      primitives.media,
+      primitives.socialLinks,
     );
   }
 
@@ -186,6 +208,8 @@ export default class Band {
       hospitalityRider: this.hospitalityRider,
       technicalRider: this.technicalRider,
       performanceArea: this.performanceArea,
+      media: this.media,
+      socialLinks: this.socialLinks,
     };
   }
 

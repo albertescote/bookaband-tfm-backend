@@ -79,7 +79,7 @@ model bandMember {
 }
 
 model band {
-  id                 String   @id
+  id                 String            @id
   name               String
   musicalStyleIds    String[]
   followers          Int
@@ -87,25 +87,25 @@ model band {
   createdAt          DateTime
   price              Int
   location           String
-  featured           Boolean  @default(false)
+  featured           Boolean           @default(false)
   bandSize           String
-  visible            Boolean  @default(true)
+  visible            Boolean           @default(true)
   eventTypeIds       String[]
   weeklyAvailability Json
   rating             Float?
   bio                String?
   imageUrl           String?
+  media              media[]
+  socialLink         socialLink[]
+  hospitalityRider   hospitalityRider?
+  technicalRider     technicalRider?
+  performanceArea    performanceArea?
 
-  members          bandMember[]
-  chats            chat[]            @relation("BandChats")
-  invitations      invitation[]
-  media            media[]
-  socialLink       socialLink[]
-  artistReview     artistReview[]
-  bookings         booking[]
-  hospitalityRider hospitalityRider?
-  technicalRider   technicalRider?
-  performanceArea  performanceArea?
+  members      bandMember[]
+  chats        chat[]         @relation("BandChats")
+  invitations  invitation[]
+  artistReview artistReview[]
+  bookings     booking[]
 }
 
 model media {

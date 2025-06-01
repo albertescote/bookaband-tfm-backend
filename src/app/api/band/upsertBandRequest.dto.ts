@@ -121,6 +121,26 @@ class PerformanceAreaDto {
   restrictions?: string;
 }
 
+class MediaDto {
+  @IsNotEmpty()
+  @IsString()
+  url: string;
+
+  @IsNotEmpty()
+  @IsString()
+  type: string;
+}
+
+class SocialLinkDto {
+  @IsNotEmpty()
+  @IsString()
+  platform: string;
+
+  @IsNotEmpty()
+  @IsString()
+  url: string;
+}
+
 export class UpsertBandRequestDto {
   @IsNotEmpty()
   @IsString()
@@ -180,4 +200,16 @@ export class UpsertBandRequestDto {
   @ValidateNested()
   @Type(() => PerformanceAreaDto)
   performanceArea?: PerformanceArea;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => MediaDto)
+  media?: MediaDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SocialLinkDto)
+  socialLinks?: SocialLinkDto[];
 }
