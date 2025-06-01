@@ -17,6 +17,9 @@ import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { BandRole } from "../domain/bandRole";
 import { BandNotCreatedException } from "../exceptions/bandNotCreatedException";
 import { BandNotUpdatedException } from "../exceptions/bandNotUpdatedException";
+import { InvalidEventTypeIdException } from "../exceptions/invalidEventTypeIdException";
+import { InvalidMusicalStyleIdException } from "../exceptions/invalidMusicalStyleIdException";
+import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 
 export interface UpsertBandRequest {
   name: string;
@@ -53,13 +56,21 @@ export interface GetUserBandsResponse {
 
 @Injectable()
 export class BandService {
-  constructor(private bandRepository: BandRepository) {}
+  constructor(
+    private bandRepository: BandRepository,
+    private moduleConnectors: ModuleConnectors,
+  ) {}
 
   @RoleAuth([Role.Musician])
   async create(
     userAuthInfo: UserAuthInfo,
     createBandRequest: UpsertBandRequest,
   ): Promise<void> {
+    await this.validateIds(
+      createBandRequest.eventTypeIds,
+      createBandRequest.musicalStyleIds,
+    );
+
     const band = Band.create(
       createBandRequest.name,
       [
@@ -119,6 +130,11 @@ export class BandService {
     id: string,
     updateBandRequest: UpsertBandRequest,
   ): Promise<void> {
+    await this.validateIds(
+      updateBandRequest.eventTypeIds,
+      updateBandRequest.musicalStyleIds,
+    );
+
     const storedBand = await this.bandRepository.getBandById(new BandId(id));
     if (!storedBand) {
       throw new BandNotFoundException(id);
@@ -176,5 +192,33 @@ export class BandService {
       );
     }
     return;
+  }
+
+  private async validateIds(
+    eventTypeIds: string[],
+    musicalStyleIds: string[],
+  ): Promise<void> {
+    const [eventTypes, musicalStyles] = await Promise.all([
+      this.moduleConnectors.getAllEventTypes(),
+      this.moduleConnectors.getAllMusicalStyles(),
+    ]);
+
+    const validEventTypeIds = new Set(eventTypes.map((et) => et.id));
+    const validMusicalStyleIds = new Set(musicalStyles.map((ms) => ms.id));
+
+    const invalidEventTypeIds = eventTypeIds.filter(
+      (id) => !validEventTypeIds.has(id),
+    );
+    const invalidMusicalStyleIds = musicalStyleIds.filter(
+      (id) => !validMusicalStyleIds.has(id),
+    );
+
+    if (invalidEventTypeIds.length > 0) {
+      throw new InvalidEventTypeIdException(invalidEventTypeIds);
+    }
+
+    if (invalidMusicalStyleIds.length > 0) {
+      throw new InvalidMusicalStyleIdException(invalidMusicalStyleIds);
+    }
   }
 }
