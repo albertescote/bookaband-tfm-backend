@@ -52,8 +52,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: ["Prefer venues within 200km radius"],
-          restrictions: ["No outdoor events during winter"],
+          travelPreferences: "Prefer venues within 200km radius",
+          restrictions: "No outdoor events during winter",
         },
       },
       members: {
@@ -114,8 +114,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
-          travelPreferences: ["Prefer venues within 150km radius"],
-          restrictions: ["No outdoor events during summer"],
+          travelPreferences: "Prefer venues within 150km radius",
+          restrictions: "No outdoor events during summer",
         },
       },
       members: {
@@ -176,8 +176,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Valencia", "Murcia", "Alicante"],
-          travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No indoor venues without proper ventilation"],
+          travelPreferences: "Prefer venues within 100km radius",
+          restrictions: "No indoor venues without proper ventilation",
         },
       },
       members: {
@@ -238,8 +238,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Barcelona", "Tarragona", "Girona"],
-          travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No outdoor events during winter"],
+          travelPreferences: "Prefer venues within 100km radius",
+          restrictions: "No outdoor events during winter",
         },
       },
       members: {
@@ -300,8 +300,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
-          travelPreferences: ["Prefer venues within 150km radius"],
-          restrictions: ["No outdoor events during summer"],
+          travelPreferences: "Prefer venues within 150km radius",
+          restrictions: "No outdoor events during summer",
         },
       },
       members: {
@@ -362,8 +362,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Barcelona", "Tarragona", "Girona"],
-          travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No outdoor events during winter"],
+          travelPreferences: "Prefer venues within 100km radius",
+          restrictions: "No outdoor events during winter",
         },
       },
       members: {
@@ -424,8 +424,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Barcelona", "Tarragona", "Girona"],
-          travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No outdoor events during winter"],
+          travelPreferences: "Prefer venues within 100km radius",
+          restrictions: "No outdoor events during winter",
         },
       },
       members: {
@@ -486,8 +486,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
-          travelPreferences: ["Prefer venues within 150km radius"],
-          restrictions: ["No outdoor events during summer"],
+          travelPreferences: "Prefer venues within 150km radius",
+          restrictions: "No outdoor events during summer",
         },
       },
       members: {
@@ -548,8 +548,8 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Barcelona", "Tarragona", "Girona"],
-          travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No outdoor events during winter"],
+          travelPreferences: "Prefer venues within 100km radius",
+          restrictions: "No outdoor events during winter",
         },
       },
       members: {

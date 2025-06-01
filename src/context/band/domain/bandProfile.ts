@@ -52,8 +52,8 @@ interface TechnicalRider {
 
 interface PerformanceArea {
   regions: string[];
-  travelPreferences: string[];
-  restrictions: string[];
+  travelPreferences: string;
+  restrictions: string;
 }
 
 export interface BandProfile {

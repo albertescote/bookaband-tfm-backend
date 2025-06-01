@@ -102,7 +102,7 @@ export class BandRepository {
         },
       });
       return band;
-    } catch {
+    } catch (e) {
       return undefined;
     }
   }

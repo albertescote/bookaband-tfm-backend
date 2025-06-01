@@ -142,8 +142,8 @@ model performanceArea {
   id                String   @id @default(uuid())
   bandId            String   @unique
   regions           String[]
-  travelPreferences String[]
-  restrictions      String[]
+  travelPreferences String
+  restrictions      String
 
   band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
 }

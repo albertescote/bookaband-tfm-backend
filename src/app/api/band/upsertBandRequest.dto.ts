@@ -1,17 +1,14 @@
 import {
   IsArray,
   IsBoolean,
-  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUUID,
   Min,
   ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { BandRole } from "../../../context/band/domain/bandRole";
 import {
   HospitalityRider,
   PerformanceArea,
@@ -19,51 +16,34 @@ import {
   WeeklyAvailability,
 } from "../../../context/band/domain/band";
 
-class BandMemberDto {
-  @IsNotEmpty()
-  @IsUUID()
-  id: string;
-
-  @IsNotEmpty()
-  @IsEnum(BandRole)
-  role: BandRole;
-}
-
 class WeeklyAvailabilityDto {
   @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  monday: string[];
+  @IsBoolean()
+  monday: boolean;
 
   @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  tuesday: string[];
+  @IsBoolean()
+  tuesday: boolean;
 
   @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  wednesday: string[];
+  @IsBoolean()
+  wednesday: boolean;
 
   @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  thursday: string[];
+  @IsBoolean()
+  thursday: boolean;
 
   @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  friday: string[];
+  @IsBoolean()
+  friday: boolean;
 
   @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  saturday: string[];
+  @IsBoolean()
+  saturday: boolean;
 
   @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  sunday: string[];
+  @IsBoolean()
+  sunday: boolean;
 }
 
 class HospitalityRiderDto {
