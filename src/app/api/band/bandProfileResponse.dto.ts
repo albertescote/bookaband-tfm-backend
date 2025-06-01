@@ -35,6 +35,7 @@ interface Media {
 }
 
 interface SocialLinks {
+  id: string;
   platform: string;
   url: string;
 }

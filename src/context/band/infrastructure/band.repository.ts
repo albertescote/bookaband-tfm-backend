@@ -436,6 +436,7 @@ export class BandRepository {
         type: m.type,
       })),
       socialLinks: band.socialLink.map((s) => ({
+        id: s.id,
         platform: s.platform,
         url: s.url,
       })),
