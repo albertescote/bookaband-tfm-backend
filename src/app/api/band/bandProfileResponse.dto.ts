@@ -46,7 +46,6 @@ export interface BandProfileResponseDto {
   musicalStyleIds: string[];
   membersId: string[];
   bookingDates: string[];
-  description: string;
   location: string;
   featured: boolean;
   bandSize: BandSize;

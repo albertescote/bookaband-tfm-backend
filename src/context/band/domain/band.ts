@@ -43,16 +43,15 @@ export interface BandPrimitives {
   followers: number;
   following: number;
   createdAt: Date;
-  rating?: number;
-  imageUrl?: string;
-  bio?: string;
   price: number;
-  description: string;
   location: string;
   bandSize: string;
   eventTypeIds: string[];
   featured: boolean;
   visible: boolean;
+  rating?: number;
+  imageUrl?: string;
+  bio?: string;
   weeklyAvailability: WeeklyAvailability;
   hospitalityRider?: HospitalityRider;
   technicalRider?: TechnicalRider;
@@ -69,7 +68,6 @@ export default class Band {
     private following: number,
     private createdAt: Date,
     private price: number,
-    private description: string,
     private location: string,
     private bandSize: string,
     private eventTypeIds: string[],
@@ -98,7 +96,6 @@ export default class Band {
     members: BandMember[],
     musicalStyleIds: string[],
     price: number,
-    description: string,
     location: string,
     bandSize: string,
     eventTypeIds: string[],
@@ -118,7 +115,6 @@ export default class Band {
       0,
       new Date(),
       price,
-      description,
       location,
       bandSize,
       eventTypeIds,
@@ -148,7 +144,6 @@ export default class Band {
       primitives.following,
       primitives.createdAt,
       primitives.price,
-      primitives.description,
       primitives.location,
       primitives.bandSize,
       primitives.eventTypeIds,
@@ -182,7 +177,6 @@ export default class Band {
       rating: this.rating,
       bio: this.bio,
       price: this.price,
-      description: this.description,
       location: this.location,
       bandSize: this.bandSize,
       eventTypeIds: this.eventTypeIds,
@@ -224,7 +218,10 @@ export default class Band {
     this.weeklyAvailability = availability;
   }
 
-  updateRiders(hospitalityRider?: HospitalityRider, technicalRider?: TechnicalRider) {
+  updateRiders(
+    hospitalityRider?: HospitalityRider,
+    technicalRider?: TechnicalRider,
+  ) {
     if (hospitalityRider !== undefined) {
       this.hospitalityRider = hospitalityRider;
     }

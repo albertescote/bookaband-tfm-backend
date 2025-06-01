@@ -7,13 +7,13 @@ import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
 import { QueryBus } from "@nestjs/cqrs";
 import { GetBandInfoQuery } from "../../band/service/getBandInfo.query";
-import { MusicGenre } from "../../band/domain/musicGenre";
 import { ChatView } from "../domain/chatView";
 import Chat from "../domain/chat";
 import { MessagePrimitives } from "../domain/message";
 import { ChatHistory } from "../domain/chatHistory";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { Role } from "../../shared/domain/role";
+import { BandRole } from "../../band/domain/bandRole";
 
 export interface CreateChatRequestDto {
   bandId: string;
@@ -29,9 +29,7 @@ export interface CreateChatResponseDto {
 interface BandPrimitives {
   id: string;
   name: string;
-  membersId: string[];
-  genre: MusicGenre;
-  imageUrl?: string;
+  members: { id: string; role: BandRole }[];
 }
 
 @Injectable()
@@ -118,8 +116,8 @@ export class ChatService {
       new GetBandInfoQuery(bandId),
     )) as BandPrimitives;
 
-    const memberId = bandInfo.membersId.find((memberId) => {
-      return memberId === userAuthInfo.id;
+    const memberId = bandInfo.members.find((member) => {
+      return member.id === userAuthInfo.id;
     });
     return !!memberId;
   }

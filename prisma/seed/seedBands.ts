@@ -18,7 +18,6 @@ export async function seedBands() {
       following: 85,
       createdAt: new Date(),
       price: 1500,
-      description: "Electronic music band specializing in synthwave and ambient sounds",
       location: "Barcelona",
       bandSize: BandSize.BAND,
       eventTypeIds: ["wedding", "corporate", "festival"],
@@ -31,15 +30,15 @@ export async function seedBands() {
         thursday: true,
         friday: true,
         saturday: true,
-        sunday: true
+        sunday: true,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Vegetarian options available"
-        }
+          specialRequirements: "Vegetarian options available",
+        },
       },
       technicalRider: {
         create: {
@@ -47,15 +46,15 @@ export async function seedBands() {
           microphones: "4 wireless microphones",
           backline: "Synthesizers and drum machines",
           lighting: "Basic stage lighting",
-          otherRequirements: "Power outlets and extension cords"
-        }
+          otherRequirements: "Power outlets and extension cords",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Catalonia", "Valencia", "Balearic Islands"],
           travelPreferences: ["Prefer venues within 200km radius"],
-          restrictions: ["No outdoor events during winter"]
-        }
+          restrictions: ["No outdoor events during winter"],
+        },
       },
       members: {
         create: [
@@ -81,7 +80,6 @@ export async function seedBands() {
       following: 60,
       createdAt: new Date(),
       price: 2000,
-      description: "Jazz quartet with soul influences, perfect for sophisticated events",
       location: "Madrid",
       bandSize: BandSize.TRIO,
       eventTypeIds: ["wedding", "corporate", "private"],
@@ -94,15 +92,15 @@ export async function seedBands() {
         thursday: true,
         friday: true,
         saturday: true,
-        sunday: false
+        sunday: false,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Allergic to nuts"
-        }
+          specialRequirements: "Allergic to nuts",
+        },
       },
       technicalRider: {
         create: {
@@ -110,15 +108,15 @@ export async function seedBands() {
           microphones: "4 microphones",
           backline: "Piano, bass, drums",
           lighting: "Stage lighting",
-          otherRequirements: "Piano tuning required"
-        }
+          otherRequirements: "Piano tuning required",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
           travelPreferences: ["Prefer venues within 150km radius"],
-          restrictions: ["No outdoor events during summer"]
-        }
+          restrictions: ["No outdoor events during summer"],
+        },
       },
       members: {
         create: [
@@ -144,7 +142,6 @@ export async function seedBands() {
       following: 40,
       createdAt: new Date(),
       price: 1800,
-      description: "Traditional Mexican mariachi band with modern arrangements",
       location: "Valencia",
       bandSize: BandSize.BAND,
       eventTypeIds: ["wedding", "festival", "private"],
@@ -157,15 +154,15 @@ export async function seedBands() {
         thursday: true,
         friday: true,
         saturday: true,
-        sunday: true
+        sunday: true,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Traditional Mexican food preferred"
-        }
+          specialRequirements: "Traditional Mexican food preferred",
+        },
       },
       technicalRider: {
         create: {
@@ -173,15 +170,15 @@ export async function seedBands() {
           microphones: "6 microphones",
           backline: "Traditional instruments provided",
           lighting: "Stage lighting",
-          otherRequirements: "Outdoor performance space preferred"
-        }
+          otherRequirements: "Outdoor performance space preferred",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Valencia", "Murcia", "Alicante"],
           travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No indoor venues without proper ventilation"]
-        }
+          restrictions: ["No indoor venues without proper ventilation"],
+        },
       },
       members: {
         create: [
@@ -207,7 +204,6 @@ export async function seedBands() {
       following: 35,
       createdAt: new Date(),
       price: 1200,
-      description: "Chamber music ensemble specializing in classical music",
       location: "Barcelona",
       bandSize: BandSize.TRIO,
       eventTypeIds: ["wedding", "corporate", "private"],
@@ -220,15 +216,15 @@ export async function seedBands() {
         thursday: true,
         friday: true,
         saturday: true,
-        sunday: false
+        sunday: false,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Vegetarian options available"
-        }
+          specialRequirements: "Vegetarian options available",
+        },
       },
       technicalRider: {
         create: {
@@ -236,15 +232,15 @@ export async function seedBands() {
           microphones: "2 microphones",
           backline: "String instruments",
           lighting: "Stage lighting",
-          otherRequirements: "No loud amplification"
-        }
+          otherRequirements: "No loud amplification",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Barcelona", "Tarragona", "Girona"],
           travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No outdoor events during winter"]
-        }
+          restrictions: ["No outdoor events during winter"],
+        },
       },
       members: {
         create: [
@@ -270,7 +266,6 @@ export async function seedBands() {
       following: 90,
       createdAt: new Date(),
       price: 2500,
-      description: "Funk and soul band with a focus on live performances",
       location: "Madrid",
       bandSize: BandSize.BAND,
       eventTypeIds: ["corporate", "private", "festival"],
@@ -283,15 +278,15 @@ export async function seedBands() {
         thursday: true,
         friday: true,
         saturday: true,
-        sunday: false
+        sunday: false,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Allergic to nuts"
-        }
+          specialRequirements: "Allergic to nuts",
+        },
       },
       technicalRider: {
         create: {
@@ -299,15 +294,15 @@ export async function seedBands() {
           microphones: "8 microphones",
           backline: "Bass, drums, keyboards",
           lighting: "Stage lighting",
-          otherRequirements: "Power outlets and extension cords"
-        }
+          otherRequirements: "Power outlets and extension cords",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
           travelPreferences: ["Prefer venues within 150km radius"],
-          restrictions: ["No outdoor events during summer"]
-        }
+          restrictions: ["No outdoor events during summer"],
+        },
       },
       members: {
         create: [
@@ -333,7 +328,6 @@ export async function seedBands() {
       following: 100,
       createdAt: new Date(),
       price: 3000,
-      description: "Rock band known for energetic late-night performances",
       location: "Barcelona",
       bandSize: BandSize.BAND,
       eventTypeIds: ["corporate", "private", "festival"],
@@ -346,15 +340,15 @@ export async function seedBands() {
         thursday: false,
         friday: true,
         saturday: true,
-        sunday: true
+        sunday: true,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Allergic to nuts"
-        }
+          specialRequirements: "Allergic to nuts",
+        },
       },
       technicalRider: {
         create: {
@@ -362,15 +356,15 @@ export async function seedBands() {
           microphones: "10 microphones",
           backline: "Guitars, bass, drums",
           lighting: "Stage lighting",
-          otherRequirements: "Power outlets and extension cords"
-        }
+          otherRequirements: "Power outlets and extension cords",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Barcelona", "Tarragona", "Girona"],
           travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No outdoor events during winter"]
-        }
+          restrictions: ["No outdoor events during winter"],
+        },
       },
       members: {
         create: [
@@ -396,7 +390,6 @@ export async function seedBands() {
       following: 70,
       createdAt: new Date(),
       price: 1000,
-      description: "Indie rock band with a focus on shimmering guitar sounds",
       location: "Barcelona",
       bandSize: BandSize.TRIO,
       eventTypeIds: ["corporate", "private", "festival"],
@@ -409,15 +402,15 @@ export async function seedBands() {
         thursday: true,
         friday: true,
         saturday: true,
-        sunday: false
+        sunday: false,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Vegetarian options available"
-        }
+          specialRequirements: "Vegetarian options available",
+        },
       },
       technicalRider: {
         create: {
@@ -425,15 +418,15 @@ export async function seedBands() {
           microphones: "2 microphones",
           backline: "Guitars, bass",
           lighting: "Stage lighting",
-          otherRequirements: "No loud amplification"
-        }
+          otherRequirements: "No loud amplification",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Barcelona", "Tarragona", "Girona"],
           travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No outdoor events during winter"]
-        }
+          restrictions: ["No outdoor events during winter"],
+        },
       },
       members: {
         create: [
@@ -459,7 +452,6 @@ export async function seedBands() {
       following: 42,
       createdAt: new Date(),
       price: 1500,
-      description: "Soul and groove band with a focus on live performances",
       location: "Madrid",
       bandSize: BandSize.BAND,
       eventTypeIds: ["corporate", "private", "festival"],
@@ -472,15 +464,15 @@ export async function seedBands() {
         thursday: true,
         friday: true,
         saturday: true,
-        sunday: false
+        sunday: false,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Vegetarian options available"
-        }
+          specialRequirements: "Vegetarian options available",
+        },
       },
       technicalRider: {
         create: {
@@ -488,15 +480,15 @@ export async function seedBands() {
           microphones: "4 microphones",
           backline: "Bass, drums",
           lighting: "Stage lighting",
-          otherRequirements: "Power outlets and extension cords"
-        }
+          otherRequirements: "Power outlets and extension cords",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
           travelPreferences: ["Prefer venues within 150km radius"],
-          restrictions: ["No outdoor events during summer"]
-        }
+          restrictions: ["No outdoor events during summer"],
+        },
       },
       members: {
         create: [
@@ -522,7 +514,6 @@ export async function seedBands() {
       following: 58,
       createdAt: new Date(),
       price: 2000,
-      description: "Neo-soul band with a focus on classic soul music",
       location: "Barcelona",
       bandSize: BandSize.TRIO,
       eventTypeIds: ["corporate", "private", "festival"],
@@ -535,15 +526,15 @@ export async function seedBands() {
         thursday: true,
         friday: true,
         saturday: true,
-        sunday: false
+        sunday: false,
       },
       hospitalityRider: {
         create: {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
-          specialRequirements: "Vegetarian options available"
-        }
+          specialRequirements: "Vegetarian options available",
+        },
       },
       technicalRider: {
         create: {
@@ -551,15 +542,15 @@ export async function seedBands() {
           microphones: "2 microphones",
           backline: "Bass, keyboards",
           lighting: "Stage lighting",
-          otherRequirements: "No loud amplification"
-        }
+          otherRequirements: "No loud amplification",
+        },
       },
       performanceArea: {
         create: {
           regions: ["Barcelona", "Tarragona", "Girona"],
           travelPreferences: ["Prefer venues within 100km radius"],
-          restrictions: ["No outdoor events during winter"]
-        }
+          restrictions: ["No outdoor events during winter"],
+        },
       },
       members: {
         create: [

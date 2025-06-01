@@ -1,0 +1,28 @@
+export class GetFilteredBandsQuery {
+  constructor(
+    private _userId: string,
+    private _page: number,
+    private _pageSize: number,
+    private _filters: {
+      location: string;
+      searchQuery: string;
+      date: string;
+    },
+  ) {}
+
+  get userId(): string {
+    return this._userId;
+  }
+
+  get page(): number {
+    return this._page;
+  }
+
+  get pageSize(): number {
+    return this._pageSize;
+  }
+
+  get filters(): { location: string; searchQuery: string; date: string } {
+    return this._filters;
+  }
+}

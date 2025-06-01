@@ -86,7 +86,6 @@ model band {
   following          Int
   createdAt          DateTime
   price              Int
-  description        String
   location           String
   featured           Boolean  @default(false)
   bandSize           String

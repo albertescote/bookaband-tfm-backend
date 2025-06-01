@@ -8,29 +8,38 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   Request,
   UseGuards,
 } from "@nestjs/common";
 import { BandResponseDto } from "./bandResponse.dto";
-import { UpdateBandRequestDto } from "./updateBandRequest.dto";
-import { CreateBandRequestDto } from "./createBandRequest.dto";
+import { UpsertBandRequestDto } from "./upsertBandRequest.dto";
 import { IdParamDto } from "./idParam.dto";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { BandService } from "../../../context/band/service/band.service";
 import { GetUserBandsResponse } from "./getUserBandsResponse.dto";
-import { BandWithDetailsResponseDto } from "./bandWithDetailsResponse.dto";
 import { BandProfileResponseDto } from "./bandProfileResponse.dto";
 import { JwtOptionalGuard } from "../../../context/auth/guards/jwt-optional.guard";
-import { CommandBus } from "@nestjs/cqrs";
+import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { LeaveBandCommand } from "../../../context/band/service/leaveBand.command";
 import { RemoveMemberCommand } from "../../../context/band/service/removeMember.command";
+import { ParseIntPipeCustom } from "../../pipes/parse-int.pipe";
+import { SanitizeTextPipe } from "../../pipes/sanitize-text.pipe";
+import { ValidateLocationPipe } from "../../pipes/validate-location.pipe";
+import { ValidateSearchQueryPipe } from "../../pipes/validate-serch-query.pipe";
+import { ValidateDatePipe } from "../../pipes/validate-date.pipe";
+import { FilteredBandsResponseDto } from "./filteredBandsResponse.dto";
+import { FeaturedBandsResponseDto } from "./featuredBandsResponse.dto";
+import { GetFilteredBandsQuery } from "../../../context/band/service/getFilteredBands.query";
+import { GetFeaturedBandsQuery } from "../../../context/band/service/getFeaturedBands.query";
 
 @Controller("bands")
 export class BandController {
   constructor(
     private readonly bandService: BandService,
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Post("/")
@@ -38,29 +47,9 @@ export class BandController {
   @HttpCode(201)
   async create(
     @Request() req: { user: UserAuthInfo },
-    @Body() body: CreateBandRequestDto,
-  ): Promise<BandResponseDto> {
+    @Body() body: UpsertBandRequestDto,
+  ): Promise<void> {
     return await this.bandService.create(req.user, body);
-  }
-
-  @Get("/:id/view")
-  @UseGuards(JwtCustomGuard)
-  @HttpCode(200)
-  async getViewById(
-    @Param() idParamDto: IdParamDto,
-    @Request() req: { user: UserAuthInfo },
-  ): Promise<BandResponseDto> {
-    return this.bandService.getViewById(req.user, idParamDto.id);
-  }
-
-  @Get("/:id/details")
-  @UseGuards(JwtCustomGuard)
-  @HttpCode(200)
-  async getDetailsById(
-    @Param() idParamDto: IdParamDto,
-    @Request() req: { user: UserAuthInfo },
-  ): Promise<BandWithDetailsResponseDto> {
-    return this.bandService.getDetailsById(req.user, idParamDto.id);
   }
 
   @Get("/:id/profile")
@@ -98,8 +87,8 @@ export class BandController {
   async update(
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
-    @Body() body: UpdateBandRequestDto,
-  ): Promise<BandResponseDto> {
+    @Body() body: UpsertBandRequestDto,
+  ): Promise<void> {
     return await this.bandService.update(req.user, idParamDto.id, body);
   }
 
@@ -139,5 +128,39 @@ export class BandController {
       new RemoveMemberCommand(bandId, req.user.id, memberId),
     );
     return;
+  }
+
+  @Get("/details")
+  @UseGuards(JwtOptionalGuard)
+  @HttpCode(200)
+  async getFilteredBands(
+    @Request() req: { user: UserAuthInfo },
+    @Query("page", ParseIntPipeCustom) page = 1,
+    @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
+    @Query("location", new SanitizeTextPipe(), new ValidateLocationPipe())
+    location?: string,
+    @Query("searchQuery", new SanitizeTextPipe(), new ValidateSearchQueryPipe())
+    searchQuery?: string,
+    @Query("date", new SanitizeTextPipe(), new ValidateDatePipe())
+    date?: string,
+  ): Promise<FilteredBandsResponseDto> {
+    const query = new GetFilteredBandsQuery(req.user.id, page, pageSize, {
+      location,
+      searchQuery,
+      date,
+    });
+    return this.queryBus.execute(query);
+  }
+
+  @Get("/featured")
+  @UseGuards(JwtOptionalGuard)
+  @HttpCode(200)
+  async getFeaturedBands(
+    @Request() req: { user: UserAuthInfo },
+    @Query("page", ParseIntPipeCustom) page = 1,
+    @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
+  ): Promise<FeaturedBandsResponseDto> {
+    const query = new GetFeaturedBandsQuery(req.user.id, page, pageSize);
+    return this.queryBus.execute(query);
   }
 }

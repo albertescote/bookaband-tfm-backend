@@ -1,18 +1,33 @@
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
   ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { WeeklyAvailability } from "../../../context/band/domain/band";
-import { HospitalityRider } from "../../../context/band/domain/band";
-import { TechnicalRider } from "../../../context/band/domain/band";
-import { PerformanceArea } from "../../../context/band/domain/band";
+import { BandRole } from "../../../context/band/domain/bandRole";
+import {
+  HospitalityRider,
+  PerformanceArea,
+  TechnicalRider,
+  WeeklyAvailability,
+} from "../../../context/band/domain/band";
+
+class BandMemberDto {
+  @IsNotEmpty()
+  @IsUUID()
+  id: string;
+
+  @IsNotEmpty()
+  @IsEnum(BandRole)
+  role: BandRole;
+}
 
 class WeeklyAvailabilityDto {
   @IsNotEmpty()
@@ -106,7 +121,7 @@ class PerformanceAreaDto {
   restrictions?: string;
 }
 
-export class CreateBandRequestDto {
+export class UpsertBandRequestDto {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -115,11 +130,6 @@ export class CreateBandRequestDto {
   @IsArray()
   @IsString({ each: true })
   musicalStyleIds: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  membersId?: string[];
 
   @IsOptional()
   @IsString()
@@ -136,10 +146,6 @@ export class CreateBandRequestDto {
 
   @IsNotEmpty()
   @IsString()
-  description: string;
-
-  @IsNotEmpty()
-  @IsString()
   location: string;
 
   @IsNotEmpty()
@@ -150,6 +156,10 @@ export class CreateBandRequestDto {
   @IsArray()
   @IsString({ each: true })
   eventTypeIds: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  visible?: boolean;
 
   @IsOptional()
   @ValidateNested()

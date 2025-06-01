@@ -2,12 +2,13 @@ import { Injectable } from "@nestjs/common";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
 import Band, { WeeklyAvailability } from "../domain/band";
 import BandId from "../../shared/domain/bandId";
-import BandWithDetails from "../domain/bandWithDetails";
 import { BandProfile } from "../domain/bandProfile";
 import { BandRole } from "../domain/bandRole";
 import UserId from "../../shared/domain/userId";
 import { BandSize } from "../domain/bandSize";
 import { Prisma } from "@prisma/client";
+import { BandCatalogItem } from "../domain/bandCatalogItem";
+import { FeaturedBand } from "../service/getFeaturedBands.queryHandler";
 
 export interface UserBand {
   id: string;
@@ -35,7 +36,6 @@ export class BandRepository {
           createdAt: primitives.createdAt,
           rating: primitives.rating,
           price: primitives.price,
-          description: primitives.description,
           location: primitives.location,
           bandSize: primitives.bandSize as BandSize,
           eventTypeIds: primitives.eventTypeIds,
@@ -132,7 +132,6 @@ export class BandRepository {
       following: band.following,
       createdAt: band.createdAt,
       price: band.price,
-      description: band.description,
       location: band.location,
       bandSize: band.bandSize,
       eventTypeIds: band.eventTypeIds,
@@ -182,7 +181,6 @@ export class BandRepository {
           followers: primitives.followers,
           following: primitives.following,
           price: primitives.price,
-          description: primitives.description,
           location: primitives.location,
           bandSize: primitives.bandSize as BandSize,
           eventTypeIds: primitives.eventTypeIds,
@@ -295,40 +293,6 @@ export class BandRepository {
     return bands ?? [];
   }
 
-  async getBandWithDetailsById(id: BandId): Promise<BandWithDetails> {
-    const band = await this.prismaService.band.findFirst({
-      where: { id: id.toPrimitive() },
-      include: {
-        members: {
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                familyName: true,
-                imageUrl: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!band) return undefined;
-
-    return BandWithDetails.fromPrimitives({
-      id: band.id,
-      name: band.name,
-      members: band.members.map((member) => ({
-        id: member.userId,
-        userName: `${member.user.firstName} ${member.user.familyName}`,
-        imageUrl: member.user.imageUrl,
-        role: member.role as BandRole,
-      })),
-      musicalStyleIds: band.musicalStyleIds,
-      imageUrl: band.imageUrl,
-    });
-  }
-
   async getBandProfileById(id: BandId): Promise<BandProfile | undefined> {
     const band = await this.prismaService.band.findFirst({
       where: { id: id.toPrimitive() },
@@ -374,7 +338,6 @@ export class BandRepository {
       musicalStyleIds: band.musicalStyleIds,
       membersId: band.members.map((m) => m.userId),
       bookingDates: band.bookings.map((b) => b.date.toISOString()),
-      description: band.description,
       location: band.location,
       featured: band.featured,
       bandSize: band.bandSize as BandSize,
@@ -439,6 +402,132 @@ export class BandRepository {
         date: booking.date.toISOString(),
         eventTypeId: booking.eventTypeId,
       })),
+    };
+  }
+
+  async getFilteredBandCatalogItems(
+    page: number,
+    pageSize: number,
+    filters?: { date?: string; location?: string; searchQuery?: string },
+  ): Promise<{ bandCatalogItems: BandCatalogItem[]; total: number }> {
+    const whereClause: any = {
+      visible: true,
+      ...(filters?.location && {
+        location: {
+          contains: filters.location,
+          mode: "insensitive",
+        },
+      }),
+      ...(filters?.searchQuery && {
+        name: {
+          contains: filters.searchQuery,
+          mode: "insensitive",
+        },
+      }),
+    };
+
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    const allBands = await this.prismaService.band.findMany({
+      where: whereClause,
+      include: {
+        artistReview: true,
+        bookings: true,
+        hospitalityRider: true,
+        technicalRider: true,
+        performanceArea: true,
+      },
+      orderBy: {
+        featured: "desc",
+      },
+    });
+
+    const filteredBands = filters?.date
+      ? allBands.filter(
+          (band) =>
+            !band.bookings.some(
+              (b) =>
+                b.status === "ACCEPTED" &&
+                b.date.toISOString().split("T")[0] === filters.date,
+            ),
+        )
+      : allBands;
+
+    const total = filteredBands.length;
+
+    const pagedBands = filteredBands.slice(skip, skip + take);
+
+    const mappedBands: BandCatalogItem[] = pagedBands.map((band) => ({
+      id: band.id,
+      name: band.name,
+      musicalStyleIds: band.musicalStyleIds,
+      bookingDates: band.bookings
+        .filter((b) => b.status === "ACCEPTED")
+        .map((b) => b.date.toISOString()),
+      weeklyAvailability:
+        band.weeklyAvailability as unknown as WeeklyAvailability,
+      location: band.location,
+      featured: band.featured,
+      bandSize: band.bandSize as BandSize,
+      eventTypeIds: band.eventTypeIds,
+      reviewCount: band.artistReview.length,
+      bio: band.bio,
+      price: band.price,
+      imageUrl: band.imageUrl || undefined,
+      rating: band.rating || undefined,
+      hospitalityRider: band.hospitalityRider,
+      technicalRider: band.technicalRider,
+      performanceArea: band.performanceArea,
+    }));
+
+    return {
+      bandCatalogItems: mappedBands,
+      total,
+    };
+  }
+
+  async getFeaturedBands(
+    page: number,
+    pageSize: number,
+  ): Promise<{ featuredBands: FeaturedBand[]; total: number }> {
+    const whereClause: any = {
+      visible: true,
+      featured: true,
+    };
+
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    const [bands, total] = await Promise.all([
+      this.prismaService.band.findMany({
+        where: whereClause,
+        include: {
+          bookings: true,
+          members: true,
+        },
+        skip,
+        take,
+      }),
+      this.prismaService.band.count({
+        where: whereClause,
+      }),
+    ]);
+
+    return {
+      featuredBands: bands.map((band) => ({
+        id: band.id,
+        name: band.name,
+        members: band.members.map((m) => ({
+          id: m.userId,
+          role: m.role as BandRole,
+        })),
+        musicalStyleIds: band.musicalStyleIds,
+        price: band.price,
+        imageUrl: band.imageUrl,
+        bio: band.bio,
+      })),
+      total,
     };
   }
 }
