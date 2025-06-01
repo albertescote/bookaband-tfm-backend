@@ -49,7 +49,6 @@ export interface BandProfileResponseDto {
   location: string;
   featured: boolean;
   bandSize: BandSize;
-  equipment: string[];
   eventTypeIds: string[];
   reviewCount: number;
   createdDate: Date;

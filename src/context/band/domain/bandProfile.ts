@@ -65,7 +65,6 @@ export interface BandProfile {
   location: string;
   featured: boolean;
   bandSize: BandSize;
-  equipment: string[];
   eventTypeIds: string[];
   reviewCount: number;
   createdDate: Date;

@@ -45,7 +45,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  private users = new Map<string, string>(); // userId -> socketId mapping
+  private users = new Map<string, string>();
 
   constructor(private chatRepository: ChatRepository) {}
 

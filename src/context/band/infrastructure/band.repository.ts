@@ -341,7 +341,6 @@ export class BandRepository {
       location: band.location,
       featured: band.featured,
       bandSize: band.bandSize as BandSize,
-      equipment: [], // Empty array since equipment is not part of the band model
       eventTypeIds: band.eventTypeIds,
       reviewCount: band.artistReview.length,
       createdDate: band.createdAt,
