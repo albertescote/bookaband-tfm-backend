@@ -14,7 +14,6 @@ import { NotAbleToExecuteBandDbTransactionException } from "../exceptions/notAbl
 import { Role } from "../../shared/domain/role";
 import UserId from "../../shared/domain/userId";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
-import { BandProfile } from "../domain/bandProfile";
 import { BandRole } from "../domain/bandRole";
 import { BandNotCreatedException } from "../exceptions/bandNotCreatedException";
 import { BandNotUpdatedException } from "../exceptions/bandNotUpdatedException";
@@ -170,18 +169,5 @@ export class BandService {
       );
     }
     return;
-  }
-
-  async getBandProfile(
-    userAuthInfo: UserAuthInfo,
-    id: string,
-  ): Promise<BandProfile> {
-    const bandId = new BandId(id);
-    const bandProfile = await this.bandRepository.getBandProfileById(bandId);
-    if (!bandProfile) {
-      throw new BandNotFoundException(id);
-    }
-    const { price, ...shaped } = bandProfile;
-    return userAuthInfo.id ? bandProfile : shaped;
   }
 }

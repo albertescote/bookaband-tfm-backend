@@ -33,6 +33,7 @@ import { FilteredBandsResponseDto } from "./filteredBandsResponse.dto";
 import { FeaturedBandsResponseDto } from "./featuredBandsResponse.dto";
 import { GetFilteredBandsQuery } from "../../../context/band/service/getFilteredBands.query";
 import { GetFeaturedBandsQuery } from "../../../context/band/service/getFeaturedBands.query";
+import { GetBandProfileQuery } from "../../../context/band/service/getBandProfile.query";
 
 @Controller("bands")
 export class BandController {
@@ -59,7 +60,8 @@ export class BandController {
     @Param() idParamDto: IdParamDto,
     @Request() req: { user: UserAuthInfo },
   ): Promise<BandProfileResponseDto> {
-    return this.bandService.getBandProfile(req.user, idParamDto.id);
+    const query = new GetBandProfileQuery(req.user.id, idParamDto.id);
+    return this.queryBus.execute(query);
   }
 
   @Get("/:id")
