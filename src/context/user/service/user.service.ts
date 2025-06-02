@@ -29,6 +29,7 @@ export interface CreateUserRequest {
 export interface UpdateUserRequest {
   firstName: string;
   familyName: string;
+  imageUrl?: string;
   bio?: string;
 }
 
@@ -123,6 +124,7 @@ export class UserService {
       role: userPrimitives.role,
       emailVerified: userPrimitives.emailVerified,
       imageUrl: userPrimitives.imageUrl,
+      bio: userPrimitives.bio,
     };
   }
 

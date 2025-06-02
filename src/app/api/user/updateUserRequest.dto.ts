@@ -12,4 +12,8 @@ export class UpdateUserRequestDto {
   @IsOptional()
   @IsString()
   bio: string;
+
+  @IsOptional()
+  @IsString()
+  imageUrl: string;
 }

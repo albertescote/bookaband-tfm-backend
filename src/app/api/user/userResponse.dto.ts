@@ -6,4 +6,5 @@ export interface UserResponseDto {
   role: string;
   emailVerified: boolean;
   imageUrl?: string;
+  bio?: string;
 }
