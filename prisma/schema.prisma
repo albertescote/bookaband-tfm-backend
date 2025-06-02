@@ -79,7 +79,7 @@ model bandMember {
 }
 
 model band {
-  id                 String            @id
+  id                 String       @id
   name               String
   musicalStyleIds    String[]
   followers          Int
@@ -87,25 +87,28 @@ model band {
   createdAt          DateTime
   price              Int
   location           String
-  featured           Boolean           @default(false)
+  featured           Boolean      @default(false)
   bandSize           String
-  visible            Boolean           @default(true)
+  visible            Boolean      @default(true)
   eventTypeIds       String[]
   weeklyAvailability Json
+  media              media[]
+  socialLink         socialLink[]
+  technicalRiderId   String       @unique
+  hospitalityRiderId String       @unique
+  performanceAreaId  String       @unique
   rating             Float?
   bio                String?
   imageUrl           String?
-  media              media[]
-  socialLink         socialLink[]
-  hospitalityRider   hospitalityRider?
-  technicalRider     technicalRider?
-  performanceArea    performanceArea?
 
-  members      bandMember[]
-  chats        chat[]         @relation("BandChats")
-  invitations  invitation[]
-  artistReview artistReview[]
-  bookings     booking[]
+  members          bandMember[]
+  chats            chat[]           @relation("BandChats")
+  invitations      invitation[]
+  artistReview     artistReview[]
+  bookings         booking[]
+  technicalRider   technicalRider   @relation(fields: [technicalRiderId], references: [id])
+  hospitalityRider hospitalityRider @relation(fields: [hospitalityRiderId], references: [id])
+  performanceArea  performanceArea  @relation(fields: [performanceAreaId], references: [id])
 }
 
 model media {
@@ -138,37 +141,34 @@ model artistReview {
   user user @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model performanceArea {
-  id                String   @id @default(uuid())
-  bandId            String   @unique
-  regions           String[]
-  travelPreferences String
-  restrictions      String
-
-  band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
-}
-
 model technicalRider {
-  id                String @id @default(uuid())
-  bandId            String @unique
+  id                String  @id @default(uuid())
   soundSystem       String
   microphones       String
   backline          String
   lighting          String
-  otherRequirements String
+  otherRequirements String?
 
-  band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
+  band band? @relation
 }
 
 model hospitalityRider {
-  id                  String @id @default(uuid())
-  bandId              String @unique
+  id                  String  @id @default(uuid())
   accommodation       String
   catering            String
   beverages           String
-  specialRequirements String
+  specialRequirements String?
 
-  band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
+  band band? @relation
+}
+
+model performanceArea {
+  id                String   @id @default(uuid())
+  regions           String[]
+  travelPreferences String
+  restrictions      String?
+
+  band band? @relation
 }
 
 model message {

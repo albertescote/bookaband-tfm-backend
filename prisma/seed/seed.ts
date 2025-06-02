@@ -20,10 +20,10 @@ async function clearDatabase() {
   await prisma.booking.deleteMany();
   await prisma.paymentMethod.deleteMany();
   await prisma.billingAddress.deleteMany();
+  await prisma.band.deleteMany();
   await prisma.hospitalityRider.deleteMany();
   await prisma.technicalRider.deleteMany();
   await prisma.performanceArea.deleteMany();
-  await prisma.band.deleteMany();
   await prisma.emailVerification.deleteMany();
   await prisma.user.deleteMany();
   await prisma.contract.deleteMany();

@@ -61,15 +61,15 @@ export interface BandPrimitives {
   eventTypeIds: string[];
   featured: boolean;
   visible: boolean;
+  weeklyAvailability: WeeklyAvailability;
+  hospitalityRider: HospitalityRider;
+  technicalRider: TechnicalRider;
+  performanceArea: PerformanceArea;
+  media: Media[];
+  socialLinks: SocialLink[];
   rating?: number;
   imageUrl?: string;
   bio?: string;
-  weeklyAvailability: WeeklyAvailability;
-  hospitalityRider?: HospitalityRider;
-  technicalRider?: TechnicalRider;
-  performanceArea?: PerformanceArea;
-  media?: Media[];
-  socialLinks?: SocialLink[];
 }
 
 export default class Band {
@@ -96,15 +96,15 @@ export default class Band {
       saturday: true,
       sunday: true,
     },
-    private hospitalityRider?: HospitalityRider | undefined,
-    private technicalRider?: TechnicalRider | undefined,
-    private performanceArea?: PerformanceArea | undefined,
+    private hospitalityRider: HospitalityRider | undefined,
+    private technicalRider: TechnicalRider | undefined,
+    private performanceArea: PerformanceArea | undefined,
     private reviewCount: number = 0,
+    private media: Media[],
+    private socialLinks: SocialLink[],
     private imageUrl?: string | undefined,
     private rating?: number | undefined,
     private bio?: string | undefined,
-    private media?: Media[] | undefined,
-    private socialLinks?: SocialLink[] | undefined,
   ) {}
 
   static create(
@@ -115,14 +115,14 @@ export default class Band {
     location: string,
     bandSize: string,
     eventTypeIds: string[],
-    imageUrl?: string,
-    bio?: string,
-    weeklyAvailability?: WeeklyAvailability,
-    hospitalityRider?: HospitalityRider,
-    technicalRider?: TechnicalRider,
-    performanceArea?: PerformanceArea,
+    weeklyAvailability: WeeklyAvailability,
+    hospitalityRider: HospitalityRider,
+    technicalRider: TechnicalRider,
+    performanceArea: PerformanceArea,
     media?: Media[],
     socialLinks?: SocialLink[],
+    imageUrl?: string,
+    bio?: string,
   ): Band {
     return new Band(
       BandId.generate(),
@@ -143,11 +143,11 @@ export default class Band {
       technicalRider,
       performanceArea,
       0,
+      media ?? [],
+      socialLinks ?? [],
       imageUrl,
       undefined,
       bio,
-      media,
-      socialLinks,
     );
   }
 
@@ -174,11 +174,11 @@ export default class Band {
       primitives.technicalRider,
       primitives.performanceArea,
       primitives.reviewCount,
+      primitives.media,
+      primitives.socialLinks,
       primitives.imageUrl,
       primitives.rating,
       primitives.bio,
-      primitives.media,
-      primitives.socialLinks,
     );
   }
 

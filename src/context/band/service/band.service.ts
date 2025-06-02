@@ -28,15 +28,15 @@ export interface UpsertBandRequest {
   location: string;
   bandSize: string;
   eventTypeIds: string[];
+  weeklyAvailability: WeeklyAvailability;
+  hospitalityRider: HospitalityRider;
+  technicalRider: TechnicalRider;
+  performanceArea: PerformanceArea;
+  media?: { url: string; type: string }[];
+  socialLinks?: { platform: string; url: string }[];
   bio?: string;
   imageUrl?: string;
   visible?: boolean;
-  weeklyAvailability?: WeeklyAvailability;
-  hospitalityRider?: HospitalityRider;
-  technicalRider?: TechnicalRider;
-  performanceArea?: PerformanceArea;
-  media?: { url: string; type: string }[];
-  socialLinks?: { platform: string; url: string }[];
 }
 
 export interface BandResponse {
@@ -84,14 +84,14 @@ export class BandService {
       createBandRequest.location,
       createBandRequest.bandSize,
       createBandRequest.eventTypeIds,
-      createBandRequest.imageUrl,
-      createBandRequest.bio,
       createBandRequest.weeklyAvailability,
       createBandRequest.hospitalityRider,
       createBandRequest.technicalRider,
       createBandRequest.performanceArea,
       createBandRequest.media,
       createBandRequest.socialLinks,
+      createBandRequest.imageUrl,
+      createBandRequest.bio,
     );
 
     const storedBand = await this.bandRepository.addBand(band);

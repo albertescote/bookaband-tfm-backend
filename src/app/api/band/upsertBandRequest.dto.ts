@@ -161,25 +161,25 @@ export class UpsertBandRequestDto {
   @IsBoolean()
   visible?: boolean;
 
-  @IsOptional()
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => WeeklyAvailabilityDto)
-  weeklyAvailability?: WeeklyAvailability;
+  weeklyAvailability: WeeklyAvailability;
 
-  @IsOptional()
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => HospitalityRiderDto)
-  hospitalityRider?: HospitalityRider;
+  hospitalityRider: HospitalityRider;
 
-  @IsOptional()
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => TechnicalRiderDto)
-  technicalRider?: TechnicalRider;
+  technicalRider: TechnicalRider;
 
-  @IsOptional()
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => PerformanceAreaDto)
-  performanceArea?: PerformanceArea;
+  performanceArea: PerformanceArea;
 
   @IsOptional()
   @IsArray()
