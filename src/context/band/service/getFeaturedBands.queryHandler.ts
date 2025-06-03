@@ -2,12 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { BandRepository } from "../infrastructure/band.repository";
 import { GetFeaturedBandsQuery } from "./getFeaturedBands.query";
-import { BandRole } from "../domain/bandRole";
 
 export interface FeaturedBand {
   id: string;
   name: string;
-  members: { id: string; role: BandRole }[];
   musicalStyleIds: string[];
   price?: number;
   imageUrl?: string;

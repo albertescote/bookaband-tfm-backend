@@ -34,7 +34,6 @@ export class BandRepository {
           followers: primitives.followers,
           following: primitives.following,
           createdAt: primitives.createdAt,
-          rating: primitives.rating,
           price: primitives.price,
           location: primitives.location,
           bandSize: primitives.bandSize as BandSize,
@@ -134,6 +133,8 @@ export class BandRepository {
 
     if (!band) return undefined;
 
+    const averageRating = this.calculateAverageRating(band.artistReview);
+
     return Band.fromPrimitives({
       id: band.id,
       name: band.name,
@@ -143,7 +144,7 @@ export class BandRepository {
         role: m.role as BandRole,
       })),
       imageUrl: band.imageUrl,
-      rating: band.rating,
+      rating: averageRating,
       reviewCount: band.artistReview.length,
       bio: band.bio,
       followers: band.followers,
@@ -204,7 +205,6 @@ export class BandRepository {
           name: primitives.name,
           musicalStyleIds: primitives.musicalStyleIds,
           imageUrl: primitives.imageUrl,
-          rating: primitives.rating,
           bio: primitives.bio,
           followers: primitives.followers,
           following: primitives.following,
@@ -376,6 +376,8 @@ export class BandRepository {
 
     if (!band) return undefined;
 
+    const averageRating = this.calculateAverageRating(band.artistReview);
+
     return {
       id: band.id,
       name: band.name,
@@ -397,7 +399,7 @@ export class BandRepository {
       createdDate: band.createdAt,
       price: band.price,
       imageUrl: band.imageUrl,
-      rating: band.rating,
+      rating: averageRating,
       bio: band.bio,
       followers: band.followers,
       following: band.following,
@@ -526,7 +528,7 @@ export class BandRepository {
       bio: band.bio,
       price: band.price,
       imageUrl: band.imageUrl || undefined,
-      rating: band.rating || undefined,
+      rating: this.calculateAverageRating(band.artistReview) || undefined,
       hospitalityRider: band.hospitalityRider,
       technicalRider: band.technicalRider,
       performanceArea: band.performanceArea,
@@ -569,10 +571,6 @@ export class BandRepository {
       featuredBands: bands.map((band) => ({
         id: band.id,
         name: band.name,
-        members: band.members.map((m) => ({
-          id: m.userId,
-          role: m.role as BandRole,
-        })),
         musicalStyleIds: band.musicalStyleIds,
         price: band.price,
         imageUrl: band.imageUrl,
@@ -580,5 +578,11 @@ export class BandRepository {
       })),
       total,
     };
+  }
+
+  private calculateAverageRating(reviews: { rating: number }[]): number | null {
+    if (reviews.length === 0) return null;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return sum / reviews.length;
   }
 }

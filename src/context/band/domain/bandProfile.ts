@@ -40,7 +40,7 @@ interface HospitalityRider {
   accommodation: string;
   catering: string;
   beverages: string;
-  specialRequirements: string;
+  specialRequirements?: string;
 }
 
 interface TechnicalRider {
@@ -48,13 +48,13 @@ interface TechnicalRider {
   microphones: string;
   backline: string;
   lighting: string;
-  otherRequirements: string;
+  otherRequirements?: string;
 }
 
 interface PerformanceArea {
   regions: string[];
   travelPreferences: string;
-  restrictions: string;
+  restrictions?: string;
 }
 
 export interface BandProfile {
@@ -68,19 +68,19 @@ export interface BandProfile {
   eventTypeIds: string[];
   reviewCount: number;
   createdDate: Date;
+  weeklyAvailability: WeeklyAvailability;
+  hospitalityRider: HospitalityRider;
+  technicalRider: TechnicalRider;
+  performanceArea: PerformanceArea;
+  followers: number;
+  following: number;
+  reviews: ArtistReview[];
+  media: Media[];
+  events: Event[];
+  socialLinks: SocialLinks[];
   members?: { id: string; role: BandRole; name: string; imageUrl?: string }[];
   price?: number;
   imageUrl?: string;
   rating?: number;
   bio?: string;
-  followers?: number;
-  following?: number;
-  weeklyAvailability: WeeklyAvailability;
-  hospitalityRider?: HospitalityRider;
-  technicalRider?: TechnicalRider;
-  performanceArea?: PerformanceArea;
-  reviews?: ArtistReview[];
-  media?: Media[];
-  events?: Event[];
-  socialLinks?: SocialLinks[];
 }

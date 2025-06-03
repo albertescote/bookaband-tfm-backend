@@ -28,9 +28,81 @@ export async function seedBookings() {
       bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - wedding event
       userId: "8dea1067-4b61-4863-984a-8e665664eb14",
       status: "PENDING",
-      name: "680e3e8f-8e08-4921-8461-0f60971c8b5f Reception",
+      name: "J&A Wedding",
       eventTypeId: "680e3e8f-8e08-4921-8461-0f60971c8b5f",
       date: new Date("2025-07-11T20:00:00.000Z"),
+      country: "Italy",
+      city: "Florence",
+      venue: "Villa di Maiano",
+      postalCode: "50125",
+      addressLine1: "Via Benedetto da Maiano 11",
+      isPublic: false,
+    },
+  });
+
+  await prisma.booking.create({
+    data: {
+      id: "cb58f0ca-afd4-459f-b0e4-0a4e2d9a3511",
+      bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - wedding event
+      userId: "8dea1067-4b61-4863-984a-8e665664eb14",
+      status: "ACCEPTED",
+      name: "BeachFest",
+      eventTypeId: "ec30f141-5914-46e3-a482-39d55a097e9b",
+      date: new Date("2025-06-11T20:00:00.000Z"),
+      country: "Italy",
+      city: "Florence",
+      venue: "Villa di Maiano",
+      postalCode: "50125",
+      addressLine1: "Via Benedetto da Maiano 11",
+      isPublic: false,
+    },
+  });
+
+  await prisma.booking.create({
+    data: {
+      id: "ca37897a-18a9-4cc5-8ea6-14f51364c314",
+      bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - wedding event
+      userId: "8dea1067-4b61-4863-984a-8e665664eb14",
+      status: "ACCEPTED",
+      name: "A&M Wedding",
+      eventTypeId: "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+      date: new Date("2025-06-11T20:00:00.000Z"),
+      country: "Italy",
+      city: "Florence",
+      venue: "Villa di Maiano",
+      postalCode: "50125",
+      addressLine1: "Via Benedetto da Maiano 11",
+      isPublic: false,
+    },
+  });
+
+  await prisma.booking.create({
+    data: {
+      id: "7f848434-88fe-404e-9948-e2079e7d0e28",
+      bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - wedding event
+      userId: "8dea1067-4b61-4863-984a-8e665664eb14",
+      status: "ACCEPTED",
+      name: "E&M Wedding",
+      eventTypeId: "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+      date: new Date("2025-07-01T20:00:00.000Z"),
+      country: "Italy",
+      city: "Florence",
+      venue: "Villa di Maiano",
+      postalCode: "50125",
+      addressLine1: "Via Benedetto da Maiano 11",
+      isPublic: false,
+    },
+  });
+
+  await prisma.booking.create({
+    data: {
+      id: "ed4b2fb5-18a8-4357-9cda-b794650738e3",
+      bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - wedding event
+      userId: "8dea1067-4b61-4863-984a-8e665664eb14",
+      status: "DECLINED",
+      name: "MyTown Festival",
+      eventTypeId: "ec30f141-5914-46e3-a482-39d55a097e9b",
+      date: new Date("2025-07-06T20:00:00.000Z"),
       country: "Italy",
       city: "Florence",
       venue: "Villa di Maiano",
@@ -46,7 +118,7 @@ export async function seedBookings() {
       bandId: "824863a8-1e09-4d69-9e5d-8e0bff068129", // Sax & Soul - jazz event
       userId: "23c678d2-2137-4758-bfc3-4a26afcd38c3",
       status: "ACCEPTED",
-      name: "Jazz Night 7c223ed2-e955-4007-ac8a-f23235127ac5",
+      name: "Jazz Night",
       eventTypeId: "7c223ed2-e955-4007-ac8a-f23235127ac5",
       date: new Date("2025-07-12T20:00:00.000Z"),
       country: "France",

@@ -17,7 +17,7 @@ export interface HospitalityRider {
   accommodation: string;
   catering: string;
   beverages: string;
-  specialRequirements: string;
+  specialRequirements?: string;
 }
 
 export interface TechnicalRider {
@@ -25,13 +25,13 @@ export interface TechnicalRider {
   microphones: string;
   backline: string;
   lighting: string;
-  otherRequirements: string;
+  otherRequirements?: string;
 }
 
 export interface PerformanceArea {
   regions: string[];
   travelPreferences: string;
-  restrictions: string;
+  restrictions?: string;
 }
 
 export interface Media {

@@ -97,7 +97,6 @@ model band {
   technicalRiderId   String       @unique
   hospitalityRiderId String       @unique
   performanceAreaId  String       @unique
-  rating             Float?
   bio                String?
   imageUrl           String?
 

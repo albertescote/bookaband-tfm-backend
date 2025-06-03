@@ -53,6 +53,49 @@ export class BandController {
     return await this.bandService.create(req.user, body);
   }
 
+  @Get("/")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async getUserBands(
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<GetUserBandsResponse[]> {
+    return this.bandService.getUserBands(req.user);
+  }
+
+  @Get("/details")
+  @UseGuards(JwtOptionalGuard)
+  @HttpCode(200)
+  async getFilteredBands(
+    @Request() req: { user: UserAuthInfo },
+    @Query("page", ParseIntPipeCustom) page = 1,
+    @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
+    @Query("location", new SanitizeTextPipe(), new ValidateLocationPipe())
+    location?: string,
+    @Query("searchQuery", new SanitizeTextPipe(), new ValidateSearchQueryPipe())
+    searchQuery?: string,
+    @Query("date", new SanitizeTextPipe(), new ValidateDatePipe())
+    date?: string,
+  ): Promise<FilteredBandsResponseDto> {
+    const query = new GetFilteredBandsQuery(req.user.id, page, pageSize, {
+      location,
+      searchQuery,
+      date,
+    });
+    return this.queryBus.execute(query);
+  }
+
+  @Get("/featured")
+  @UseGuards(JwtOptionalGuard)
+  @HttpCode(200)
+  async getFeaturedBands(
+    @Request() req: { user: UserAuthInfo },
+    @Query("page", ParseIntPipeCustom) page = 1,
+    @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
+  ): Promise<FeaturedBandsResponseDto> {
+    const query = new GetFeaturedBandsQuery(req.user.id, page, pageSize);
+    return this.queryBus.execute(query);
+  }
+
   @Get("/:id/profile")
   @UseGuards(JwtOptionalGuard)
   @HttpCode(200)
@@ -72,15 +115,6 @@ export class BandController {
     @Request() req: { user: UserAuthInfo },
   ): Promise<BandResponseDto> {
     return this.bandService.getById(req.user, idParamDto.id);
-  }
-
-  @Get("/")
-  @UseGuards(JwtCustomGuard)
-  @HttpCode(200)
-  async getUserBands(
-    @Request() req: { user: UserAuthInfo },
-  ): Promise<GetUserBandsResponse[]> {
-    return this.bandService.getUserBands(req.user);
   }
 
   @Put("/:id")
@@ -130,39 +164,5 @@ export class BandController {
       new RemoveMemberCommand(bandId, req.user.id, memberId),
     );
     return;
-  }
-
-  @Get("/details")
-  @UseGuards(JwtOptionalGuard)
-  @HttpCode(200)
-  async getFilteredBands(
-    @Request() req: { user: UserAuthInfo },
-    @Query("page", ParseIntPipeCustom) page = 1,
-    @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
-    @Query("location", new SanitizeTextPipe(), new ValidateLocationPipe())
-    location?: string,
-    @Query("searchQuery", new SanitizeTextPipe(), new ValidateSearchQueryPipe())
-    searchQuery?: string,
-    @Query("date", new SanitizeTextPipe(), new ValidateDatePipe())
-    date?: string,
-  ): Promise<FilteredBandsResponseDto> {
-    const query = new GetFilteredBandsQuery(req.user.id, page, pageSize, {
-      location,
-      searchQuery,
-      date,
-    });
-    return this.queryBus.execute(query);
-  }
-
-  @Get("/featured")
-  @UseGuards(JwtOptionalGuard)
-  @HttpCode(200)
-  async getFeaturedBands(
-    @Request() req: { user: UserAuthInfo },
-    @Query("page", ParseIntPipeCustom) page = 1,
-    @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
-  ): Promise<FeaturedBandsResponseDto> {
-    const query = new GetFeaturedBandsQuery(req.user.id, page, pageSize);
-    return this.queryBus.execute(query);
   }
 }
