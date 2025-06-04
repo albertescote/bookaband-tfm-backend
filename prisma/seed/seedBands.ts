@@ -294,7 +294,11 @@ export async function seedBands() {
       price: 2500,
       location: "Madrid",
       bandSize: BandSize.BAND,
-      eventTypeIds: ["corporate", "private", "festival"],
+      eventTypeIds: [
+        "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+        "4d36abfe-0ce7-4ac5-a888-ce31d22cff8c",
+        "7c223ed2-e955-4007-ac8a-f23235127ac5",
+      ],
       featured: true,
       visible: true,
       weeklyAvailability: {
@@ -358,7 +362,11 @@ export async function seedBands() {
       price: 3000,
       location: "Barcelona",
       bandSize: BandSize.BAND,
-      eventTypeIds: ["corporate", "private", "festival"],
+      eventTypeIds: [
+        "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+        "7c223ed2-e955-4007-ac8a-f23235127ac5",
+        "ec30f141-5914-46e3-a482-39d55a097e9b",
+      ],
       featured: true,
       visible: true,
       weeklyAvailability: {
@@ -422,7 +430,11 @@ export async function seedBands() {
       price: 1000,
       location: "Barcelona",
       bandSize: BandSize.TRIO,
-      eventTypeIds: ["corporate", "private", "festival"],
+      eventTypeIds: [
+        "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+        "7c223ed2-e955-4007-ac8a-f23235127ac5",
+        "ec30f141-5914-46e3-a482-39d55a097e9b",
+      ],
       featured: true,
       visible: true,
       weeklyAvailability: {
@@ -486,7 +498,11 @@ export async function seedBands() {
       price: 1500,
       location: "Madrid",
       bandSize: BandSize.BAND,
-      eventTypeIds: ["corporate", "private", "festival"],
+      eventTypeIds: [
+        "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+        "7c223ed2-e955-4007-ac8a-f23235127ac5",
+        "ec30f141-5914-46e3-a482-39d55a097e9b",
+      ],
       featured: true,
       visible: true,
       weeklyAvailability: {
@@ -550,7 +566,11 @@ export async function seedBands() {
       price: 2000,
       location: "Barcelona",
       bandSize: BandSize.TRIO,
-      eventTypeIds: ["corporate", "private", "festival"],
+      eventTypeIds: [
+        "680e3e8f-8e08-4921-8461-0f60971c8b5f",
+        "7c223ed2-e955-4007-ac8a-f23235127ac5",
+        "ec30f141-5914-46e3-a482-39d55a097e9b",
+      ],
       featured: true,
       visible: true,
       weeklyAvailability: {
