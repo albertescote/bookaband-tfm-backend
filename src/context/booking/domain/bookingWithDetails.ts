@@ -8,7 +8,8 @@ export interface BookingWithDetailsPrimitives {
   bandId: string;
   userId: string;
   status: BookingStatus;
-  date: Date;
+  initDate: Date;
+  endDate: Date;
   name: string;
   userName: string;
   bandName: string;
@@ -30,7 +31,8 @@ export class BookingWithDetails {
     private bandId: BandId,
     private userId: UserId,
     private status: BookingStatus,
-    private date: Date,
+    private initDate: Date,
+    private endDate: Date,
     private name: string,
     private userName: string,
     private bandName: string,
@@ -54,7 +56,8 @@ export class BookingWithDetails {
       new BandId(primitives.bandId),
       new UserId(primitives.userId),
       primitives.status,
-      primitives.date,
+      primitives.initDate,
+      primitives.endDate,
       primitives.name,
       primitives.userName,
       primitives.bandName,
@@ -77,7 +80,8 @@ export class BookingWithDetails {
       bandId: this.bandId.toPrimitive(),
       userId: this.userId.toPrimitive(),
       status: this.status,
-      date: this.date,
+      initDate: this.initDate,
+      endDate: this.endDate,
       name: this.name,
       userName: this.userName,
       bandName: this.bandName,

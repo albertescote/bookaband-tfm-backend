@@ -17,7 +17,8 @@ import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 
 export interface CreateBookingRequest {
   bandId: string;
-  date: string;
+  initDate: string;
+  endDate: string;
   name: string;
   country: string;
   city: string;
@@ -44,7 +45,8 @@ export class BookingService {
     const newBooking = Booking.create(
       new BandId(request.bandId),
       new UserId(userAuthInfo.id),
-      new Date(request.date),
+      new Date(request.initDate),
+      new Date(request.endDate),
       request.name,
       request.country,
       request.city,

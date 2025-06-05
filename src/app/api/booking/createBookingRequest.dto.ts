@@ -14,7 +14,11 @@ export class CreateBookingRequestDto {
 
   @IsNotEmpty()
   @IsStringDate()
-  date: string;
+  initDate: string;
+
+  @IsNotEmpty()
+  @IsStringDate()
+  endDate: string;
 
   @IsNotEmpty()
   @IsString()

@@ -211,7 +211,8 @@ model booking {
   userId       String
   status       String
   name         String
-  date         DateTime
+  initDate     DateTime
+  endDate      DateTime
   country      String
   city         String
   venue        String

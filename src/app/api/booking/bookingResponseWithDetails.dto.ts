@@ -5,7 +5,8 @@ export interface BookingResponseWithDetailsDto {
   bandId: string;
   userId: string;
   status: BookingStatus;
-  date: Date;
+  initDate: Date;
+  endDate: Date;
   name: string;
   userName: string;
   bandName: string;
