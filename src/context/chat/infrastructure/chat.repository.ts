@@ -7,7 +7,6 @@ import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
 import { ChatView } from "../domain/chatView";
 import { ChatHistory } from "../domain/chatHistory";
-import BookingId from "../../shared/domain/bookingId";
 import { BookingStatus } from "../../shared/domain/bookingStatus";
 
 @Injectable()
@@ -17,25 +16,41 @@ export class ChatRepository {
   async createChat(chat: Chat): Promise<Chat> {
     const chatPrimitives = chat.toPrimitives();
     try {
-      await this.prismaService.chat.create({
-        data: {
-          id: chatPrimitives.id,
-          userId: chatPrimitives.userId,
-          bandId: chatPrimitives.bandId,
+      const createdChat = await this.prismaService.$transaction(
+        async (prisma) => {
+          const chat = await prisma.chat.create({
+            data: {
+              id: chatPrimitives.id,
+              userId: chatPrimitives.userId,
+              bandId: chatPrimitives.bandId,
+            },
+          });
+
+          if (chatPrimitives.messages.length > 0) {
+            await prisma.message.createMany({
+              data: chatPrimitives.messages.map((message) => ({
+                id: message.id,
+                chatId: chatPrimitives.id,
+                senderId: message.senderId,
+                recipientId: message.recipientId,
+                message: message.message,
+                bookingId: message.metadata?.bookingId,
+                isRead: false,
+              })),
+            });
+          }
+
+          return chat;
         },
-      });
-      return chat;
-    } catch (e) {
+      );
+
+      return await this.getChatById(new ChatId(createdChat.id));
+    } catch (error) {
       return undefined;
     }
   }
 
-  async addMessage(
-    chatId: ChatId,
-    message: Message,
-    isRead: boolean,
-    bookingId?: BookingId,
-  ) {
+  async addMessage(chatId: ChatId, message: Message, isRead: boolean) {
     const messagePrimitives = message.toPrimitives();
     await this.prismaService.$transaction([
       this.prismaService.message.create({
@@ -45,7 +60,9 @@ export class ChatRepository {
           senderId: messagePrimitives.senderId,
           recipientId: messagePrimitives.recipientId,
           message: messagePrimitives.message,
-          bookingId: bookingId.toPrimitive(),
+          bookingId: messagePrimitives.metadata?.bookingId
+            ? messagePrimitives.metadata.bookingId
+            : undefined,
           isRead,
         },
       }),
@@ -225,6 +242,7 @@ export class ChatRepository {
             senderId: true,
             recipientId: true,
             message: true,
+            booking: true,
             timestamp: true,
           },
         },
@@ -260,7 +278,25 @@ export class ChatRepository {
       id: chat.id,
       createdAt: chat.createdAt,
       updatedAt: chat.updatedAt,
-      messages: chat.messages,
+      messages: chat.messages.map((message) => {
+        return {
+          id: message.id,
+          senderId: message.senderId,
+          recipientId: message.recipientId,
+          message: message.message,
+          ...(message.booking && {
+            metadata: {
+              bookingId: message.booking.id,
+              bookingStatus: message.booking.status as BookingStatus,
+              eventName: message.booking.name,
+              eventDate: message.booking.initDate,
+              venue: message.booking.venue,
+              city: message.booking.city,
+            },
+          }),
+          timestamp: message.timestamp,
+        };
+      }),
       user: chat.user,
       band: chat.band,
       unreadMessagesCount: chat._count.messages,

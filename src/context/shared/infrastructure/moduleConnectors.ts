@@ -75,8 +75,8 @@ class ModuleConnectors {
     bookingId: string,
   ): Promise<void> {
     const addBookingIntoChatCommand = new AddBookingIntoChatCommand(
-      bandId,
       userId,
+      bandId,
       bookingId,
     );
     await this.commandBus.execute(addBookingIntoChatCommand);
