@@ -90,11 +90,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     await this.chatRepository.addMessage(
       new ChatId(data.chatId),
-      Message.createNew({
+      Message.createNewTextMessage({
         id: MessageId.generate().toPrimitive(),
         senderId: data.senderId,
         recipientId: data.recipientId,
-        content: data.message,
+        message: data.message,
       }),
       isRead,
     );

@@ -7,6 +7,8 @@ import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
 import { ChatView } from "../domain/chatView";
 import { ChatHistory } from "../domain/chatHistory";
+import BookingId from "../../shared/domain/bookingId";
+import { BookingStatus } from "../../shared/domain/bookingStatus";
 
 @Injectable()
 export class ChatRepository {
@@ -28,7 +30,12 @@ export class ChatRepository {
     }
   }
 
-  async addMessage(chatId: ChatId, message: Message, isRead: boolean) {
+  async addMessage(
+    chatId: ChatId,
+    message: Message,
+    isRead: boolean,
+    bookingId?: BookingId,
+  ) {
     const messagePrimitives = message.toPrimitives();
     await this.prismaService.$transaction([
       this.prismaService.message.create({
@@ -37,7 +44,8 @@ export class ChatRepository {
           chatId: chatId.toPrimitive(),
           senderId: messagePrimitives.senderId,
           recipientId: messagePrimitives.recipientId,
-          content: messagePrimitives.content,
+          message: messagePrimitives.message,
+          bookingId: bookingId.toPrimitive(),
           isRead,
         },
       }),
@@ -66,17 +74,82 @@ export class ChatRepository {
   async getChatById(id: ChatId): Promise<Chat> {
     const chat = await this.prismaService.chat.findFirst({
       where: { id: id.toPrimitive() },
+      include: {
+        messages: {
+          include: {
+            booking: true,
+          },
+        },
+      },
     });
-    const messages = await this.prismaService.message.findMany({
-      where: { chatId: chat.id },
-      orderBy: { timestamp: "asc" },
-    });
+
     return chat
       ? Chat.fromPrimitives({
           id: chat.id,
           userId: chat.userId,
           bandId: chat.bandId,
-          messages,
+          messages: chat.messages.map((message) => {
+            return {
+              id: message.id,
+              senderId: message.senderId,
+              recipientId: message.recipientId,
+              message: message.message,
+              ...(message.booking && {
+                metadata: {
+                  bookingId: message.booking.id,
+                  bookingStatus: message.booking.status as BookingStatus,
+                  eventName: message.booking.name,
+                  eventDate: message.booking.initDate,
+                  venue: message.booking.venue,
+                  city: message.booking.city,
+                },
+              }),
+              timestamp: message.timestamp,
+            };
+          }),
+        })
+      : undefined;
+  }
+
+  async getChatByUserIdAndBandId(
+    userId: UserId,
+    bandId: BandId,
+  ): Promise<Chat> {
+    const chat = await this.prismaService.chat.findFirst({
+      where: { userId: userId.toPrimitive(), bandId: bandId.toPrimitive() },
+      include: {
+        messages: {
+          include: {
+            booking: true,
+          },
+        },
+      },
+    });
+
+    return chat
+      ? Chat.fromPrimitives({
+          id: chat.id,
+          userId: chat.userId,
+          bandId: chat.bandId,
+          messages: chat.messages.map((message) => {
+            return {
+              id: message.id,
+              senderId: message.senderId,
+              recipientId: message.recipientId,
+              message: message.message,
+              ...(message.booking && {
+                metadata: {
+                  bookingId: message.booking.id,
+                  bookingStatus: message.booking.status as BookingStatus,
+                  eventName: message.booking.name,
+                  eventDate: message.booking.initDate,
+                  venue: message.booking.venue,
+                  city: message.booking.city,
+                },
+              }),
+              timestamp: message.timestamp,
+            };
+          }),
         })
       : undefined;
   }
@@ -89,6 +162,9 @@ export class ChatRepository {
         createdAt: true,
         updatedAt: true,
         messages: {
+          include: {
+            booking: true,
+          },
           orderBy: { timestamp: "asc" },
         },
         user: {
@@ -103,7 +179,30 @@ export class ChatRepository {
       },
     });
 
-    return chat ?? undefined;
+    return chat
+      ? {
+          ...chat,
+          messages: chat.messages.map((message) => {
+            return {
+              id: message.id,
+              senderId: message.senderId,
+              recipientId: message.recipientId,
+              message: message.message,
+              ...(message.booking && {
+                metadata: {
+                  bookingId: message.booking.id,
+                  bookingStatus: message.booking.status as BookingStatus,
+                  eventName: message.booking.name,
+                  eventDate: message.booking.initDate,
+                  venue: message.booking.venue,
+                  city: message.booking.city,
+                },
+              }),
+              timestamp: message.timestamp,
+            };
+          }),
+        }
+      : undefined;
   }
 
   async getUserChats(userId: UserId): Promise<ChatView[]> {
@@ -125,7 +224,7 @@ export class ChatRepository {
             id: true,
             senderId: true,
             recipientId: true,
-            content: true,
+            message: true,
             timestamp: true,
           },
         },
@@ -181,6 +280,9 @@ export class ChatRepository {
         createdAt: true,
         updatedAt: true,
         messages: {
+          include: {
+            booking: true,
+          },
           orderBy: { timestamp: "desc" },
           take: 1,
         },
@@ -209,7 +311,25 @@ export class ChatRepository {
       id: chat.id,
       createdAt: chat.createdAt,
       updatedAt: chat.updatedAt,
-      messages: chat.messages,
+      messages: chat.messages.map((message) => {
+        return {
+          id: message.id,
+          senderId: message.senderId,
+          recipientId: message.recipientId,
+          message: message.message,
+          ...(message.booking && {
+            metadata: {
+              bookingId: message.booking.id,
+              bookingStatus: message.booking.status as BookingStatus,
+              eventName: message.booking.name,
+              eventDate: message.booking.initDate,
+              venue: message.booking.venue,
+              city: message.booking.city,
+            },
+          }),
+          timestamp: message.timestamp,
+        };
+      }),
       user: chat.user,
       band: chat.band,
       unreadMessagesCount: chat._count.messages,

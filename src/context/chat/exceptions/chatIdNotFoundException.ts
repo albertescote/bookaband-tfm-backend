@@ -1,7 +1,7 @@
-import { NotFoundException } from "../../../app/exceptions/notFoundException";
+import { BadRequestException } from "../../../app/exceptions/badRequestException";
 
-export class ChatIdNotFoundException extends NotFoundException {
-  constructor(chatId: string) {
-    super(`Chat not found for this id: ${chatId}`);
+export class ChatIdNotFoundException extends BadRequestException {
+  constructor(id: string) {
+    super(`Invalid chat id format: ${id}. It must be a UUID`);
   }
 }

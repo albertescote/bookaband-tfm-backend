@@ -5,7 +5,7 @@ import BandId from "../../shared/domain/bandId";
 import { BandProfile } from "../domain/bandProfile";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import { GetBandProfileQuery } from "./getBandProfile.query";
-import { BookingStatus } from "../../booking/domain/bookingStatus";
+import { BookingStatus } from "../../shared/domain/bookingStatus";
 
 @Injectable()
 @QueryHandler(GetBandProfileQuery)

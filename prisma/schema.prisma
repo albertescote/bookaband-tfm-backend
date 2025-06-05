@@ -175,11 +175,13 @@ model message {
   senderId    String
   recipientId String
   chatId      String
-  content     String
   timestamp   DateTime @default(now())
   isRead      Boolean
+  message     String?
+  bookingId   String?
 
-  chat chat @relation(fields: [chatId], references: [id])
+  booking booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  chat    chat     @relation(fields: [chatId], references: [id])
 }
 
 model chat {
@@ -227,6 +229,7 @@ model booking {
   band     band      @relation(fields: [bandId], references: [id], onDelete: Cascade)
   user     user      @relation(fields: [userId], references: [id], onDelete: Cascade)
   contract contract?
+  message  message[]
 }
 
 model contract {

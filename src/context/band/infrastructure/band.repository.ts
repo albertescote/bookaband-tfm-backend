@@ -9,7 +9,7 @@ import { BandSize } from "../domain/bandSize";
 import { Prisma } from "@prisma/client";
 import { BandCatalogItem } from "../domain/bandCatalogItem";
 import { FeaturedBand } from "../service/getFeaturedBands.queryHandler";
-import { BookingStatus } from "../../booking/domain/bookingStatus";
+import { BookingStatus } from "../../shared/domain/bookingStatus";
 
 export interface UserBand {
   id: string;

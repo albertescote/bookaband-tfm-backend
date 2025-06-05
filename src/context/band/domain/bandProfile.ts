@@ -1,7 +1,7 @@
 import { WeeklyAvailability } from "./band";
 import { BandSize } from "./bandSize";
 import { BandRole } from "./bandRole";
-import { BookingStatus } from "../../booking/domain/bookingStatus";
+import { BookingStatus } from "../../shared/domain/bookingStatus";
 
 export interface ArtistReview {
   id: string;

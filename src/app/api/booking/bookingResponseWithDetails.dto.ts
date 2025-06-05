@@ -1,4 +1,4 @@
-import { BookingStatus } from "../../../context/booking/domain/bookingStatus";
+import { BookingStatus } from "../../../context/shared/domain/bookingStatus";
 
 export interface BookingResponseWithDetailsDto {
   id: string;

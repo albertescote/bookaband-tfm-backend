@@ -14,6 +14,7 @@ import { NotOwnerOfTheRequestedBandException } from "../exceptions/notOwnerOfThe
 import { BookingAlreadyProcessedException } from "../exceptions/bookingAlreadyProcessedException";
 import { BookingWithDetailsPrimitives } from "../domain/bookingWithDetails";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
+import { NotAbleToCreateBookingException } from "../exceptions/notAbleToCreateBookingException";
 
 export interface CreateBookingRequest {
   bandId: string;
@@ -58,6 +59,14 @@ export class BookingService {
       request.isPublic,
     );
     const storedBooking = await this.bookingRepository.save(newBooking);
+    if (!storedBooking) {
+      throw new NotAbleToCreateBookingException();
+    }
+    await this.moduleConnectors.addBookingToChat(
+      request.bandId,
+      userAuthInfo.id,
+      newBooking.getId().toPrimitive(),
+    );
     return storedBooking.toPrimitives();
   }
 

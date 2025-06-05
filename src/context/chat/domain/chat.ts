@@ -44,4 +44,8 @@ export default class Chat {
   isOwner(id: string) {
     return this.userId.toPrimitive() === id || this.bandId.toPrimitive() === id;
   }
+
+  getId(): ChatId {
+    return this.id;
+  }
 }

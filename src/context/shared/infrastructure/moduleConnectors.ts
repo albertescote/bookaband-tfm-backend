@@ -20,6 +20,7 @@ import { GetUserIdByBookingIdQuery } from "../../booking/service/getUserIdByBook
 import { CreateVerificationRecordCommand } from "../../email/service/createVerificationRecord.command";
 import { GetAllMusicalStylesQuery } from "../../musicalStyle/service/getAllMusicalStyles.query";
 import { MusicalStylePrimitives } from "../domain/musicalStyle";
+import { AddBookingIntoChatCommand } from "../../chat/service/addBookingIntoChat.command";
 
 @Injectable()
 class ModuleConnectors {
@@ -66,6 +67,19 @@ class ModuleConnectors {
   async joinBand(bandId: string, userId: string): Promise<void> {
     const joinBandCommand = new JoinBandCommand(bandId, userId);
     await this.commandBus.execute(joinBandCommand);
+  }
+
+  async addBookingToChat(
+    bandId: string,
+    userId: string,
+    bookingId: string,
+  ): Promise<void> {
+    const addBookingIntoChatCommand = new AddBookingIntoChatCommand(
+      bandId,
+      userId,
+      bookingId,
+    );
+    await this.commandBus.execute(addBookingIntoChatCommand);
   }
 
   async createVerificationRecord(
