@@ -79,4 +79,14 @@ export class BookingController {
   ): Promise<BookingResponseDto> {
     return await this.bookingService.declineBooking(req.user, id);
   }
+
+  @Put("/:id/cancel")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async cancelBooking(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BookingResponseDto> {
+    return await this.bookingService.cancelBooking(req.user, id);
+  }
 }

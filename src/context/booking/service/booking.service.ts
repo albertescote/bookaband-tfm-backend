@@ -164,6 +164,24 @@ export class BookingService {
     return booking.toPrimitives();
   }
 
+  @RoleAuth([Role.Client])
+  async cancelBooking(user: UserAuthInfo, id: string) {
+    const booking = await this.bookingRepository.findById(new BookingId(id));
+    if (!booking) {
+      throw new BookingNotFoundException(id);
+    }
+    if (!booking.isClientOwner(new UserId(user.id))) {
+      throw new NotOwnerOfTheRequestedBookingException();
+    }
+    if (!booking.isPending()) {
+      throw new BookingAlreadyProcessedException();
+    }
+    booking.cancel();
+    await this.bookingRepository.save(booking);
+
+    return booking.toPrimitives();
+  }
+
   private async checkIsBandMember(
     bandId: BandId,
     bookingId: BookingId,

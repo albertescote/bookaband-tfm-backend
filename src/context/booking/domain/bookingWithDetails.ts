@@ -9,10 +9,19 @@ export interface BookingWithDetailsPrimitives {
   userId: string;
   status: BookingStatus;
   date: Date;
+  name: string;
   userName: string;
   bandName: string;
   userImageUrl?: string;
   bandImageUrl?: string;
+  country: string;
+  city: string;
+  venue: string;
+  postalCode: string;
+  addressLine1: string;
+  addressLine2?: string;
+  eventTypeId?: string;
+  isPublic?: boolean;
 }
 
 export class BookingWithDetails {
@@ -22,8 +31,17 @@ export class BookingWithDetails {
     private userId: UserId,
     private status: BookingStatus,
     private date: Date,
+    private name: string,
     private userName: string,
     private bandName: string,
+    private country: string,
+    private city: string,
+    private venue: string,
+    private postalCode: string,
+    private addressLine1: string,
+    private addressLine2?: string,
+    private eventTypeId?: string,
+    private isPublic?: boolean,
     private userImageUrl?: string,
     private bandImageUrl?: string,
   ) {}
@@ -37,8 +55,17 @@ export class BookingWithDetails {
       new UserId(primitives.userId),
       primitives.status,
       primitives.date,
+      primitives.name,
       primitives.userName,
       primitives.bandName,
+      primitives.country,
+      primitives.city,
+      primitives.venue,
+      primitives.postalCode,
+      primitives.addressLine1,
+      primitives.addressLine2,
+      primitives.eventTypeId,
+      primitives.isPublic,
       primitives.userImageUrl,
       primitives.bandImageUrl,
     );
@@ -51,8 +78,17 @@ export class BookingWithDetails {
       userId: this.userId.toPrimitive(),
       status: this.status,
       date: this.date,
+      name: this.name,
       userName: this.userName,
       bandName: this.bandName,
+      country: this.country,
+      city: this.city,
+      venue: this.venue,
+      postalCode: this.postalCode,
+      addressLine1: this.addressLine1,
+      addressLine2: this.addressLine2,
+      eventTypeId: this.eventTypeId,
+      isPublic: this.isPublic,
       userImageUrl: this.userImageUrl,
       bandImageUrl: this.bandImageUrl,
     };

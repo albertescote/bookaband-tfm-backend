@@ -88,10 +88,19 @@ export class BookingRepository {
           userId: booking.userId,
           status: BookingStatus[booking.status],
           date: booking.date,
+          name: booking.name,
           userName: booking.user.firstName + " " + booking.user.familyName,
           userImageUrl: booking.user.imageUrl,
           bandName: booking.band.name,
           bandImageUrl: booking.band.imageUrl,
+          country: booking.country,
+          city: booking.city,
+          venue: booking.venue,
+          postalCode: booking.postalCode,
+          addressLine1: booking.addressLine1,
+          addressLine2: booking.addressLine2,
+          eventTypeId: booking.eventTypeId,
+          isPublic: booking.isPublic,
         })
       : undefined;
   }
@@ -124,10 +133,19 @@ export class BookingRepository {
             userId: booking.userId,
             status: BookingStatus[booking.status],
             date: booking.date,
+            name: booking.name,
             userName: booking.user.firstName + " " + booking.user.familyName,
             userImageUrl: booking.user.imageUrl,
             bandName: booking.band.name,
             bandImageUrl: booking.band.imageUrl,
+            country: booking.country,
+            city: booking.city,
+            venue: booking.venue,
+            postalCode: booking.postalCode,
+            addressLine1: booking.addressLine1,
+            addressLine2: booking.addressLine2,
+            eventTypeId: booking.eventTypeId,
+            isPublic: booking.isPublic,
           });
         })
       : undefined;
@@ -161,10 +179,19 @@ export class BookingRepository {
             userId: booking.userId,
             status: BookingStatus[booking.status],
             date: booking.date,
+            name: booking.name,
             userName: booking.user.firstName + " " + booking.user.familyName,
             userImageUrl: booking.user.imageUrl,
             bandName: booking.band.name,
             bandImageUrl: booking.band.imageUrl,
+            country: booking.country,
+            city: booking.city,
+            venue: booking.venue,
+            postalCode: booking.postalCode,
+            addressLine1: booking.addressLine1,
+            addressLine2: booking.addressLine2,
+            eventTypeId: booking.eventTypeId,
+            isPublic: booking.isPublic,
           });
         })
       : undefined;

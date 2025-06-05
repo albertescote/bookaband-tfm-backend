@@ -1,6 +1,7 @@
 import { WeeklyAvailability } from "./band";
 import { BandSize } from "./bandSize";
 import { BandRole } from "./bandRole";
+import { BookingStatus } from "../../booking/domain/bookingStatus";
 
 export interface ArtistReview {
   id: string;
@@ -18,6 +19,7 @@ interface Event {
   name: string;
   date: string;
   eventTypeId: string;
+  status?: BookingStatus;
   city?: string;
   country?: string;
   venue?: string;

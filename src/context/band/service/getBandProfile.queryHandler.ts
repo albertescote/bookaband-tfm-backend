@@ -5,6 +5,7 @@ import BandId from "../../shared/domain/bandId";
 import { BandProfile } from "../domain/bandProfile";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import { GetBandProfileQuery } from "./getBandProfile.query";
+import { BookingStatus } from "../../booking/domain/bookingStatus";
 
 @Injectable()
 @QueryHandler(GetBandProfileQuery)
@@ -22,8 +23,13 @@ export class GetBandProfileQueryHandler
     }
     const { price, ...shaped } = bandProfile;
     if (!bandProfile.members.find((member) => member.id === userId)) {
-      const { members, ...bandProfileWithoutMembers } = bandProfile;
-      return bandProfileWithoutMembers;
+      const { members, events, ...bandProfileWithoutMembers } = bandProfile;
+      return {
+        ...bandProfileWithoutMembers,
+        events: events.filter(
+          (event) => event.isPublic && event.status === BookingStatus.ACCEPTED,
+        ),
+      };
     }
     return userId ? bandProfile : shaped;
   }

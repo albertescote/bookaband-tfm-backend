@@ -120,11 +120,19 @@ export class Booking {
     this.status = BookingStatus.DECLINED;
   }
 
+  cancel() {
+    this.status = BookingStatus.CANCELED;
+  }
+
   getBandId() {
     return this.bandId;
   }
 
   getId() {
     return this.id;
+  }
+
+  isClientOwner(id: UserId): boolean {
+    return this.userId.toPrimitive() === id.toPrimitive();
   }
 }

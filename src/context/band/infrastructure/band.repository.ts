@@ -9,6 +9,7 @@ import { BandSize } from "../domain/bandSize";
 import { Prisma } from "@prisma/client";
 import { BandCatalogItem } from "../domain/bandCatalogItem";
 import { FeaturedBand } from "../service/getFeaturedBands.queryHandler";
+import { BookingStatus } from "../../booking/domain/bookingStatus";
 
 export interface UserBand {
   id: string;
@@ -454,6 +455,11 @@ export class BandRepository {
         name: booking.name,
         date: booking.date.toISOString(),
         eventTypeId: booking.eventTypeId,
+        city: booking.city,
+        country: booking.country,
+        venue: booking.venue,
+        isPublic: booking.isPublic,
+        status: booking.status as BookingStatus,
       })),
     };
   }

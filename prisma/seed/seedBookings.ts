@@ -43,7 +43,7 @@ export async function seedBookings() {
   await prisma.booking.create({
     data: {
       id: "cb58f0ca-afd4-459f-b0e4-0a4e2d9a3511",
-      bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - wedding event
+      bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - festival event
       userId: "8dea1067-4b61-4863-984a-8e665664eb14",
       status: "ACCEPTED",
       name: "BeachFest",
@@ -54,7 +54,7 @@ export async function seedBookings() {
       venue: "Villa di Maiano",
       postalCode: "50125",
       addressLine1: "Via Benedetto da Maiano 11",
-      isPublic: false,
+      isPublic: true,
     },
   });
 
@@ -90,14 +90,14 @@ export async function seedBookings() {
       venue: "Villa di Maiano",
       postalCode: "50125",
       addressLine1: "Via Benedetto da Maiano 11",
-      isPublic: false,
+      isPublic: true,
     },
   });
 
   await prisma.booking.create({
     data: {
       id: "ed4b2fb5-18a8-4357-9cda-b794650738e3",
-      bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - wedding event
+      bandId: "b4ed7600-12da-4673-960d-ff29af2606db", // The Electric Waves - festival event
       userId: "8dea1067-4b61-4863-984a-8e665664eb14",
       status: "DECLINED",
       name: "MyTown Festival",
@@ -108,7 +108,7 @@ export async function seedBookings() {
       venue: "Villa di Maiano",
       postalCode: "50125",
       addressLine1: "Via Benedetto da Maiano 11",
-      isPublic: false,
+      isPublic: true,
     },
   });
 
