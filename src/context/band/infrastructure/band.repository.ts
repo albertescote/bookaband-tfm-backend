@@ -391,7 +391,7 @@ export class BandRepository {
           imageUrl: m.user.imageUrl,
         };
       }),
-      bookingDates: band.bookings.map((b) => b.date.toISOString()),
+      bookingDates: band.bookings.map((b) => b.initDate.toISOString()),
       location: band.location,
       featured: band.featured,
       bandSize: band.bandSize as BandSize,
@@ -453,7 +453,7 @@ export class BandRepository {
       events: band.bookings.map((booking) => ({
         id: booking.id,
         name: booking.name,
-        date: booking.date.toISOString(),
+        date: booking.initDate.toISOString(),
         eventTypeId: booking.eventTypeId,
         city: booking.city,
         country: booking.country,
@@ -508,7 +508,7 @@ export class BandRepository {
             !band.bookings.some(
               (b) =>
                 b.status === "ACCEPTED" &&
-                b.date.toISOString().split("T")[0] === filters.date,
+                b.initDate.toISOString().split("T")[0] === filters.date,
             ),
         )
       : allBands;
@@ -523,7 +523,7 @@ export class BandRepository {
       musicalStyleIds: band.musicalStyleIds,
       bookingDates: band.bookings
         .filter((b) => b.status === "ACCEPTED")
-        .map((b) => b.date.toISOString()),
+        .map((b) => b.initDate.toISOString()),
       weeklyAvailability:
         band.weeklyAvailability as unknown as WeeklyAvailability,
       location: band.location,
