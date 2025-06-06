@@ -7,6 +7,8 @@ const checkStrVar = (variable: string | undefined, name: string): string => {
   return variable;
 };
 
+const EXTERNAL_URL = checkStrVar(process.env.EXTERNAL_URL, "EXTERNAL_URL");
+
 const FRONTEND_PAGE_URL = checkStrVar(
   process.env.FRONTEND_PAGE_URL,
   "FRONTEND_PAGE_URL",
@@ -39,6 +41,7 @@ const MONGO_DB_NAME = checkStrVar(process.env.MONGO_DB_NAME, "MONGO_DB_NAME");
 const MONGO_DB_URL = checkStrVar(process.env.MONGO_DB_URL, "MONGO_DB_URL");
 
 export {
+  EXTERNAL_URL,
   FRONTEND_PAGE_URL,
   FRONTEND_AUTH_URL,
   FRONTEND_APP_URL,
