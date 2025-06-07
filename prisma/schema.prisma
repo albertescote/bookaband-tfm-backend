@@ -179,6 +179,7 @@ model message {
   isRead      Boolean
   message     String?
   bookingId   String?
+  fileUrl     String?
 
   booking booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
   chat    chat     @relation(fields: [chatId], references: [id])

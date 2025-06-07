@@ -34,7 +34,8 @@ export class ChatRepository {
                 senderId: message.senderId,
                 recipientId: message.recipientId,
                 message: message.message,
-                bookingId: message.metadata?.bookingId,
+                bookingId: message.bookingMetadata?.bookingId,
+                fileUrl: message.fileUrl,
                 isRead: false,
               })),
             });
@@ -60,9 +61,10 @@ export class ChatRepository {
           senderId: messagePrimitives.senderId,
           recipientId: messagePrimitives.recipientId,
           message: messagePrimitives.message,
-          bookingId: messagePrimitives.metadata?.bookingId
-            ? messagePrimitives.metadata.bookingId
+          bookingId: messagePrimitives.bookingMetadata?.bookingId
+            ? messagePrimitives.bookingMetadata.bookingId
             : undefined,
+          fileUrl: messagePrimitives.fileUrl,
           isRead,
         },
       }),
@@ -112,7 +114,7 @@ export class ChatRepository {
               recipientId: message.recipientId,
               message: message.message,
               ...(message.booking && {
-                metadata: {
+                bookingMetadata: {
                   bookingId: message.booking.id,
                   bookingStatus: message.booking.status as BookingStatus,
                   eventName: message.booking.name,
@@ -121,6 +123,7 @@ export class ChatRepository {
                   city: message.booking.city,
                 },
               }),
+              fileUrl: message.fileUrl,
               timestamp: message.timestamp,
             };
           }),
@@ -155,7 +158,7 @@ export class ChatRepository {
               recipientId: message.recipientId,
               message: message.message,
               ...(message.booking && {
-                metadata: {
+                bookingMetadata: {
                   bookingId: message.booking.id,
                   bookingStatus: message.booking.status as BookingStatus,
                   eventName: message.booking.name,
@@ -164,6 +167,7 @@ export class ChatRepository {
                   city: message.booking.city,
                 },
               }),
+              fileUrl: message.fileUrl,
               timestamp: message.timestamp,
             };
           }),
@@ -206,7 +210,7 @@ export class ChatRepository {
               recipientId: message.recipientId,
               message: message.message,
               ...(message.booking && {
-                metadata: {
+                bookingMetadata: {
                   bookingId: message.booking.id,
                   bookingStatus: message.booking.status as BookingStatus,
                   eventName: message.booking.name,
@@ -215,6 +219,7 @@ export class ChatRepository {
                   city: message.booking.city,
                 },
               }),
+              fileUrl: message.fileUrl,
               timestamp: message.timestamp,
             };
           }),
@@ -243,6 +248,7 @@ export class ChatRepository {
             recipientId: true,
             message: true,
             booking: true,
+            fileUrl: true,
             timestamp: true,
           },
         },
@@ -285,7 +291,7 @@ export class ChatRepository {
           recipientId: message.recipientId,
           message: message.message,
           ...(message.booking && {
-            metadata: {
+            bookingMetadata: {
               bookingId: message.booking.id,
               bookingStatus: message.booking.status as BookingStatus,
               eventName: message.booking.name,
@@ -294,6 +300,7 @@ export class ChatRepository {
               city: message.booking.city,
             },
           }),
+          fileUrl: message.fileUrl,
           timestamp: message.timestamp,
         };
       }),
@@ -354,7 +361,7 @@ export class ChatRepository {
           recipientId: message.recipientId,
           message: message.message,
           ...(message.booking && {
-            metadata: {
+            bookingMetadata: {
               bookingId: message.booking.id,
               bookingStatus: message.booking.status as BookingStatus,
               eventName: message.booking.name,
@@ -363,6 +370,7 @@ export class ChatRepository {
               city: message.booking.city,
             },
           }),
+          fileUrl: message.fileUrl,
           timestamp: message.timestamp,
         };
       }),

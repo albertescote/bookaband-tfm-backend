@@ -4,7 +4,7 @@ import SenderId from "./senderId";
 import { BookingStatus } from "../../shared/domain/bookingStatus";
 import { InvalidMessageContentException } from "../exceptions/invalidMessageContentException";
 
-export interface MessageMetadata {
+export interface BookingMetadata {
   bookingId: string;
   bookingStatus?: BookingStatus;
   eventName?: string;
@@ -18,7 +18,8 @@ export interface MessagePrimitives {
   senderId: string;
   recipientId: string;
   message?: string;
-  metadata?: MessageMetadata;
+  bookingMetadata?: BookingMetadata;
+  fileUrl?: string;
   timestamp?: string | Date;
 }
 
@@ -28,10 +29,11 @@ export default class Message {
     private readonly senderId: SenderId,
     private readonly recipientId: RecipientId,
     private readonly message?: string,
-    private readonly metadata?: MessageMetadata,
+    private readonly bookingMetadata?: BookingMetadata,
+    private readonly fileUrl?: string,
     private readonly timestamp?: Date,
   ) {
-    if (!message && !metadata) {
+    if (!message && !bookingMetadata && !fileUrl) {
       throw new InvalidMessageContentException();
     }
   }
@@ -41,12 +43,15 @@ export default class Message {
     senderId: string;
     recipientId: string;
     message: string;
+    fileUrl?: string;
   }) {
     return new Message(
       new MessageId(data.id),
       new SenderId(data.senderId),
       new RecipientId(data.recipientId),
       data.message,
+      undefined,
+      data.fileUrl,
     );
   }
 
@@ -71,7 +76,8 @@ export default class Message {
       new SenderId(data.senderId),
       new RecipientId(data.recipientId),
       data.message,
-      data.metadata,
+      data.bookingMetadata,
+      data.fileUrl,
       data.timestamp ? new Date(data.timestamp) : undefined,
     );
   }
@@ -82,7 +88,8 @@ export default class Message {
       senderId: this.senderId.toPrimitive(),
       recipientId: this.recipientId.toPrimitive(),
       message: this.message,
-      metadata: this.metadata,
+      bookingMetadata: this.bookingMetadata,
+      fileUrl: this.fileUrl,
       timestamp: this.timestamp?.toISOString(),
     };
   }

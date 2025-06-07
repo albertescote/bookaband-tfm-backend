@@ -3,7 +3,7 @@ import { InternalServerErrorException } from "../../../app/exceptions/internalSe
 export class InvalidMessageContentException extends InternalServerErrorException {
   constructor() {
     super(
-      "Invalid message content: neither message nor booking reference are present",
+      "Invalid message content: neither message nor file url nor booking reference are present",
     );
   }
 }

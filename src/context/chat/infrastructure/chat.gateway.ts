@@ -24,7 +24,8 @@ interface MessageRequest {
   chatId: string;
   senderId: string;
   recipientId: string;
-  message: string;
+  message?: string;
+  fileUrl?: string;
   timestamp: string | Date;
 }
 
@@ -95,6 +96,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         senderId: data.senderId,
         recipientId: data.recipientId,
         message: data.message,
+        fileUrl: data.fileUrl,
       }),
       isRead,
     );
