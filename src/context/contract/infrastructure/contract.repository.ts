@@ -15,20 +15,20 @@ export class ContractRepository {
     return contract ? Contract.fromPrimitives(contract) : undefined;
   }
 
-  async findBookingUserIdByContractId(contractId: string): Promise<string> {
+  async findBookingBandIdByContractId(contractId: string): Promise<string> {
     const result = await this.prisma.contract.findUnique({
       where: { id: contractId },
       select: {
         booking: {
           select: {
-            userId: true,
+            bandId: true,
           },
         },
       },
     });
     if (!result) return undefined;
 
-    return result.booking.userId;
+    return result.booking.bandId;
   }
 
   async findManyByUserId(userId: string): Promise<Contract[]> {
