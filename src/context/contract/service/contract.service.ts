@@ -30,7 +30,7 @@ export interface UpdateContractRequest {
 export class ContractService {
   constructor(
     private readonly repository: ContractRepository,
-    private moduleConnectors: ModuleConnectors,
+    private readonly moduleConnectors: ModuleConnectors,
   ) {}
 
   @RoleAuth([Role.Musician])
@@ -38,11 +38,12 @@ export class ContractService {
     user: UserAuthInfo,
     request: CreateContractRequest,
   ): Promise<ContractPrimitives> {
-    await this.checkCrationOwnership(request, user);
+    await this.checkCreationOwnership(request, user);
 
     const contract = Contract.create(
       new BookingId(request.bookingId),
       request.status,
+      request.fileUrl,
     );
     const created = await this.repository.create(contract);
     if (!created) throw new UnableToCreateContractException();
@@ -64,6 +65,7 @@ export class ContractService {
       Contract.fromPrimitives({
         ...existing.toPrimitives(),
         status: request.status,
+        fileUrl: request.fileUrl,
       }),
     );
 
@@ -96,7 +98,7 @@ export class ContractService {
     return contracts.map((c) => c.toPrimitives());
   }
 
-  private async checkCrationOwnership(
+  private async checkCreationOwnership(
     request: CreateContractRequest,
     user: UserAuthInfo,
   ) {

@@ -238,7 +238,7 @@ model contract {
   bookingId String   @unique
   date      DateTime
   status    String
-  fileUrl   String?
+  fileUrl   String
   createdAt DateTime @default(now())
 
   booking booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)

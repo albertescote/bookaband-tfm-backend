@@ -22,6 +22,7 @@ interface ContractResponseDto {
   bookingId: string;
   date: Date;
   status: string;
+  fileUrl: string;
 }
 
 @Controller("/contracts")

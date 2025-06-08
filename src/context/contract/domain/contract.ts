@@ -8,6 +8,7 @@ export interface ContractPrimitives {
   bookingId: string;
   date: Date;
   status: string;
+  fileUrl: string;
 }
 
 export class Contract {
@@ -16,6 +17,7 @@ export class Contract {
     private bookingId: BookingId,
     private date: Date,
     private status: ContractStatus,
+    private fileUrl: string,
   ) {}
 
   static fromPrimitives(primitives: ContractPrimitives): Contract {
@@ -28,11 +30,22 @@ export class Contract {
       new BookingId(primitives.bookingId),
       new Date(primitives.date),
       status,
+      primitives.fileUrl,
     );
   }
 
-  static create(bookingId: BookingId, status: ContractStatus): Contract {
-    return new Contract(ContractId.generate(), bookingId, new Date(), status);
+  static create(
+    bookingId: BookingId,
+    status: ContractStatus,
+    fileUrl: string,
+  ): Contract {
+    return new Contract(
+      ContractId.generate(),
+      bookingId,
+      new Date(),
+      status,
+      fileUrl,
+    );
   }
 
   toPrimitives(): ContractPrimitives {
@@ -41,10 +54,15 @@ export class Contract {
       bookingId: this.bookingId.toPrimitive(),
       date: this.date,
       status: this.status,
+      fileUrl: this.fileUrl,
     };
   }
 
   getId() {
     return this.id;
+  }
+
+  getFileUrl() {
+    return this.fileUrl;
   }
 }
