@@ -5,6 +5,7 @@ import { ContractRepository } from "./infrastructure/contract.repository";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
 import { GetBookingIdByContractIdQueryHandler } from "./service/getBookingIdByContractId.queryHandler";
 import { CqrsModule } from "@nestjs/cqrs";
+import { GenerateContractCommandHandler } from "./service/generateContract.commandHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -14,7 +15,12 @@ import { CqrsModule } from "@nestjs/cqrs";
     ContractRepository,
     PrismaService,
     GetBookingIdByContractIdQueryHandler,
+    GenerateContractCommandHandler,
   ],
-  exports: [ContractService, GetBookingIdByContractIdQueryHandler],
+  exports: [
+    ContractService,
+    GetBookingIdByContractIdQueryHandler,
+    GenerateContractCommandHandler,
+  ],
 })
 export class ContractModule {}

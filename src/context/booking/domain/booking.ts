@@ -130,15 +130,19 @@ export class Booking {
     this.status = BookingStatus.CANCELED;
   }
 
-  getBandId() {
-    return this.bandId;
-  }
-
-  getId() {
+  getId(): BookingId {
     return this.id;
   }
 
-  isClientOwner(id: UserId): boolean {
-    return this.userId.toPrimitive() === id.toPrimitive();
+  getBandId(): BandId {
+    return this.bandId;
+  }
+
+  getUserId(): UserId {
+    return this.userId;
+  }
+
+  isClientOwner(userId: UserId): boolean {
+    return this.userId.toPrimitive() === userId.toPrimitive();
   }
 }

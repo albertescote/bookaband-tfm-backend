@@ -15,6 +15,7 @@ import { BookingAlreadyProcessedException } from "../exceptions/bookingAlreadyPr
 import { BookingWithDetailsPrimitives } from "../domain/bookingWithDetails";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { NotAbleToCreateBookingException } from "../exceptions/notAbleToCreateBookingException";
+import { CommandBus } from "@nestjs/cqrs";
 
 export interface CreateBookingRequest {
   bandId: string;
@@ -36,6 +37,7 @@ export class BookingService {
   constructor(
     private bookingRepository: BookingRepository,
     private moduleConnectors: ModuleConnectors,
+    private commandBus: CommandBus,
   ) {}
 
   @RoleAuth([Role.Client])
@@ -145,6 +147,12 @@ export class BookingService {
     }
     booking.accept();
     await this.bookingRepository.save(booking);
+
+    await this.moduleConnectors.generateContract(
+      booking.getId().toPrimitive(),
+      booking.getBandId().toPrimitive(),
+      booking.getUserId().toPrimitive(),
+    );
 
     return booking.toPrimitives();
   }

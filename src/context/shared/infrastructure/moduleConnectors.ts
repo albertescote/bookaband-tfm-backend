@@ -21,6 +21,8 @@ import { CreateVerificationRecordCommand } from "../../email/service/createVerif
 import { GetAllMusicalStylesQuery } from "../../musicalStyle/service/getAllMusicalStyles.query";
 import { MusicalStylePrimitives } from "../domain/musicalStyle";
 import { AddBookingIntoChatCommand } from "../../chat/service/addBookingIntoChat.command";
+import { GetBookingByIdQuery } from "../../booking/service/getBookingById.query";
+import { GenerateContractCommand } from "../../contract/service/generateContract.command";
 
 @Injectable()
 class ModuleConnectors {
@@ -47,6 +49,16 @@ class ModuleConnectors {
   async getAllEventTypes(): Promise<EventTypePrimitives[]> {
     const userQuery = new GetAllEventTypesQuery();
     return await this.queryBus.execute(userQuery);
+  }
+
+  async getBookingById(bookingId: string): Promise<any> {
+    const query = new GetBookingByIdQuery(bookingId);
+    return await this.queryBus.execute(query);
+  }
+
+  async getBandById(bandId: string): Promise<any> {
+    const query = new GetBandInfoQuery(bandId);
+    return await this.queryBus.execute(query);
   }
 
   async getAllMusicalStyles(): Promise<MusicalStylePrimitives[]> {
@@ -149,6 +161,19 @@ class ModuleConnectors {
     await this.commandBus.execute(createUserFromGoogleCommand);
     const userQuery = new UserQuery(userId.toPrimitive());
     return await this.queryBus.execute(userQuery);
+  }
+
+  async generateContract(
+    bookingId: string,
+    bandId: string,
+    userId: string,
+  ): Promise<void> {
+    const generateContractCommand = new GenerateContractCommand(
+      bookingId,
+      bandId,
+      userId,
+    );
+    await this.commandBus.execute(generateContractCommand);
   }
 }
 

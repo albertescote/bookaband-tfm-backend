@@ -17,11 +17,13 @@ import { NotOwnerOfTheRequestedBookingException } from "../exceptions/notOwnerOf
 export interface CreateContractRequest {
   bookingId: string;
   status: ContractStatus;
+  fileUrl: string;
 }
 
 export interface UpdateContractRequest {
   id: string;
   status: ContractStatus;
+  fileUrl: string;
 }
 
 @Injectable()
@@ -31,7 +33,7 @@ export class ContractService {
     private moduleConnectors: ModuleConnectors,
   ) {}
 
-  @RoleAuth([Role.Client])
+  @RoleAuth([Role.Musician])
   async create(
     user: UserAuthInfo,
     request: CreateContractRequest,
@@ -48,7 +50,7 @@ export class ContractService {
     return created.toPrimitives();
   }
 
-  @RoleAuth([Role.Client])
+  @RoleAuth([Role.Musician])
   async update(
     user: UserAuthInfo,
     request: UpdateContractRequest,
@@ -68,7 +70,7 @@ export class ContractService {
     return updated.toPrimitives();
   }
 
-  @RoleAuth([Role.Client])
+  @RoleAuth([Role.Musician])
   async delete(user: UserAuthInfo, id: string): Promise<void> {
     const existing = await this.repository.findById(new ContractId(id));
     if (!existing) throw new ContractNotFoundException();
@@ -78,7 +80,7 @@ export class ContractService {
     await this.repository.delete(new ContractId(id));
   }
 
-  @RoleAuth([Role.Client])
+  @RoleAuth([Role.Musician, Role.Client])
   async findById(user: UserAuthInfo, id: string): Promise<ContractPrimitives> {
     const contract = await this.repository.findById(new ContractId(id));
     if (!contract) throw new ContractNotFoundException();
@@ -88,7 +90,7 @@ export class ContractService {
     return contract.toPrimitives();
   }
 
-  @RoleAuth([Role.Client])
+  @RoleAuth([Role.Musician, Role.Client])
   async findManyByUserId(user: UserAuthInfo): Promise<ContractPrimitives[]> {
     const contracts = await this.repository.findManyByUserId(user.id);
     return contracts.map((c) => c.toPrimitives());
