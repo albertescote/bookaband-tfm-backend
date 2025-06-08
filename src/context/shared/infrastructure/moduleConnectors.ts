@@ -23,6 +23,8 @@ import { MusicalStylePrimitives } from "../domain/musicalStyle";
 import { AddBookingIntoChatCommand } from "../../chat/service/addBookingIntoChat.command";
 import { GetBookingByIdQuery } from "../../booking/service/getBookingById.query";
 import { GenerateContractCommand } from "../../contract/service/generateContract.command";
+import { UserAuthInfo } from "../domain/userAuthInfo";
+import { StoreFileCommand } from "../../fileUpload/service/storeFile.command";
 
 @Injectable()
 class ModuleConnectors {
@@ -166,14 +168,19 @@ class ModuleConnectors {
   async generateContract(
     bookingId: string,
     bandId: string,
-    userId: string,
+    authorized: UserAuthInfo,
   ): Promise<void> {
     const generateContractCommand = new GenerateContractCommand(
       bookingId,
       bandId,
-      userId,
+      authorized,
     );
     await this.commandBus.execute(generateContractCommand);
+  }
+
+  async storeFile(fileName: string, fileContent: Buffer) {
+    const storeFileCommand = new StoreFileCommand(fileName, fileContent);
+    await this.commandBus.execute(storeFileCommand);
   }
 }
 

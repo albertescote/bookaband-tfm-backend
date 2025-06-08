@@ -16,7 +16,6 @@ import { NotOwnerOfTheRequestedBookingException } from "../exceptions/notOwnerOf
 
 export interface CreateContractRequest {
   bookingId: string;
-  status: ContractStatus;
   fileUrl: string;
 }
 
@@ -42,7 +41,6 @@ export class ContractService {
 
     const contract = Contract.create(
       new BookingId(request.bookingId),
-      request.status,
       request.fileUrl,
     );
     const created = await this.repository.create(contract);

@@ -34,16 +34,12 @@ export class Contract {
     );
   }
 
-  static create(
-    bookingId: BookingId,
-    status: ContractStatus,
-    fileUrl: string,
-  ): Contract {
+  static create(bookingId: BookingId, fileUrl: string): Contract {
     return new Contract(
       ContractId.generate(),
       bookingId,
       new Date(),
-      status,
+      ContractStatus.PENDING,
       fileUrl,
     );
   }

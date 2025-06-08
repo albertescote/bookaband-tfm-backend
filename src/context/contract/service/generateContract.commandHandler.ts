@@ -2,10 +2,9 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { GenerateContractCommand } from "./generateContract.command";
 import { Injectable } from "@nestjs/common";
 import { ContractService } from "./contract.service";
-import { FileUploadService } from "../../fileUpload/service/fileUpload.service";
 import { PDFDocument, rgb } from "pdf-lib";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
-import { ContractStatus } from "../domain/contractStatus";
+import { EXTERNAL_URL } from "../../../config";
 
 @Injectable()
 @CommandHandler(GenerateContractCommand)
@@ -14,38 +13,39 @@ export class GenerateContractCommandHandler
 {
   constructor(
     private readonly contractService: ContractService,
-    private readonly fileUploadService: FileUploadService,
     private readonly moduleConnectors: ModuleConnectors,
   ) {}
 
   async execute(command: GenerateContractCommand): Promise<void> {
     const { bookingId, bandId, authorized } = command;
 
+    // Get booking details
     const booking = await this.moduleConnectors.getBookingById(bookingId);
     if (!booking) {
       throw new Error("Booking not found");
     }
 
+    // Get band details
     const band = await this.moduleConnectors.getBandById(bandId);
     if (!band) {
       throw new Error("Band not found");
     }
 
-    const user = await this.moduleConnectors.obtainUserInformation(
+    // Get user details
+    const user = await this.moduleConnectors.obtainBandInformation(
       authorized.id,
     );
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Generate PDF
+    // Create PDF document
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([595.28, 841.89]); // A4 size
     const { width, height } = page.getSize();
-    const fontSize = 12;
 
-    // Add content to PDF
-    page.drawText("Performance Contract", {
+    // Add content to the PDF
+    page.drawText("Contract Agreement", {
       x: 50,
       y: height - 50,
       size: 20,
@@ -56,21 +56,21 @@ export class GenerateContractCommandHandler
     page.drawText(`Event: ${booking.name}`, {
       x: 50,
       y: height - 100,
-      size: fontSize,
+      size: 12,
       color: rgb(0, 0, 0),
     });
 
-    page.drawText(`Date: ${booking.initDate.toLocaleDateString()}`, {
+    page.drawText(`Date: ${new Date(booking.initDate).toLocaleDateString()}`, {
       x: 50,
       y: height - 120,
-      size: fontSize,
+      size: 12,
       color: rgb(0, 0, 0),
     });
 
     page.drawText(`Venue: ${booking.venue}`, {
       x: 50,
       y: height - 140,
-      size: fontSize,
+      size: 12,
       color: rgb(0, 0, 0),
     });
 
@@ -79,7 +79,7 @@ export class GenerateContractCommandHandler
       {
         x: 50,
         y: height - 160,
-        size: fontSize,
+        size: 12,
         color: rgb(0, 0, 0),
       },
     );
@@ -88,63 +88,85 @@ export class GenerateContractCommandHandler
     page.drawText("Band Information:", {
       x: 50,
       y: height - 200,
-      size: fontSize,
+      size: 14,
       color: rgb(0, 0, 0),
     });
 
     page.drawText(`Name: ${band.name}`, {
       x: 50,
       y: height - 220,
-      size: fontSize,
-      color: rgb(0, 0, 0),
-    });
-
-    page.drawText(`Price: $${band.price}`, {
-      x: 50,
-      y: height - 240,
-      size: fontSize,
+      size: 12,
       color: rgb(0, 0, 0),
     });
 
     // Add client details
     page.drawText("Client Information:", {
       x: 50,
-      y: height - 280,
-      size: fontSize,
+      y: height - 260,
+      size: 14,
       color: rgb(0, 0, 0),
     });
 
-    page.drawText(
-      `Name: ${user.toPrimitives().firstName} ${user.toPrimitives().familyName}`,
-      {
-        x: 50,
-        y: height - 300,
-        size: fontSize,
-        color: rgb(0, 0, 0),
-      },
-    );
-
-    page.drawText(`Email: ${user.toPrimitives().email}`, {
+    page.drawText(`Name: ${user.name}`, {
       x: 50,
-      y: height - 320,
-      size: fontSize,
+      y: height - 280,
+      size: 12,
       color: rgb(0, 0, 0),
     });
 
-    // Save PDF
+    // Add terms and conditions
+    page.drawText("Terms and Conditions:", {
+      x: 50,
+      y: height - 340,
+      size: 14,
+      color: rgb(0, 0, 0),
+    });
+
+    const terms = [
+      "1. The band agrees to perform at the specified venue on the agreed date.",
+      "2. The client agrees to pay the agreed amount in full before the event.",
+      "3. Any changes to the agreement must be made in writing and agreed upon by both parties.",
+      "4. The band reserves the right to cancel the performance in case of force majeure.",
+      "5. The client is responsible for providing necessary equipment and facilities.",
+    ];
+
+    terms.forEach((term, index) => {
+      page.drawText(term, {
+        x: 50,
+        y: height - 360 - index * 20,
+        size: 10,
+        color: rgb(0, 0, 0),
+      });
+    });
+
+    // Add signature lines
+    page.drawText("Band Representative Signature:", {
+      x: 50,
+      y: height - 500,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    page.drawText("Client Signature:", {
+      x: 50,
+      y: height - 550,
+      size: 12,
+      color: rgb(0, 0, 0),
+    });
+
+    // Save the PDF
     const pdfBytes = await pdfDoc.save();
-    const filename = `contract-${bookingId}.pdf`;
-    const filePath = `./uploads/${filename}`;
 
-    // Write file to disk
-    const fs = require("fs");
-    fs.writeFileSync(filePath, pdfBytes);
+    // Generate a unique filename
+    const fileName = `contract-${bookingId}-${Date.now()}.pdf`;
 
-    // Create contract record
+    // Store the PDF file
+    await this.moduleConnectors.storeFile(fileName, Buffer.from(pdfBytes));
+
+    // Create the contract
     await this.contractService.create(authorized, {
       bookingId,
-      status: ContractStatus.PENDING,
-      fileUrl: `/files/${filename}`,
+      fileUrl: `${EXTERNAL_URL}/files/${fileName}`,
     });
   }
 }

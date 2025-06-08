@@ -151,7 +151,7 @@ export class BookingService {
     await this.moduleConnectors.generateContract(
       booking.getId().toPrimitive(),
       booking.getBandId().toPrimitive(),
-      booking.getUserId().toPrimitive(),
+      userAuthInfo,
     );
 
     return booking.toPrimitives();

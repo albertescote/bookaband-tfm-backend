@@ -1,14 +1,9 @@
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from "class-validator";
-import { ContractStatus } from "../../../context/contract/domain/contractStatus";
+import { IsNotEmpty, IsString, IsUUID } from "class-validator";
 
 export class CreateContractRequestDto {
   @IsNotEmpty()
   @IsUUID()
   bookingId: string;
-
-  @IsNotEmpty()
-  @IsEnum(ContractStatus)
-  status: ContractStatus;
 
   @IsNotEmpty()
   @IsString()
