@@ -32,7 +32,7 @@ export class GenerateContractCommandHandler
     }
 
     // Get user details
-    const user = await this.moduleConnectors.obtainBandInformation(
+    const user = await this.moduleConnectors.obtainUserInformation(
       authorized.id,
     );
     if (!user) {
@@ -107,12 +107,15 @@ export class GenerateContractCommandHandler
       color: rgb(0, 0, 0),
     });
 
-    page.drawText(`Name: ${user.name}`, {
-      x: 50,
-      y: height - 280,
-      size: 12,
-      color: rgb(0, 0, 0),
-    });
+    page.drawText(
+      `Name: ${user.toPrimitives().firstName + " " + user.toPrimitives().familyName}`,
+      {
+        x: 50,
+        y: height - 280,
+        size: 12,
+        color: rgb(0, 0, 0),
+      },
+    );
 
     // Add terms and conditions
     page.drawText("Terms and Conditions:", {

@@ -5,7 +5,7 @@ import { BookingRepository } from "./infrastructure/booking.repository";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
 import { CqrsModule } from "@nestjs/cqrs";
 import { GetUserIdByBookingIdQueryHandler } from "./service/getUserIdByBookingId.queryHandler";
-import { GetBookingByIdQuery } from "./service/getBookingById.query";
+import { GetBookingByIdQueryHandler } from "./service/getBookingById.queryHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -15,12 +15,12 @@ import { GetBookingByIdQuery } from "./service/getBookingById.query";
     PrismaService,
     ModuleConnectors,
     GetUserIdByBookingIdQueryHandler,
-    GetBookingByIdQuery,
+    GetBookingByIdQueryHandler,
   ],
   exports: [
     BookingService,
     GetUserIdByBookingIdQueryHandler,
-    GetBookingByIdQuery,
+    GetBookingByIdQueryHandler,
   ],
 })
 export class BookingModule {}

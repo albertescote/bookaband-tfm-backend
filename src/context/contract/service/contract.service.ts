@@ -11,8 +11,8 @@ import BookingId from "../../shared/domain/bookingId";
 import { UnableToCreateContractException } from "../exceptions/unableToCreateContractException";
 import { NotOwnerOfTheRequestedContractException } from "../exceptions/notOwnerOfTheRequestedContractException";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
-import { UserIdNotFoundForBookingIdException } from "../exceptions/userIdNotFoundForBookingIdException";
 import { NotOwnerOfTheRequestedBookingException } from "../exceptions/notOwnerOfTheRequestedBookingException";
+import { BookingNotFoundException } from "../exceptions/bookingNotFoundException";
 
 export interface CreateContractRequest {
   bookingId: string;
@@ -37,7 +37,7 @@ export class ContractService {
     user: UserAuthInfo,
     request: CreateContractRequest,
   ): Promise<ContractPrimitives> {
-    await this.checkCreationOwnership(request, user);
+    await this.validateCreationRequest(request, user);
 
     const contract = Contract.create(
       new BookingId(request.bookingId),
@@ -96,18 +96,21 @@ export class ContractService {
     return contracts.map((c) => c.toPrimitives());
   }
 
-  private async checkCreationOwnership(
+  private async validateCreationRequest(
     request: CreateContractRequest,
     user: UserAuthInfo,
   ) {
-    const userId = await this.moduleConnectors.obtainUserIdByBookingId(
+    const booking = await this.moduleConnectors.getBookingById(
       request.bookingId,
     );
-    if (!userId) {
-      throw new UserIdNotFoundForBookingIdException(request.bookingId);
+    if (!booking) {
+      throw new BookingNotFoundException(booking.id);
     }
+    const bandMembers = await this.moduleConnectors.obtainBandMembers(
+      booking.bandId,
+    );
 
-    if (userId !== user.id) {
+    if (!bandMembers.some((memberId) => memberId === user.id)) {
       throw new NotOwnerOfTheRequestedBookingException();
     }
   }

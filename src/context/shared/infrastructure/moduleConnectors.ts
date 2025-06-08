@@ -25,6 +25,7 @@ import { GetBookingByIdQuery } from "../../booking/service/getBookingById.query"
 import { GenerateContractCommand } from "../../contract/service/generateContract.command";
 import { UserAuthInfo } from "../domain/userAuthInfo";
 import { StoreFileCommand } from "../../fileUpload/service/storeFile.command";
+import { BookingPrimitives } from "../../booking/domain/booking";
 
 @Injectable()
 class ModuleConnectors {
@@ -53,7 +54,7 @@ class ModuleConnectors {
     return await this.queryBus.execute(userQuery);
   }
 
-  async getBookingById(bookingId: string): Promise<any> {
+  async getBookingById(bookingId: string): Promise<BookingPrimitives> {
     const query = new GetBookingByIdQuery(bookingId);
     return await this.queryBus.execute(query);
   }
