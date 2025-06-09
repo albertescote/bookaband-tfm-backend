@@ -14,8 +14,8 @@ import {
 import { ContractService } from "../../../context/contract/service/contract.service";
 import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
-import { CreateContractRequestDto } from "./createContractRequest.dto";
 import { UpdateContractRequestDto } from "./updateContractRequest.dto";
+import { SignatureNotificationRequestDto } from "./signatureNotificationRequest.dto";
 
 interface ContractResponseDto {
   id: string;
@@ -36,16 +36,6 @@ interface ContractResponseDto {
 export class ContractController {
   constructor(private readonly service: ContractService) {}
 
-  @Post("/")
-  @UseGuards(JwtCustomGuard)
-  @HttpCode(201)
-  async create(
-    @Request() req: { user: UserAuthInfo },
-    @Body() body: CreateContractRequestDto,
-  ): Promise<ContractResponseDto> {
-    return this.service.create(req.user, body);
-  }
-
   @Get("/user")
   @UseGuards(JwtCustomGuard)
   @HttpCode(200)
@@ -63,6 +53,15 @@ export class ContractController {
     @Param("id", ParseUUIDPipe) id: string,
   ): Promise<ContractResponseDto[]> {
     return this.service.findManyByBand(req.user, id);
+  }
+
+  @Post("/notifications/signerstatus/:id")
+  @HttpCode(200)
+  async processNotification(
+    @Body() body: SignatureNotificationRequestDto,
+    @Param("id") id: string,
+  ): Promise<void> {
+    return this.service.processSignatureNotification(body);
   }
 
   @Get("/:id")

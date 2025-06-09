@@ -5,6 +5,7 @@ import {
   FRONTEND_APP_URL,
   FRONTEND_AUTH_URL,
   FRONTEND_PAGE_URL,
+  VIDSIGNER,
 } from "./config";
 import { AllExceptionsFilter } from "./app/filter/http-exception.filter";
 import { LoggingInterceptor } from "./app/interceptor/logging.interceptor";
@@ -18,6 +19,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new LoggingInterceptor());
 
   const allowedOrigins = [
+    VIDSIGNER.BASE_URL,
     FRONTEND_AUTH_URL,
     FRONTEND_PAGE_URL,
     FRONTEND_APP_URL,

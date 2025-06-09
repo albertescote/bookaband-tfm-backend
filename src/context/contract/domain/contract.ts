@@ -12,6 +12,7 @@ export interface ContractPrimitives {
   bandSigned: boolean;
   createdAt: Date;
   updatedAt: Date;
+  vidsignerDocGui?: string;
 
   eventName?: string;
   bandName?: string;
@@ -29,6 +30,7 @@ export class Contract {
     private bandSigned: boolean,
     private createdAt: Date,
     private updatedAt: Date,
+    private vidsignerDocGui?: string,
     private eventName?: string,
     private bandName?: string,
     private userName?: string,
@@ -49,6 +51,7 @@ export class Contract {
       primitives.bandSigned,
       primitives.createdAt,
       primitives.updatedAt,
+      primitives.vidsignerDocGui,
       primitives.eventName,
       primitives.bandName,
       primitives.userName,
@@ -56,7 +59,11 @@ export class Contract {
     );
   }
 
-  static create(bookingId: BookingId, fileUrl: string): Contract {
+  static create(
+    bookingId: BookingId,
+    fileUrl: string,
+    vidsignerDocGui: string,
+  ): Contract {
     const now = new Date();
     return new Contract(
       ContractId.generate(),
@@ -67,10 +74,29 @@ export class Contract {
       false,
       now,
       now,
+      vidsignerDocGui,
     );
   }
 
   toPrimitives(): ContractPrimitives {
+    return {
+      id: this.id.toPrimitive(),
+      bookingId: this.bookingId.toPrimitive(),
+      status: this.status,
+      fileUrl: this.fileUrl,
+      userSigned: this.userSigned,
+      bandSigned: this.bandSigned,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      vidsignerDocGui: this.vidsignerDocGui,
+      eventName: this.eventName,
+      bandName: this.bandName,
+      userName: this.userName,
+      eventDate: this.eventDate,
+    };
+  }
+
+  toPrimitivesWithoutDocGui(): Omit<ContractPrimitives, "vidsignerDocGui"> {
     return {
       id: this.id.toPrimitive(),
       bookingId: this.bookingId.toPrimitive(),
@@ -95,7 +121,31 @@ export class Contract {
     return this.fileUrl;
   }
 
+  isBandSigned() {
+    return this.bandSigned;
+  }
+
+  isUserSigned() {
+    return this.userSigned;
+  }
+
+  setUserSigned() {
+    this.userSigned = true;
+  }
+
+  setBandSigned() {
+    this.bandSigned = true;
+  }
+
   getBookingId(): BookingId {
     return this.bookingId;
+  }
+
+  failedSignature() {
+    this.status = ContractStatus.CANCELED;
+  }
+
+  updateFileUrl(fileUrl: string) {
+    this.fileUrl = fileUrl;
   }
 }

@@ -5,6 +5,13 @@ import { ContractService } from "./contract.service";
 import { PDFDocument, rgb } from "pdf-lib";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { EXTERNAL_URL } from "../../../config";
+import { VidsignerApiWrapper } from "../infrastructure/vidsignerApiWrapper";
+import User from "../../shared/domain/user";
+import { BookingNotFoundException } from "../exceptions/bookingNotFoundException";
+import { BandNotFoundException } from "../exceptions/bandNotFoundException";
+import { UserNotFoundException } from "../exceptions/userNotFoundException";
+import { BandRole } from "../../band/domain/bandRole";
+import { Signer } from "../domain/signer";
 
 @Injectable()
 @CommandHandler(GenerateContractCommand)
@@ -14,37 +21,101 @@ export class GenerateContractCommandHandler
   constructor(
     private readonly contractService: ContractService,
     private readonly moduleConnectors: ModuleConnectors,
+    private readonly vidsignerApiWrapper: VidsignerApiWrapper,
   ) {}
 
   async execute(command: GenerateContractCommand): Promise<void> {
     const { bookingId, bandId, authorized } = command;
 
-    // Get booking details
     const booking = await this.moduleConnectors.getBookingById(bookingId);
     if (!booking) {
-      throw new Error("Booking not found");
+      throw new BookingNotFoundException(bookingId);
     }
 
-    // Get band details
     const band = await this.moduleConnectors.getBandById(bandId);
     if (!band) {
-      throw new Error("Band not found");
+      throw new BandNotFoundException(bookingId);
     }
 
-    // Get user details
     const user = await this.moduleConnectors.obtainUserInformation(
       authorized.id,
     );
     if (!user) {
-      throw new Error("User not found");
+      throw new UserNotFoundException(authorized.id);
+    }
+    const pdfBytes = await this.generatePdfDocument(booking, band.name, user);
+    const fileName = `contract-${bookingId}-${Date.now()}.pdf`;
+
+    await this.moduleConnectors.storeFile(fileName, pdfBytes);
+
+    const member = band.members.find(
+      (member) => member.id === user.getId().toPrimitive(),
+    );
+    let bandSignerUser: User;
+    if (member.role !== BandRole.ADMIN) {
+      const adminMember = band.members.find(
+        (member) => member.role === BandRole.MEMBER,
+      );
+      bandSignerUser = await this.moduleConnectors.obtainUserInformation(
+        adminMember.id,
+      );
+    } else {
+      bandSignerUser = user;
     }
 
-    // Create PDF document
+    const clientSignerUser = await this.moduleConnectors.obtainUserInformation(
+      booking.userId,
+    );
+
+    const signatureResponse = await this.vidsignerApiWrapper.signDocument(
+      fileName,
+      pdfBytes,
+      "BookaBand",
+      false,
+      [
+        Signer.createDefault(
+          clientSignerUser.getFullName(),
+          "DNI",
+          clientSignerUser.getNationalId(),
+          clientSignerUser.getPhoneNumber(),
+          clientSignerUser.getEmail(),
+          fileName,
+        ),
+        Signer.createDefault(
+          bandSignerUser.getFullName(),
+          "DNI",
+          bandSignerUser.getNationalId(),
+          bandSignerUser.getPhoneNumber(),
+          bandSignerUser.getEmail(),
+          fileName,
+        ),
+      ],
+      EXTERNAL_URL + "/contracts/notifications",
+    );
+
+    await this.contractService.create(authorized, {
+      bookingId,
+      fileUrl: `${EXTERNAL_URL}/files/${fileName}`,
+      vidsignerDocGui: signatureResponse.DocGUI,
+    });
+  }
+
+  private async generatePdfDocument(
+    booking: {
+      name: string;
+      initDate: Date;
+      venue: string;
+      addressLine1: string;
+      city: string;
+      country: string;
+    },
+    bandName: string,
+    user: User,
+  ): Promise<Buffer> {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([595.28, 841.89]); // A4 size
-    const { width, height } = page.getSize();
+    const { height } = page.getSize();
 
-    // Add content to the PDF
     page.drawText("Contract Agreement", {
       x: 50,
       y: height - 50,
@@ -92,7 +163,7 @@ export class GenerateContractCommandHandler
       color: rgb(0, 0, 0),
     });
 
-    page.drawText(`Name: ${band.name}`, {
+    page.drawText(`Name: ${bandName}`, {
       x: 50,
       y: height - 220,
       size: 12,
@@ -157,19 +228,7 @@ export class GenerateContractCommandHandler
       color: rgb(0, 0, 0),
     });
 
-    // Save the PDF
-    const pdfBytes = await pdfDoc.save();
-
-    // Generate a unique filename
-    const fileName = `contract-${bookingId}-${Date.now()}.pdf`;
-
-    // Store the PDF file
-    await this.moduleConnectors.storeFile(fileName, Buffer.from(pdfBytes));
-
-    // Create the contract
-    await this.contractService.create(authorized, {
-      bookingId,
-      fileUrl: `${EXTERNAL_URL}/files/${fileName}`,
-    });
+    const pdfUint8Array = await pdfDoc.save();
+    return Buffer.from(pdfUint8Array);
   }
 }

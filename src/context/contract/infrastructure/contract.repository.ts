@@ -43,6 +43,7 @@ export class ContractRepository {
           bandSigned: contract.bandSigned,
           createdAt: contract.createdAt,
           updatedAt: contract.updatedAt,
+          vidsignerDocGui: contract.vidsignerDocGui,
           eventName: contract.booking.name,
           bandName: contract.booking.band.name,
           userName:
@@ -88,6 +89,7 @@ export class ContractRepository {
           bandSigned: contract.bandSigned,
           createdAt: contract.createdAt,
           updatedAt: contract.updatedAt,
+          vidsignerDocGui: contract.vidsignerDocGui,
           eventName: contract.booking.name,
           bandName: contract.booking.band.name,
           userName:
@@ -153,6 +155,7 @@ export class ContractRepository {
         bandSigned: contract.bandSigned,
         createdAt: contract.createdAt,
         updatedAt: contract.updatedAt,
+        vidsignerDocGui: contract.vidsignerDocGui,
         eventName: contract.booking.name,
         bandName: contract.booking.band.name,
         userName:
@@ -202,6 +205,7 @@ export class ContractRepository {
         bandSigned: contract.bandSigned,
         createdAt: contract.createdAt,
         updatedAt: contract.updatedAt,
+        vidsignerDocGui: contract.vidsignerDocGui,
         eventName: contract.booking.name,
         bandName: contract.booking.band.name,
         userName:
@@ -214,8 +218,19 @@ export class ContractRepository {
   }
 
   async create(contract: Contract): Promise<Contract> {
+    const contractPrimitives = contract.toPrimitives();
     const created = await this.prisma.contract.create({
-      data: contract.toPrimitives(),
+      data: {
+        id: contractPrimitives.id,
+        bookingId: contractPrimitives.bookingId,
+        status: contractPrimitives.status,
+        fileUrl: contractPrimitives.fileUrl,
+        userSigned: contractPrimitives.userSigned,
+        bandSigned: contractPrimitives.bandSigned,
+        vidsignerDocGui: contractPrimitives.vidsignerDocGui,
+        createdAt: contractPrimitives.createdAt,
+        updatedAt: contractPrimitives.updatedAt,
+      },
       include: {
         booking: {
           select: {
@@ -246,6 +261,7 @@ export class ContractRepository {
       bandSigned: created.bandSigned,
       createdAt: created.createdAt,
       updatedAt: created.updatedAt,
+      vidsignerDocGui: created.vidsignerDocGui,
       eventName: created.booking.name,
       bandName: created.booking.band.name,
       userName:
@@ -288,6 +304,7 @@ export class ContractRepository {
       bandSigned: updated.bandSigned,
       createdAt: updated.createdAt,
       updatedAt: updated.updatedAt,
+      vidsignerDocGui: updated.vidsignerDocGui,
       eventName: updated.booking.name,
       bandName: updated.booking.band.name,
       userName:
@@ -300,5 +317,48 @@ export class ContractRepository {
     await this.prisma.contract.delete({
       where: { id: id.toPrimitive() },
     });
+  }
+
+  async findByVidSignerDocGui(docGui: string) {
+    const contract = await this.prisma.contract.findFirst({
+      where: { vidsignerDocGui: docGui },
+      include: {
+        booking: {
+          select: {
+            name: true,
+            initDate: true,
+            band: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return contract
+      ? Contract.fromPrimitives({
+          id: contract.id,
+          bookingId: contract.bookingId,
+          status: contract.status,
+          fileUrl: contract.fileUrl,
+          userSigned: contract.userSigned,
+          bandSigned: contract.bandSigned,
+          createdAt: contract.createdAt,
+          updatedAt: contract.updatedAt,
+          vidsignerDocGui: contract.vidsignerDocGui,
+          userName:
+            contract.booking.user.firstName +
+            " " +
+            contract.booking.user.familyName,
+        })
+      : undefined;
   }
 }

@@ -10,6 +10,8 @@ export interface UserPrimitives {
   role: string;
   emailVerified: boolean;
   joinedDate: string;
+  phoneNumber?: string;
+  nationalId?: string;
   password?: string;
   imageUrl?: string;
   bio?: string;
@@ -24,6 +26,8 @@ export default class User {
     private role: Role,
     private emailVerified: boolean = false,
     private joinedDate: Date,
+    private phoneNumber?: string,
+    private nationalId?: string,
     private password?: string,
     private imageUrl?: string,
     private bio?: string,
@@ -65,6 +69,8 @@ export default class User {
       role,
       user.emailVerified,
       new Date(user.joinedDate),
+      user.phoneNumber,
+      user.nationalId,
       user.password,
       user.imageUrl,
       user.bio,
@@ -80,6 +86,8 @@ export default class User {
       role: this.role.toString(),
       emailVerified: this.emailVerified,
       joinedDate: this.joinedDate.toISOString(),
+      phoneNumber: this.phoneNumber,
+      nationalId: this.nationalId,
       password: this.password,
       imageUrl: this.imageUrl,
       bio: this.bio,
@@ -104,5 +112,21 @@ export default class User {
 
   hasPassword(): boolean {
     return !!this.password;
+  }
+
+  getFullName() {
+    return this.firstName + " " + this.familyName;
+  }
+
+  getNationalId() {
+    return this.nationalId;
+  }
+
+  getPhoneNumber() {
+    return this.phoneNumber;
+  }
+
+  getEmail() {
+    return this.email;
   }
 }

@@ -6,6 +6,7 @@ import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
 import { GetContractByBookingIdQueryHandler } from "./service/getContractByBookingId.queryHandler";
 import { CqrsModule } from "@nestjs/cqrs";
 import { GenerateContractCommandHandler } from "./service/generateContract.commandHandler";
+import { VidsignerApiWrapper } from "./infrastructure/vidsignerApiWrapper";
 
 @Module({
   imports: [CqrsModule],
@@ -16,6 +17,7 @@ import { GenerateContractCommandHandler } from "./service/generateContract.comma
     PrismaService,
     GetContractByBookingIdQueryHandler,
     GenerateContractCommandHandler,
+    VidsignerApiWrapper,
   ],
   exports: [
     ContractService,

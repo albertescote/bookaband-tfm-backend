@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function seedInvoices() {
   for (const contract of contractEntries) {
-    if (contract.status !== "cancelled") {
+    if (contract.status !== "canceled") {
       await prisma.invoice.create({
         data: {
           id: uuid(),

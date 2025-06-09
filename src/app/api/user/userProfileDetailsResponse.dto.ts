@@ -29,6 +29,8 @@ export interface UserProfileDetailsResponseDto {
   role: string;
   email: string;
   joinedDate: Date;
+  phoneNumber?: string;
+  nationalId?: string;
   imageUrl?: string;
   bio?: string;
 

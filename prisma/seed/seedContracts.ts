@@ -20,7 +20,7 @@ export const contractEntries = [
     id: uuid(),
     bookingId: "f267fc58-5472-4b9a-800a-c67cbc648083",
     fileUrl: "http://localhost:4000/files/contract-uuid-date.pdf",
-    status: "CANCELLED",
+    status: "CANCELED",
   },
   {
     id: uuid(),
@@ -52,6 +52,7 @@ export async function seedContracts() {
         fileUrl: contract.fileUrl,
         userSigned: false,
         bandSigned: false,
+        vidsignerDocGui: uuid(),
         createdAt: new Date(),
         updatedAt: new Date(),
       },

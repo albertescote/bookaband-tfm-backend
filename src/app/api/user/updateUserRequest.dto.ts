@@ -11,9 +11,17 @@ export class UpdateUserRequestDto {
 
   @IsOptional()
   @IsString()
-  bio: string;
+  bio?: string;
 
   @IsOptional()
   @IsString()
-  imageUrl: string;
+  imageUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  nationalId?: string;
 }

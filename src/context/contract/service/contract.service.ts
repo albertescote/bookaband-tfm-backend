@@ -16,10 +16,13 @@ import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import BandId from "../../shared/domain/bandId";
 import { NotOwnerOfTheRequestedContractException } from "../exceptions/notOwnerOfTheRequestedContractException";
 import { NotAMemberOfTheRequestedBandException } from "../exceptions/notAMemberOfTheRequestedBandException";
+import { VidsignerApiWrapper } from "../infrastructure/vidsignerApiWrapper";
+import { EXTERNAL_URL } from "../../../config";
 
 export interface CreateContractRequest {
   bookingId: string;
   fileUrl: string;
+  vidsignerDocGui: string;
 }
 
 export interface UpdateContractRequest {
@@ -28,11 +31,31 @@ export interface UpdateContractRequest {
   fileUrl: string;
 }
 
+export interface SignatureNotificationRequest {
+  Signers: {
+    SignerGUI: string;
+    SignerName: string;
+    SignatureStatus: string;
+    TypeOfID: string;
+    NumberID: string;
+    OperationTime: string;
+    RejectionReason?: string | null;
+    UserNoticesInfo?: string | null;
+    FormInfo?: string | null;
+  }[];
+  FileName: string;
+  DocGUI: string;
+  DocStatus: string;
+  Downloaded: boolean;
+  AdditionalData?: string;
+}
+
 @Injectable()
 export class ContractService {
   constructor(
     private readonly repository: ContractRepository,
     private readonly moduleConnectors: ModuleConnectors,
+    private readonly vidSignerApiWrapper: VidsignerApiWrapper,
   ) {}
 
   @RoleAuth([Role.Musician])
@@ -45,11 +68,12 @@ export class ContractService {
     const contract = Contract.create(
       new BookingId(request.bookingId),
       request.fileUrl,
+      request.vidsignerDocGui,
     );
     const created = await this.repository.create(contract);
     if (!created) throw new UnableToCreateContractException();
 
-    return created.toPrimitives();
+    return created.toPrimitivesWithoutDocGui();
   }
 
   @RoleAuth([Role.Musician])
@@ -70,7 +94,7 @@ export class ContractService {
       }),
     );
 
-    return updated.toPrimitives();
+    return updated.toPrimitivesWithoutDocGui();
   }
 
   @RoleAuth([Role.Musician])
@@ -98,13 +122,13 @@ export class ContractService {
       await this.checkRequestedContractBandMembership(id, user);
     }
 
-    return contract.toPrimitives();
+    return contract.toPrimitivesWithoutDocGui();
   }
 
   @RoleAuth([Role.Client])
   async findManyByUserId(user: UserAuthInfo): Promise<ContractPrimitives[]> {
     const contracts = await this.repository.findManyByUserId(user.id);
-    return contracts.map((c) => c.toPrimitives());
+    return contracts.map((c) => c.toPrimitivesWithoutDocGui());
   }
 
   @RoleAuth([Role.Musician])
@@ -119,7 +143,43 @@ export class ContractService {
     const contracts = await this.repository.findManyByBandId(
       new BandId(bandId),
     );
-    return contracts.map((c) => c.toPrimitives());
+    return contracts.map((c) => c.toPrimitivesWithoutDocGui());
+  }
+
+  async processSignatureNotification(
+    body: SignatureNotificationRequest,
+  ): Promise<void> {
+    const contract = await this.repository.findByVidSignerDocGui(body.DocGUI);
+    if (!contract) {
+      return;
+    }
+    let modified = false;
+    body.Signers.forEach((signer) => {
+      if (signer.SignatureStatus === "Signed") {
+        if (contract.toPrimitives().userName === signer.SignerName) {
+          if (!contract.isUserSigned()) {
+            contract.setUserSigned();
+            modified = true;
+          }
+        } else if (!contract.isBandSigned()) {
+          contract.setBandSigned();
+          modified = true;
+        }
+      } else if (signer.SignatureStatus === "Rejected") {
+        contract.failedSignature();
+      }
+    });
+    if (modified) {
+      const signedDocument = await this.vidSignerApiWrapper.getDocument(
+        body.DocGUI,
+      );
+      const fileName = `contract-${contract.toPrimitives().bookingId}-${Date.now()}.pdf`;
+      await this.moduleConnectors.storeFile(fileName, signedDocument);
+
+      contract.updateFileUrl(`${EXTERNAL_URL}/files/${fileName}`);
+    }
+
+    await this.repository.update(contract);
   }
 
   private async validateCreationRequest(
