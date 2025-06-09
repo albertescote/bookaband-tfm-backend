@@ -54,6 +54,8 @@ export class Signer {
     phoneNumber: string,
     email: string,
     fileName: string,
+    posY: number = 100,
+    posX: number = 100,
     language: string = "es",
   ): Signer {
     return new Signer(
@@ -66,8 +68,8 @@ export class Signer {
       email,
       {
         Page: 1,
-        PosX: 100,
-        PosY: 100,
+        PosX: posX,
+        PosY: posY,
         SizeX: 60,
         SizeY: 30,
         SignatureField: null,

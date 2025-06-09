@@ -80,6 +80,7 @@ export class GenerateContractCommandHandler
           clientSignerUser.getPhoneNumber(),
           clientSignerUser.getEmail(),
           fileName,
+          200,
         ),
         Signer.createDefault(
           bandSignerUser.getFullName(),
@@ -88,6 +89,7 @@ export class GenerateContractCommandHandler
           bandSignerUser.getPhoneNumber(),
           bandSignerUser.getEmail(),
           fileName,
+          170,
         ),
       ],
       EXTERNAL_URL + "/contracts/notifications",
