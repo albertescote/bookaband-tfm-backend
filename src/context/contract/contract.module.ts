@@ -3,7 +3,7 @@ import PrismaService from "../shared/infrastructure/db/prisma.service";
 import { ContractService } from "./service/contract.service";
 import { ContractRepository } from "./infrastructure/contract.repository";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
-import { GetBookingIdByContractIdQueryHandler } from "./service/getBookingIdByContractId.queryHandler";
+import { GetContractByBookingIdQueryHandler } from "./service/getContractByBookingId.queryHandler";
 import { CqrsModule } from "@nestjs/cqrs";
 import { GenerateContractCommandHandler } from "./service/generateContract.commandHandler";
 
@@ -14,12 +14,12 @@ import { GenerateContractCommandHandler } from "./service/generateContract.comma
     ContractService,
     ContractRepository,
     PrismaService,
-    GetBookingIdByContractIdQueryHandler,
+    GetContractByBookingIdQueryHandler,
     GenerateContractCommandHandler,
   ],
   exports: [
     ContractService,
-    GetBookingIdByContractIdQueryHandler,
+    GetContractByBookingIdQueryHandler,
     GenerateContractCommandHandler,
   ],
 })

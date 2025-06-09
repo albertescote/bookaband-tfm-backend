@@ -20,9 +20,16 @@ import { UpdateContractRequestDto } from "./updateContractRequest.dto";
 interface ContractResponseDto {
   id: string;
   bookingId: string;
-  date: Date;
   status: string;
   fileUrl: string;
+  userSigned: boolean;
+  bandSigned: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  eventName?: string;
+  bandName?: string;
+  userName?: string;
+  eventDate?: Date;
 }
 
 @Controller("/contracts")
@@ -46,6 +53,16 @@ export class ContractController {
     @Request() req: { user: UserAuthInfo },
   ): Promise<ContractResponseDto[]> {
     return this.service.findManyByUserId(req.user);
+  }
+
+  @Get("/band/:id")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async findAllByBand(
+    @Request() req: { user: UserAuthInfo },
+    @Param("id", ParseUUIDPipe) id: string,
+  ): Promise<ContractResponseDto[]> {
+    return this.service.findManyByBand(req.user, id);
   }
 
   @Get("/:id")

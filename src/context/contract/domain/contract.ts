@@ -1,23 +1,38 @@
 import { ContractStatus } from "./contractStatus";
 import BookingId from "../../shared/domain/bookingId";
-import ContractId from "./contractId";
+import ContractId from "../../shared/domain/contractId";
 import { InvalidContractStatusException } from "../exceptions/invalidContractStatusException";
 
 export interface ContractPrimitives {
   id: string;
   bookingId: string;
-  date: Date;
   status: string;
   fileUrl: string;
+  userSigned: boolean;
+  bandSigned: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+
+  eventName?: string;
+  bandName?: string;
+  userName?: string;
+  eventDate?: Date;
 }
 
 export class Contract {
   constructor(
     private id: ContractId,
     private bookingId: BookingId,
-    private date: Date,
     private status: ContractStatus,
     private fileUrl: string,
+    private userSigned: boolean,
+    private bandSigned: boolean,
+    private createdAt: Date,
+    private updatedAt: Date,
+    private eventName?: string,
+    private bandName?: string,
+    private userName?: string,
+    private eventDate?: Date,
   ) {}
 
   static fromPrimitives(primitives: ContractPrimitives): Contract {
@@ -28,19 +43,30 @@ export class Contract {
     return new Contract(
       new ContractId(primitives.id),
       new BookingId(primitives.bookingId),
-      new Date(primitives.date),
       status,
       primitives.fileUrl,
+      primitives.userSigned,
+      primitives.bandSigned,
+      primitives.createdAt,
+      primitives.updatedAt,
+      primitives.eventName,
+      primitives.bandName,
+      primitives.userName,
+      primitives.eventDate,
     );
   }
 
   static create(bookingId: BookingId, fileUrl: string): Contract {
+    const now = new Date();
     return new Contract(
       ContractId.generate(),
       bookingId,
-      new Date(),
       ContractStatus.PENDING,
       fileUrl,
+      false,
+      false,
+      now,
+      now,
     );
   }
 
@@ -48,9 +74,16 @@ export class Contract {
     return {
       id: this.id.toPrimitive(),
       bookingId: this.bookingId.toPrimitive(),
-      date: this.date,
       status: this.status,
       fileUrl: this.fileUrl,
+      userSigned: this.userSigned,
+      bandSigned: this.bandSigned,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      eventName: this.eventName,
+      bandName: this.bandName,
+      userName: this.userName,
+      eventDate: this.eventDate,
     };
   }
 
@@ -60,5 +93,9 @@ export class Contract {
 
   getFileUrl() {
     return this.fileUrl;
+  }
+
+  getBookingId(): BookingId {
+    return this.bookingId;
   }
 }

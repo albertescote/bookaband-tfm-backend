@@ -50,7 +50,10 @@ export async function seedContracts() {
         bookingId: contract.bookingId,
         status: contract.status,
         fileUrl: contract.fileUrl,
-        date: new Date(),
+        userSigned: false,
+        bandSigned: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     });
   }

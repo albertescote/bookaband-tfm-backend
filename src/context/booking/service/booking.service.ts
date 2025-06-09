@@ -15,7 +15,9 @@ import { BookingAlreadyProcessedException } from "../exceptions/bookingAlreadyPr
 import { BookingWithDetailsPrimitives } from "../domain/bookingWithDetails";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { NotAbleToCreateBookingException } from "../exceptions/notAbleToCreateBookingException";
-import { CommandBus } from "@nestjs/cqrs";
+import { ContractNotFoundForBookingIdException } from "../exceptions/contractNotFoundForBookingIdException";
+import { InvoiceNotFoundForBookingIdException } from "../exceptions/invoiceNotFoundForBookingIdException";
+import ContractId from "../../shared/domain/contractId";
 
 export interface CreateBookingRequest {
   bandId: string;
@@ -32,12 +34,36 @@ export interface CreateBookingRequest {
   isPublic?: boolean;
 }
 
+export interface BookingContractResponse {
+  id: string;
+  bookingId: string;
+  status: string;
+  fileUrl: string;
+  userSigned: boolean;
+  bandSigned: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  eventName?: string;
+  bandName?: string;
+  userName?: string;
+  eventDate?: Date;
+}
+
+export interface BookingInvoiceResponse {
+  id: string;
+  contractId: string;
+  amount: number;
+  status: string;
+  fileUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 @Injectable()
 export class BookingService {
   constructor(
     private bookingRepository: BookingRepository,
     private moduleConnectors: ModuleConnectors,
-    private commandBus: CommandBus,
   ) {}
 
   @RoleAuth([Role.Client])
@@ -199,6 +225,63 @@ export class BookingService {
     await this.bookingRepository.save(booking);
 
     return booking.toPrimitives();
+  }
+
+  @RoleAuth([Role.Client, Role.Musician])
+  async getBookingContract(
+    user: UserAuthInfo,
+    id: string,
+  ): Promise<BookingContractResponse> {
+    const contract = await this.moduleConnectors.getContractByBookingId(id);
+    if (!contract) {
+      throw new ContractNotFoundForBookingIdException(id);
+    }
+    const bookingId = new BookingId(contract.bookingId);
+    const booking = await this.bookingRepository.findById(bookingId);
+    if (user.role === Role.Musician) {
+      const isBandMember = await this.checkIsBandMember(
+        booking.getBandId(),
+        bookingId,
+        new UserId(user.id),
+      );
+      if (!isBandMember) {
+        throw new NotOwnerOfTheRequestedBookingException();
+      }
+    } else {
+      if (booking.toPrimitives().userId !== user.id) {
+        throw new NotOwnerOfTheRequestedBookingException();
+      }
+    }
+    return contract;
+  }
+
+  @RoleAuth([Role.Client, Role.Musician])
+  async getBookingInvoice(
+    user: UserAuthInfo,
+    id: string,
+  ): Promise<BookingInvoiceResponse> {
+    const invoice = await this.moduleConnectors.getInvoiceByBookingId(id);
+    if (!invoice) {
+      throw new InvoiceNotFoundForBookingIdException(id);
+    }
+    const booking = await this.bookingRepository.findByContractId(
+      new ContractId(invoice.contractId),
+    );
+    if (user.role === Role.Musician) {
+      const isBandMember = await this.checkIsBandMember(
+        booking.getBandId(),
+        booking.getId(),
+        new UserId(user.id),
+      );
+      if (!isBandMember) {
+        throw new NotOwnerOfTheRequestedBookingException();
+      }
+    } else {
+      if (booking.toPrimitives().userId !== user.id) {
+        throw new NotOwnerOfTheRequestedBookingException();
+      }
+    }
+    return invoice;
   }
 
   private async checkIsBandMember(

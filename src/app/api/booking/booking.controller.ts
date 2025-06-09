@@ -16,6 +16,8 @@ import { CreateBookingRequestDto } from "./createBookingRequest.dto";
 import { BookingService } from "../../../context/booking/service/booking.service";
 import { BookingResponseDto } from "./bookingResponse.dto";
 import { BookingResponseWithDetailsDto } from "./bookingResponseWithDetails.dto";
+import { BookingContractResponseDto } from "./bookingContractResponse.dto";
+import { BookingInvoiceResponseDto } from "./bookingInvoiceResponse.dto";
 
 @Controller("/bookings")
 export class BookingController {
@@ -38,6 +40,26 @@ export class BookingController {
     @Request() req: { user: UserAuthInfo },
   ): Promise<BookingResponseWithDetailsDto[]> {
     return await this.bookingService.getAllFromClient(req.user);
+  }
+
+  @Get("/:id/contract")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async getBookingContract(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BookingContractResponseDto> {
+    return await this.bookingService.getBookingContract(req.user, id);
+  }
+
+  @Get("/:id/invoice")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async getBookingInvoice(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Request() req: { user: UserAuthInfo },
+  ): Promise<BookingInvoiceResponseDto> {
+    return await this.bookingService.getBookingInvoice(req.user, id);
   }
 
   @Get("/:id")

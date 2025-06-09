@@ -20,9 +20,11 @@ import { CreateInvoiceRequestDto } from "./createInvoiceRequest.dto";
 interface InvoiceResponseDto {
   id: string;
   contractId: string;
-  date: Date;
   amount: number;
   status: string;
+  fileUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 @Controller("/invoices")
@@ -46,6 +48,16 @@ export class InvoiceController {
     @Request() req: { user: UserAuthInfo },
   ): Promise<InvoiceResponseDto[]> {
     return this.service.findManyByUserId(req.user);
+  }
+
+  @Get("/band/:id")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async findAllByBand(
+    @Request() req: { user: UserAuthInfo },
+    @Param("id", ParseUUIDPipe) id: string,
+  ): Promise<InvoiceResponseDto[]> {
+    return this.service.findManyByBand(req.user, id);
   }
 
   @Get("/:id")

@@ -1,23 +1,27 @@
 import { InvoiceStatus } from "./invoiceStatus";
 import InvoiceId from "./invoiceId";
-import ContractId from "../../contract/domain/contractId";
+import ContractId from "../../shared/domain/contractId";
 import { InvalidInvoiceStatusException } from "../exceptions/invalidInvoiceStatusException";
 
 export interface InvoicePrimitives {
   id: string;
   contractId: string;
-  date: Date;
   amount: number;
   status: string;
+  fileUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class Invoice {
   constructor(
     private id: InvoiceId,
     private contractId: ContractId,
-    private date: Date,
     private amount: number,
     private status: InvoiceStatus,
+    private fileUrl: string,
+    private createdAt: Date,
+    private updatedAt: Date,
   ) {}
 
   static fromPrimitives(primitives: InvoicePrimitives): Invoice {
@@ -28,23 +32,28 @@ export class Invoice {
     return new Invoice(
       new InvoiceId(primitives.id),
       new ContractId(primitives.contractId),
-      new Date(primitives.date),
       primitives.amount,
       status,
+      primitives.fileUrl,
+      primitives.createdAt,
+      primitives.updatedAt,
     );
   }
 
   static create(
     contractId: ContractId,
     amount: number,
-    status: InvoiceStatus,
+    fileUrl: string,
   ): Invoice {
+    const now = new Date();
     return new Invoice(
       InvoiceId.generate(),
       contractId,
-      new Date(),
       amount,
-      status,
+      InvoiceStatus.PENDING,
+      fileUrl,
+      now,
+      now,
     );
   }
 
@@ -52,9 +61,11 @@ export class Invoice {
     return {
       id: this.id.toPrimitive(),
       contractId: this.contractId.toPrimitive(),
-      date: this.date,
       amount: this.amount,
       status: this.status,
+      fileUrl: this.fileUrl,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     };
   }
 }

@@ -1,5 +1,5 @@
 import { v4 as uuidv4, validate } from "uuid";
-import { InvalidContractIdFormatException } from "../exceptions/invalidContractIdFormatException";
+import { InvalidContractIdFormatException } from "../../contract/exceptions/invalidContractIdFormatException";
 
 export default class ContractId {
   constructor(private value: string) {

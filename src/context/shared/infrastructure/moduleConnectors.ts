@@ -26,6 +26,11 @@ import { GenerateContractCommand } from "../../contract/service/generateContract
 import { UserAuthInfo } from "../domain/userAuthInfo";
 import { StoreFileCommand } from "../../fileUpload/service/storeFile.command";
 import { BookingPrimitives } from "../../booking/domain/booking";
+import { ContractPrimitives } from "../../contract/domain/contract";
+import { GetBookingByContractIdQuery } from "../../booking/service/getBookingByContractId.query";
+import { GetContractByBookingIdQuery } from "../../contract/service/getContractByBookingId.query";
+import { InvoicePrimitives } from "../../invoice/domain/invoice";
+import { GetInvoiceByBookingIdQuery } from "../../invoice/service/getInvoiceByBookingId.query";
 
 @Injectable()
 class ModuleConnectors {
@@ -44,11 +49,6 @@ class ModuleConnectors {
     return await this.queryBus.execute(userQuery);
   }
 
-  async obtainBookingIdByContractId(id: string): Promise<string> {
-    const userQuery = new GetUserIdByBookingIdQuery(id);
-    return await this.queryBus.execute(userQuery);
-  }
-
   async getAllEventTypes(): Promise<EventTypePrimitives[]> {
     const userQuery = new GetAllEventTypesQuery();
     return await this.queryBus.execute(userQuery);
@@ -59,7 +59,7 @@ class ModuleConnectors {
     return await this.queryBus.execute(query);
   }
 
-  async getBandById(bandId: string): Promise<any> {
+  async getBandById(bandId: string): Promise<BandPrimitives> {
     const query = new GetBandInfoQuery(bandId);
     return await this.queryBus.execute(query);
   }
@@ -182,6 +182,27 @@ class ModuleConnectors {
   async storeFile(fileName: string, fileContent: Buffer) {
     const storeFileCommand = new StoreFileCommand(fileName, fileContent);
     await this.commandBus.execute(storeFileCommand);
+  }
+
+  async getContractByBookingId(bookingId: string): Promise<ContractPrimitives> {
+    const getContractByBookingIdQuery = new GetContractByBookingIdQuery(
+      bookingId,
+    );
+    return await this.queryBus.execute(getContractByBookingIdQuery);
+  }
+
+  async getInvoiceByBookingId(bookingId: string): Promise<InvoicePrimitives> {
+    const getInvoiceByBookingIdQuery = new GetInvoiceByBookingIdQuery(
+      bookingId,
+    );
+    return await this.queryBus.execute(getInvoiceByBookingIdQuery);
+  }
+
+  async getBookingByContractId(bookingId: string): Promise<BookingPrimitives> {
+    const getContractByBookingIdQuery = new GetBookingByContractIdQuery(
+      bookingId,
+    );
+    return await this.queryBus.execute(getContractByBookingIdQuery);
   }
 }
 

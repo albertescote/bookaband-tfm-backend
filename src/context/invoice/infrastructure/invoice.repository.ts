@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { Invoice } from "../domain/invoice";
 import InvoiceId from "../domain/invoiceId";
+import BookingId from "../../shared/domain/bookingId";
 
 @Injectable()
 export class InvoiceRepository {
@@ -21,6 +22,27 @@ export class InvoiceRepository {
         contract: {
           booking: {
             userId: userId,
+          },
+        },
+      },
+      include: {
+        contract: {
+          include: {
+            booking: true,
+          },
+        },
+      },
+    });
+
+    return invoices.map((i) => Invoice.fromPrimitives(i));
+  }
+
+  async findManyByBandId(bandId: string): Promise<Invoice[]> {
+    const invoices = await this.prisma.invoice.findMany({
+      where: {
+        contract: {
+          booking: {
+            bandId: bandId,
           },
         },
       },
@@ -77,5 +99,33 @@ export class InvoiceRepository {
     if (!result) return undefined;
 
     return result.contract.booking.userId;
+  }
+
+  async findBookingBandIdIdFromInvoiceId(invoiceId: string): Promise<string> {
+    const result = await this.prisma.invoice.findUnique({
+      where: { id: invoiceId },
+      select: {
+        contract: {
+          select: {
+            booking: {
+              select: {
+                bandId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!result) return undefined;
+
+    return result.contract.booking.bandId;
+  }
+
+  async findByBookingId(bookingId: BookingId) {
+    const invoice = await this.prisma.invoice.findFirst({
+      where: { contract: { booking: { id: bookingId.toPrimitive() } } },
+    });
+
+    return invoice ? Invoice.fromPrimitives(invoice) : undefined;
   }
 }

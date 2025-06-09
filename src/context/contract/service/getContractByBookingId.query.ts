@@ -1,4 +1,4 @@
-export class GetBookingIdByContractIdQuery {
+export class GetContractByBookingIdQuery {
   constructor(private _id: string) {}
 
   get id(): string {

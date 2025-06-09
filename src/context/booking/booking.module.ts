@@ -6,6 +6,7 @@ import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
 import { CqrsModule } from "@nestjs/cqrs";
 import { GetUserIdByBookingIdQueryHandler } from "./service/getUserIdByBookingId.queryHandler";
 import { GetBookingByIdQueryHandler } from "./service/getBookingById.queryHandler";
+import { GetBookingByContractIdQueryHandler } from "./service/getBookingByContractId.queryHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -16,11 +17,13 @@ import { GetBookingByIdQueryHandler } from "./service/getBookingById.queryHandle
     ModuleConnectors,
     GetUserIdByBookingIdQueryHandler,
     GetBookingByIdQueryHandler,
+    GetBookingByContractIdQueryHandler,
   ],
   exports: [
     BookingService,
     GetUserIdByBookingIdQueryHandler,
     GetBookingByIdQueryHandler,
+    GetBookingByContractIdQueryHandler,
   ],
 })
 export class BookingModule {}

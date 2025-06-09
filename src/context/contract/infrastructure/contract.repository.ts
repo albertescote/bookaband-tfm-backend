@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { Contract } from "../domain/contract";
-import ContractId from "../domain/contractId";
+import ContractId from "../../shared/domain/contractId";
+import BandId from "../../shared/domain/bandId";
+import BookingId from "../../shared/domain/bookingId";
 
 @Injectable()
 export class ContractRepository {
@@ -10,9 +12,91 @@ export class ContractRepository {
   async findById(id: ContractId): Promise<Contract | undefined> {
     const contract = await this.prisma.contract.findUnique({
       where: { id: id.toPrimitive() },
+      include: {
+        booking: {
+          select: {
+            name: true,
+            initDate: true,
+            band: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    return contract ? Contract.fromPrimitives(contract) : undefined;
+    return contract
+      ? Contract.fromPrimitives({
+          id: contract.id,
+          bookingId: contract.bookingId,
+          status: contract.status,
+          fileUrl: contract.fileUrl,
+          userSigned: contract.userSigned,
+          bandSigned: contract.bandSigned,
+          createdAt: contract.createdAt,
+          updatedAt: contract.updatedAt,
+          eventName: contract.booking.name,
+          bandName: contract.booking.band.name,
+          userName:
+            contract.booking.user.firstName +
+            " " +
+            contract.booking.user.familyName,
+          eventDate: contract.booking.initDate,
+        })
+      : undefined;
+  }
+
+  async findByBookingId(id: BookingId): Promise<Contract | undefined> {
+    const contract = await this.prisma.contract.findUnique({
+      where: { bookingId: id.toPrimitive() },
+      include: {
+        booking: {
+          select: {
+            name: true,
+            initDate: true,
+            band: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return contract
+      ? Contract.fromPrimitives({
+          id: contract.id,
+          bookingId: contract.bookingId,
+          status: contract.status,
+          fileUrl: contract.fileUrl,
+          userSigned: contract.userSigned,
+          bandSigned: contract.bandSigned,
+          createdAt: contract.createdAt,
+          updatedAt: contract.updatedAt,
+          eventName: contract.booking.name,
+          bandName: contract.booking.band.name,
+          userName:
+            contract.booking.user.firstName +
+            " " +
+            contract.booking.user.familyName,
+          eventDate: contract.booking.initDate,
+        })
+      : undefined;
   }
 
   async findBookingBandIdByContractId(contractId: string): Promise<string> {
@@ -39,28 +123,177 @@ export class ContractRepository {
         },
       },
       include: {
-        booking: true,
+        booking: {
+          select: {
+            name: true,
+            initDate: true,
+            band: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    return contracts.map((c) => Contract.fromPrimitives(c));
+    return contracts.map((contract) =>
+      Contract.fromPrimitives({
+        id: contract.id,
+        bookingId: contract.bookingId,
+        status: contract.status,
+        fileUrl: contract.fileUrl,
+        userSigned: contract.userSigned,
+        bandSigned: contract.bandSigned,
+        createdAt: contract.createdAt,
+        updatedAt: contract.updatedAt,
+        eventName: contract.booking.name,
+        bandName: contract.booking.band.name,
+        userName:
+          contract.booking.user.firstName +
+          " " +
+          contract.booking.user.familyName,
+        eventDate: contract.booking.initDate,
+      }),
+    );
+  }
+
+  async findManyByBandId(bandId: BandId): Promise<Contract[]> {
+    const contracts = await this.prisma.contract.findMany({
+      where: {
+        booking: {
+          bandId: bandId.toPrimitive(),
+        },
+      },
+      include: {
+        booking: {
+          select: {
+            name: true,
+            initDate: true,
+            band: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return contracts.map((contract) =>
+      Contract.fromPrimitives({
+        id: contract.id,
+        bookingId: contract.bookingId,
+        status: contract.status,
+        fileUrl: contract.fileUrl,
+        userSigned: contract.userSigned,
+        bandSigned: contract.bandSigned,
+        createdAt: contract.createdAt,
+        updatedAt: contract.updatedAt,
+        eventName: contract.booking.name,
+        bandName: contract.booking.band.name,
+        userName:
+          contract.booking.user.firstName +
+          " " +
+          contract.booking.user.familyName,
+        eventDate: contract.booking.initDate,
+      }),
+    );
   }
 
   async create(contract: Contract): Promise<Contract> {
     const created = await this.prisma.contract.create({
       data: contract.toPrimitives(),
+      include: {
+        booking: {
+          select: {
+            name: true,
+            initDate: true,
+            band: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    return Contract.fromPrimitives(created);
+    return Contract.fromPrimitives({
+      id: created.id,
+      bookingId: created.bookingId,
+      status: created.status,
+      fileUrl: created.fileUrl,
+      userSigned: created.userSigned,
+      bandSigned: created.bandSigned,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt,
+      eventName: created.booking.name,
+      bandName: created.booking.band.name,
+      userName:
+        created.booking.user.firstName + " " + created.booking.user.familyName,
+      eventDate: created.booking.initDate,
+    });
   }
 
   async update(contract: Contract): Promise<Contract> {
     const updated = await this.prisma.contract.update({
       where: { id: contract.toPrimitives().id },
       data: contract.toPrimitives(),
+      include: {
+        booking: {
+          select: {
+            name: true,
+            initDate: true,
+            band: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: {
+                firstName: true,
+                familyName: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    return Contract.fromPrimitives(updated);
+    return Contract.fromPrimitives({
+      id: updated.id,
+      bookingId: updated.bookingId,
+      status: updated.status,
+      fileUrl: updated.fileUrl,
+      userSigned: updated.userSigned,
+      bandSigned: updated.bandSigned,
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt,
+      eventName: updated.booking.name,
+      bandName: updated.booking.band.name,
+      userName:
+        updated.booking.user.firstName + " " + updated.booking.user.familyName,
+      eventDate: updated.booking.initDate,
+    });
   }
 
   async delete(id: ContractId): Promise<void> {

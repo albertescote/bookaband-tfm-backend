@@ -234,12 +234,14 @@ model booking {
 }
 
 model contract {
-  id        String   @id @default(uuid())
-  bookingId String   @unique
-  date      DateTime
-  status    String
-  fileUrl   String
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  bookingId  String   @unique
+  status     String
+  fileUrl    String
+  userSigned Boolean
+  bandSigned Boolean
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   booking booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   invoice invoice?
@@ -248,10 +250,11 @@ model contract {
 model invoice {
   id         String   @id @default(uuid())
   contractId String   @unique
-  date       DateTime
   amount     Float
   status     String
+  fileUrl    String
   createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   contract contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
 }

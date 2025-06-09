@@ -13,7 +13,9 @@ export async function seedInvoices() {
           contractId: contract.id,
           amount: Math.floor(Math.random() * 500) + 100,
           status: ["PAID", "PENDING", "FAILED"][Math.floor(Math.random() * 3)],
-          date: new Date(),
+          fileUrl: "http://localhost:4000/files/invoice-uuid-date.pdf",
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       });
     }
