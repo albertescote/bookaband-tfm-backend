@@ -271,9 +271,16 @@ export class ContractRepository {
   }
 
   async update(contract: Contract): Promise<Contract> {
+    const contractPrimitives = contract.toPrimitives();
     const updated = await this.prisma.contract.update({
-      where: { id: contract.toPrimitives().id },
-      data: contract.toPrimitives(),
+      where: { id: contractPrimitives.id },
+      data: {
+        status: contractPrimitives.status,
+        fileUrl: contractPrimitives.fileUrl,
+        userSigned: contractPrimitives.userSigned,
+        bandSigned: contractPrimitives.bandSigned,
+        vidsignerDocGui: contractPrimitives.vidsignerDocGui,
+      },
       include: {
         booking: {
           select: {
