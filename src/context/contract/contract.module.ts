@@ -7,6 +7,7 @@ import { GetContractByBookingIdQueryHandler } from "./service/getContractByBooki
 import { CqrsModule } from "@nestjs/cqrs";
 import { GenerateContractCommandHandler } from "./service/generateContract.commandHandler";
 import { VidsignerApiWrapper } from "./infrastructure/vidsignerApiWrapper";
+import { ProcessSignatureNotificationCommandHandler } from "./service/processSignatureNotification.commandHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -18,11 +19,13 @@ import { VidsignerApiWrapper } from "./infrastructure/vidsignerApiWrapper";
     GetContractByBookingIdQueryHandler,
     GenerateContractCommandHandler,
     VidsignerApiWrapper,
+    ProcessSignatureNotificationCommandHandler,
   ],
   exports: [
     ContractService,
     GetContractByBookingIdQueryHandler,
     GenerateContractCommandHandler,
+    ProcessSignatureNotificationCommandHandler,
   ],
 })
 export class ContractModule {}

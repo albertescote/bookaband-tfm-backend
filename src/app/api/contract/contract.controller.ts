@@ -16,6 +16,8 @@ import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { UpdateContractRequestDto } from "./updateContractRequest.dto";
 import { SignatureNotificationRequestDto } from "./signatureNotificationRequest.dto";
+import { CommandBus } from "@nestjs/cqrs";
+import { ProcessSignatureNotificationCommand } from "../../../context/contract/service/processSignatureNotification.command";
 
 interface ContractResponseDto {
   id: string;
@@ -34,7 +36,10 @@ interface ContractResponseDto {
 
 @Controller("/contracts")
 export class ContractController {
-  constructor(private readonly service: ContractService) {}
+  constructor(
+    private readonly service: ContractService,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   @Get("/user")
   @UseGuards(JwtCustomGuard)
@@ -61,7 +66,16 @@ export class ContractController {
     @Body() body: SignatureNotificationRequestDto,
     @Param("id") id: string,
   ): Promise<void> {
-    return this.service.processSignatureNotification(body);
+    const processSignatureNotificationCommand =
+      new ProcessSignatureNotificationCommand(
+        body.Signers,
+        body.FileName,
+        body.DocGUI,
+        body.DocStatus,
+        body.Downloaded,
+        body.AdditionalData,
+      );
+    return this.commandBus.execute(processSignatureNotificationCommand);
   }
 
   @Get("/:id")

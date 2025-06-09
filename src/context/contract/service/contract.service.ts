@@ -16,8 +16,6 @@ import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import BandId from "../../shared/domain/bandId";
 import { NotOwnerOfTheRequestedContractException } from "../exceptions/notOwnerOfTheRequestedContractException";
 import { NotAMemberOfTheRequestedBandException } from "../exceptions/notAMemberOfTheRequestedBandException";
-import { VidsignerApiWrapper } from "../infrastructure/vidsignerApiWrapper";
-import { EXTERNAL_URL } from "../../../config";
 
 export interface CreateContractRequest {
   bookingId: string;
@@ -55,7 +53,6 @@ export class ContractService {
   constructor(
     private readonly repository: ContractRepository,
     private readonly moduleConnectors: ModuleConnectors,
-    private readonly vidSignerApiWrapper: VidsignerApiWrapper,
   ) {}
 
   @RoleAuth([Role.Musician])
@@ -144,42 +141,6 @@ export class ContractService {
       new BandId(bandId),
     );
     return contracts.map((c) => c.toPrimitivesWithoutDocGui());
-  }
-
-  async processSignatureNotification(
-    body: SignatureNotificationRequest,
-  ): Promise<void> {
-    const contract = await this.repository.findByVidSignerDocGui(body.DocGUI);
-    if (!contract) {
-      return;
-    }
-    let modified = false;
-    body.Signers.forEach((signer) => {
-      if (signer.SignatureStatus === "Signed") {
-        if (contract.toPrimitives().userName === signer.SignerName) {
-          if (!contract.isUserSigned()) {
-            contract.setUserSigned();
-            modified = true;
-          }
-        } else if (!contract.isBandSigned()) {
-          contract.setBandSigned();
-          modified = true;
-        }
-      } else if (signer.SignatureStatus === "Rejected") {
-        contract.failedSignature();
-      }
-    });
-    if (modified) {
-      const signedDocument = await this.vidSignerApiWrapper.getDocument(
-        body.DocGUI,
-      );
-      const fileName = `contract-${contract.toPrimitives().bookingId}-${Date.now()}.pdf`;
-      await this.moduleConnectors.storeFile(fileName, signedDocument);
-
-      contract.updateFileUrl(`${EXTERNAL_URL}/files/${fileName}`);
-    }
-
-    await this.repository.update(contract);
   }
 
   private async validateCreationRequest(
