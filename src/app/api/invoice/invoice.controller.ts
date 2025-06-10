@@ -16,6 +16,8 @@ import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { UpdateInvoiceRequestDto } from "./updateInvoiceRequest.dto";
 import { CreateInvoiceRequestDto } from "./createInvoiceRequest.dto";
+import { CommandBus } from "@nestjs/cqrs";
+import { PayInvoiceCommand } from "../../../context/invoice/service/payInvoice.command";
 
 interface InvoiceResponseDto {
   id: string;
@@ -29,7 +31,10 @@ interface InvoiceResponseDto {
 
 @Controller("/invoices")
 export class InvoiceController {
-  constructor(private readonly service: InvoiceService) {}
+  constructor(
+    private readonly service: InvoiceService,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   @Post("/")
   @UseGuards(JwtCustomGuard)
@@ -68,6 +73,17 @@ export class InvoiceController {
     @Param("id", ParseUUIDPipe) id: string,
   ): Promise<InvoiceResponseDto> {
     return this.service.findById(req.user, id);
+  }
+
+  @Put("/:id/payment")
+  @UseGuards(JwtCustomGuard)
+  @HttpCode(200)
+  async payInvoice(
+    @Request() req: { user: UserAuthInfo },
+    @Param("id", ParseUUIDPipe) id: string,
+  ): Promise<void> {
+    const payInvoiceCommand = new PayInvoiceCommand(id, req.user);
+    await this.commandBus.execute(payInvoiceCommand);
   }
 
   @Put("/:id")

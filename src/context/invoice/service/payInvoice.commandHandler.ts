@@ -10,6 +10,9 @@ import { InvoicePaidEvent } from "../../shared/eventBus/domain/invoicePaid.event
 import { BookingIdNotFoundForInvoiceIdException } from "../exceptions/bookingIdNotFoundForInvoiceIdException";
 import { Role } from "../../shared/domain/role";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
+import { UnauthorizedRoleException } from "../exceptions/unauthorizedRoleException";
+import { BandNotFoundForInvoiceException } from "../exceptions/bandNotFoundForInvoiceException";
+import { NotBandMemberException } from "../exceptions/notBandMemberException";
 
 @Injectable()
 @CommandHandler(PayInvoiceCommand)
@@ -26,20 +29,20 @@ export class PayInvoiceCommandHandler
     const { id, authorized } = command;
 
     if (authorized.role !== Role.Musician) {
-      throw new Error();
+      throw new UnauthorizedRoleException(authorized.role);
     }
 
     const bandId = await this.invoiceRepository.getBandIdByInvoiceId(
       new InvoiceId(id),
     );
     if (!bandId) {
-      throw new Error();
+      throw new BandNotFoundForInvoiceException(id);
     }
     const bandMembersId = await this.moduleConnectors.obtainBandMembers(
       bandId.toPrimitive(),
     );
     if (!bandMembersId.some((memberId) => memberId === authorized.id)) {
-      throw new Error();
+      throw new NotBandMemberException();
     }
 
     const invoice = await this.invoiceRepository.findById(new InvoiceId(id));
