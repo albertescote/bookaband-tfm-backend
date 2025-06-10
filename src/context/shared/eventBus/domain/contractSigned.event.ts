@@ -1,11 +1,11 @@
 import { BaseEvent } from "./baseEvent";
 
 export class ContractSignedEvent extends BaseEvent {
-  constructor(private _bookingId: string) {
+  constructor(private _contractId: string) {
     super();
   }
 
-  get bookingId(): string {
-    return this._bookingId;
+  get contractId(): string {
+    return this._contractId;
   }
 }

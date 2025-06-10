@@ -1,5 +1,5 @@
 import { v4 as uuidv4, validate } from "uuid";
-import { InvalidInvoiceIdFormatException } from "../exceptions/invalidInvoiceIdFormatException";
+import { InvalidInvoiceIdFormatException } from "../../invoice/exceptions/invalidInvoiceIdFormatException";
 
 export default class InvoiceId {
   constructor(private value: string) {

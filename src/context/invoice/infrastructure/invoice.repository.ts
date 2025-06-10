@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { Invoice } from "../domain/invoice";
-import InvoiceId from "../domain/invoiceId";
+import InvoiceId from "../../shared/domain/invoiceId";
 import BookingId from "../../shared/domain/bookingId";
 import BandId from "../../shared/domain/bandId";
 

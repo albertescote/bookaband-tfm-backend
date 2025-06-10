@@ -1,5 +1,5 @@
 import { InvoiceStatus } from "./invoiceStatus";
-import InvoiceId from "./invoiceId";
+import InvoiceId from "../../shared/domain/invoiceId";
 import ContractId from "../../shared/domain/contractId";
 import { InvalidInvoiceStatusException } from "../exceptions/invalidInvoiceStatusException";
 

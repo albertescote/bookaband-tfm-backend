@@ -7,6 +7,7 @@ import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
 import { BookingWithDetails } from "../domain/bookingWithDetails";
 import ContractId from "../../shared/domain/contractId";
+import InvoiceId from "../../shared/domain/invoiceId";
 
 @Injectable()
 export class BookingRepository {
@@ -220,6 +221,31 @@ export class BookingRepository {
   async findByContractId(contractId: ContractId) {
     const booking = await this.prismaService.booking.findFirst({
       where: { contract: { id: contractId.toPrimitive() } },
+    });
+    return booking
+      ? Booking.fromPrimitives({
+          id: booking.id,
+          bandId: booking.bandId,
+          userId: booking.userId,
+          status: BookingStatus[booking.status],
+          initDate: booking.initDate,
+          endDate: booking.endDate,
+          name: booking.name,
+          country: booking.country,
+          city: booking.city,
+          venue: booking.venue,
+          postalCode: booking.postalCode,
+          addressLine1: booking.addressLine1,
+          addressLine2: booking.addressLine2,
+          eventTypeId: booking.eventTypeId,
+          isPublic: booking.isPublic,
+        })
+      : undefined;
+  }
+
+  async findByInvoiceId(invoiceId: InvoiceId) {
+    const booking = await this.prismaService.booking.findFirst({
+      where: { contract: { invoice: { id: invoiceId.toPrimitive() } } },
     });
     return booking
       ? Booking.fromPrimitives({

@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { EventsHandler, IEventHandler } from "@nestjs/cqrs";
 import { BookingRepository } from "../infrastructure/booking.repository";
-import BookingId from "../../shared/domain/bookingId";
 import { ContractSignedEvent } from "../../shared/eventBus/domain/contractSigned.event";
-import { BookingNotFoundException } from "../exceptions/bookingNotFoundException";
 import { UnableToUpdateBookingException } from "../exceptions/unableToUpdateBookingException";
+import ContractId from "../../shared/domain/contractId";
+import { BookingNotFoundForContractIdException } from "../exceptions/bookingNotFoundForContractIdException";
 
 @Injectable()
 @EventsHandler(ContractSignedEvent)
@@ -14,12 +14,12 @@ export class UpdateBookingStatusOnContractSignedEventHandler
   constructor(private bookingRepository: BookingRepository) {}
 
   async handle(event: ContractSignedEvent): Promise<void> {
-    const { bookingId } = event;
-    const booking = await this.bookingRepository.findById(
-      new BookingId(bookingId),
+    const { contractId } = event;
+    const booking = await this.bookingRepository.findByContractId(
+      new ContractId(contractId),
     );
     if (!booking) {
-      throw new BookingNotFoundException(bookingId);
+      throw new BookingNotFoundForContractIdException(contractId);
     }
 
     booking.contractSigned();

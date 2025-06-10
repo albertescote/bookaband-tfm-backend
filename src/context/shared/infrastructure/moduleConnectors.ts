@@ -204,9 +204,9 @@ class ModuleConnectors {
     return await this.queryBus.execute(getInvoiceByBookingIdQuery);
   }
 
-  async getBookingByContractId(bookingId: string): Promise<BookingPrimitives> {
+  async getBookingByContractId(contractId: string): Promise<BookingPrimitives> {
     const getContractByBookingIdQuery = new GetBookingByContractIdQuery(
-      bookingId,
+      contractId,
     );
     return await this.queryBus.execute(getContractByBookingIdQuery);
   }

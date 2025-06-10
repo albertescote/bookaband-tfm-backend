@@ -4,7 +4,7 @@ import { Invoice, InvoicePrimitives } from "../domain/invoice";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { Role } from "../../shared/domain/role";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
-import InvoiceId from "../domain/invoiceId";
+import InvoiceId from "../../shared/domain/invoiceId";
 import ContractId from "../../shared/domain/contractId";
 import { InvoiceStatus } from "../domain/invoiceStatus";
 import { InvoiceNotFoundException } from "../exceptions/invoiceNotFoundException";

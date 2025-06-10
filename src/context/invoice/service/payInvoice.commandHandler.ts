@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { InvoiceRepository } from "../infrastructure/invoice.repository";
 import { PayInvoiceCommand } from "./payInvoice.command";
 import { EventBus } from "../../shared/eventBus/domain/eventBus";
-import InvoiceId from "../domain/invoiceId";
+import InvoiceId from "../../shared/domain/invoiceId";
 import { InvoiceNotFoundException } from "../exceptions/invoiceNotFoundException";
 import { UnableToUpdateInvoiceException } from "../exceptions/unableToUpdateInvoiceException";
 import { InvoicePaidEvent } from "../../shared/eventBus/domain/invoicePaid.event";
@@ -68,6 +68,8 @@ export class PayInvoiceCommandHandler
       );
     }
 
-    await this.eventBus.publish(new InvoicePaidEvent(bookingId.toPrimitive()));
+    await this.eventBus.publish(
+      new InvoicePaidEvent(invoice.getId().toPrimitive()),
+    );
   }
 }
