@@ -1,10 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { ContractRepository } from "../infrastructure/contract.repository";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { VidsignerApiWrapper } from "../infrastructure/vidsignerApiWrapper";
 import { EXTERNAL_URL } from "../../../config";
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { ProcessSignatureNotificationCommand } from "./processSignatureNotification.command";
+import { EventBus } from "../../shared/eventBus/domain/eventBus";
+import { ContractSignedEvent } from "../../shared/eventBus/domain/contractSigned.event";
 
 @Injectable()
 @CommandHandler(ProcessSignatureNotificationCommand)
@@ -15,10 +17,11 @@ export class ProcessSignatureNotificationCommandHandler
     private readonly repository: ContractRepository,
     private readonly moduleConnectors: ModuleConnectors,
     private readonly vidSignerApiWrapper: VidsignerApiWrapper,
+    @Inject("EventBus") private eventBus: EventBus,
   ) {}
 
   async execute(command: ProcessSignatureNotificationCommand): Promise<void> {
-    const { DocGUI, Signers } = command;
+    const { DocGUI, Signers, DocStatus } = command;
     const contract = await this.repository.findByVidSignerDocGui(DocGUI);
     if (!contract) {
       return;
@@ -47,6 +50,12 @@ export class ProcessSignatureNotificationCommandHandler
       await this.moduleConnectors.storeFile(fileName, signedDocument);
 
       contract.updateFileUrl(`${EXTERNAL_URL}/files/${fileName}`);
+
+      if (DocStatus === "Signed") {
+        await this.eventBus.publish(
+          new ContractSignedEvent(contract.getBookingId().toPrimitive()),
+        );
+      }
     }
 
     await this.repository.update(contract);

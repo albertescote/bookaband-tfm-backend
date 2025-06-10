@@ -12,9 +12,9 @@ import { UnableToCreateInvoiceException } from "../exceptions/unableToCreateInvo
 import { NotOwnerOfTheRequestedInvoiceException } from "../exceptions/notOwnerOfTheRequestedInvoiceException";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { NotOwnerOfTheRequestedContractException } from "../exceptions/notOwnerOfTheRequestedContractException";
-import { UserIdNotFoundForBookingIdException } from "../exceptions/userIdNotFoundForBookingIdException";
 import { BookingNotFoundForContractIdException } from "../exceptions/bookingNotFoundForContractIdException";
 import { NotOwnerOfTheRequestedBandException } from "../exceptions/notOwnerOfTheRequestedBandException";
+import { UnableToUpdateInvoiceException } from "../exceptions/unableToUpdateInvoiceException";
 
 export interface CreateInvoiceRequest {
   contractId: string;
@@ -33,7 +33,7 @@ export class InvoiceService {
     private moduleConnectors: ModuleConnectors,
   ) {}
 
-  @RoleAuth([Role.Client, Role.Musician])
+  @RoleAuth([Role.Musician])
   async create(
     user: UserAuthInfo,
     request: CreateInvoiceRequest,
@@ -44,12 +44,13 @@ export class InvoiceService {
     if (!booking) {
       throw new BookingNotFoundForContractIdException(request.contractId);
     }
-    await this.checkCreationOwnership(request, user, booking.id);
+    await this.checkUpsertOwnership(request, user, booking.id);
 
-    // TODO: add correct amount value
+    const price = await this.moduleConnectors.getBookingPrice(booking.id);
+
     const invoice = Invoice.create(
       new ContractId(request.contractId),
-      100,
+      price,
       request.fileUrl,
     );
     const created = await this.repository.create(invoice);
@@ -66,7 +67,7 @@ export class InvoiceService {
     const existing = await this.repository.findById(new InvoiceId(request.id));
     if (!existing) throw new InvoiceNotFoundException();
 
-    await this.checkRequestedInvoiceOwnership(request.id, user);
+    await this.checkRetrieveOwnership(request.id, user);
 
     const updated = await this.repository.update(
       Invoice.fromPrimitives({
@@ -75,15 +76,25 @@ export class InvoiceService {
       }),
     );
 
+    if (!updated) {
+      throw new UnableToUpdateInvoiceException();
+    }
+
     return updated.toPrimitives();
   }
 
-  @RoleAuth([Role.Client, Role.Musician])
+  @RoleAuth([Role.Musician])
   async delete(user: UserAuthInfo, id: string): Promise<void> {
     const existing = await this.repository.findById(new InvoiceId(id));
     if (!existing) throw new InvoiceNotFoundException();
 
-    await this.checkRequestedInvoiceOwnership(id, user);
+    const invoiceBandId =
+      await this.repository.findBookingBandIdIdFromInvoiceId(id);
+    const memberIds =
+      await this.moduleConnectors.obtainBandMembers(invoiceBandId);
+    if (!memberIds.some((memberId) => memberId === user.id)) {
+      throw new NotOwnerOfTheRequestedInvoiceException(id);
+    }
 
     await this.repository.delete(new InvoiceId(id));
   }
@@ -93,7 +104,7 @@ export class InvoiceService {
     const invoice = await this.repository.findById(new InvoiceId(id));
     if (!invoice) throw new InvoiceNotFoundException();
 
-    await this.checkRequestedInvoiceOwnership(id, user);
+    await this.checkRetrieveOwnership(id, user);
 
     return invoice.toPrimitives();
   }
@@ -117,24 +128,18 @@ export class InvoiceService {
     return invoices.map((i) => i.toPrimitives());
   }
 
-  private async checkCreationOwnership(
+  private async checkUpsertOwnership(
     request: CreateInvoiceRequest,
     user: UserAuthInfo,
-    bookingId: string,
+    bandId: string,
   ) {
-    const userId =
-      await this.moduleConnectors.obtainUserIdByBookingId(bookingId);
-
-    if (!userId) {
-      throw new UserIdNotFoundForBookingIdException(bookingId);
-    }
-
-    if (userId !== user.id) {
+    const memberIds = await this.moduleConnectors.obtainBandMembers(bandId);
+    if (!memberIds.some((memberId) => memberId === user.id)) {
       throw new NotOwnerOfTheRequestedContractException(request.contractId);
     }
   }
 
-  private async checkRequestedInvoiceOwnership(
+  private async checkRetrieveOwnership(
     requestedInvoiceId: string,
     user: UserAuthInfo,
   ) {

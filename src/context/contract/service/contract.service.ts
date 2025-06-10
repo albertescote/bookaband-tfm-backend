@@ -29,25 +29,6 @@ export interface UpdateContractRequest {
   fileUrl: string;
 }
 
-export interface SignatureNotificationRequest {
-  Signers: {
-    SignerGUI: string;
-    SignerName: string;
-    SignatureStatus: string;
-    TypeOfID: string;
-    NumberID: string;
-    OperationTime: string;
-    RejectionReason?: string | null;
-    UserNoticesInfo?: string | null;
-    FormInfo?: string | null;
-  }[];
-  FileName: string;
-  DocGUI: string;
-  DocStatus: string;
-  Downloaded: boolean;
-  AdditionalData?: string;
-}
-
 @Injectable()
 export class ContractService {
   constructor(

@@ -145,4 +145,12 @@ export class Booking {
   isClientOwner(userId: UserId): boolean {
     return this.userId.toPrimitive() === userId.toPrimitive();
   }
+
+  contractSigned() {
+    this.status = BookingStatus.SIGNED;
+  }
+
+  invoicePaid() {
+    this.status = BookingStatus.PAID;
+  }
 }

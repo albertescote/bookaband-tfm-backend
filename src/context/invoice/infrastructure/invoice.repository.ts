@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { Invoice } from "../domain/invoice";
 import InvoiceId from "../domain/invoiceId";
 import BookingId from "../../shared/domain/bookingId";
+import BandId from "../../shared/domain/bandId";
 
 @Injectable()
 export class InvoiceRepository {
@@ -72,7 +73,7 @@ export class InvoiceRepository {
       data: invoice.toPrimitives(),
     });
 
-    return Invoice.fromPrimitives(updated);
+    return updated ? Invoice.fromPrimitives(updated) : undefined;
   }
 
   async delete(id: InvoiceId): Promise<void> {
@@ -127,5 +128,47 @@ export class InvoiceRepository {
     });
 
     return invoice ? Invoice.fromPrimitives(invoice) : undefined;
+  }
+
+  async getBookingIdByInvoiceId(invoiceId: InvoiceId): Promise<BookingId> {
+    const invoice = await this.prisma.invoice.findFirst({
+      where: { id: invoiceId.toPrimitive() },
+      include: {
+        contract: {
+          include: {
+            booking: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return invoice?.contract?.booking?.id
+      ? new BookingId(invoice.contract.booking.id)
+      : undefined;
+  }
+
+  async getBandIdByInvoiceId(invoiceId: InvoiceId): Promise<BandId> {
+    const invoice = await this.prisma.invoice.findFirst({
+      where: { id: invoiceId.toPrimitive() },
+      include: {
+        contract: {
+          include: {
+            booking: {
+              select: {
+                bandId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return invoice?.contract?.booking?.bandId
+      ? new BandId(invoice.contract.booking.bandId)
+      : undefined;
   }
 }

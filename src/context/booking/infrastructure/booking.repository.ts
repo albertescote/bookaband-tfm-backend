@@ -65,6 +65,20 @@ export class BookingRepository {
       : undefined;
   }
 
+  async getBookingPrice(bookingId: BookingId): Promise<number> {
+    const booking = await this.prismaService.booking.findFirst({
+      where: { id: bookingId.toPrimitive() },
+      include: {
+        band: {
+          select: {
+            price: true,
+          },
+        },
+      },
+    });
+    return booking.band.price ?? undefined;
+  }
+
   async findByIdWithDetails(bookingId: BookingId): Promise<BookingWithDetails> {
     const booking = await this.prismaService.booking.findFirst({
       where: { id: bookingId.toPrimitive() },

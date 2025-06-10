@@ -36,6 +36,8 @@ const REDIS = {
   PORT: checkStrVar(process.env.REDIS_PORT, "REDIS_PORT"),
 };
 
+const BUS_TYPE = checkStrVar(process.env.BUS_TYPE, "BUS_TYPE");
+
 const MONGO_DB_NAME = checkStrVar(process.env.MONGO_DB_NAME, "MONGO_DB_NAME");
 
 const MONGO_DB_URL = checkStrVar(process.env.MONGO_DB_URL, "MONGO_DB_URL");
@@ -80,4 +82,5 @@ export {
   MONGO_DB_URL,
   MONGODB_COLLECTIONS,
   VIDSIGNER,
+  BUS_TYPE,
 };

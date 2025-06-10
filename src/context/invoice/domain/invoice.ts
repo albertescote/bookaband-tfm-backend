@@ -68,4 +68,12 @@ export class Invoice {
       updatedAt: this.updatedAt,
     };
   }
+
+  paid(): void {
+    this.status = InvoiceStatus.PAID;
+  }
+
+  getId(): InvoiceId {
+    return this.id;
+  }
 }

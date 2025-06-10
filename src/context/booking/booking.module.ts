@@ -7,6 +7,8 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { GetUserIdByBookingIdQueryHandler } from "./service/getUserIdByBookingId.queryHandler";
 import { GetBookingByIdQueryHandler } from "./service/getBookingById.queryHandler";
 import { GetBookingByContractIdQueryHandler } from "./service/getBookingByContractId.queryHandler";
+import { GetBookingPriceQueryHandler } from "./service/getBookingPrice.queryHandler";
+import { UpdateBookingStatusOnContractSignedEventHandler } from "./service/updateBookingStatusOnContractSigned.eventHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -18,12 +20,16 @@ import { GetBookingByContractIdQueryHandler } from "./service/getBookingByContra
     GetUserIdByBookingIdQueryHandler,
     GetBookingByIdQueryHandler,
     GetBookingByContractIdQueryHandler,
+    GetBookingPriceQueryHandler,
+    UpdateBookingStatusOnContractSignedEventHandler,
   ],
   exports: [
     BookingService,
     GetUserIdByBookingIdQueryHandler,
     GetBookingByIdQueryHandler,
     GetBookingByContractIdQueryHandler,
+    GetBookingPriceQueryHandler,
+    UpdateBookingStatusOnContractSignedEventHandler,
   ],
 })
 export class BookingModule {}

@@ -31,6 +31,7 @@ import { GetBookingByContractIdQuery } from "../../booking/service/getBookingByC
 import { GetContractByBookingIdQuery } from "../../contract/service/getContractByBookingId.query";
 import { InvoicePrimitives } from "../../invoice/domain/invoice";
 import { GetInvoiceByBookingIdQuery } from "../../invoice/service/getInvoiceByBookingId.query";
+import { GetBookingPriceQuery } from "../../booking/service/getBookingPrice.query";
 
 @Injectable()
 class ModuleConnectors {
@@ -189,6 +190,11 @@ class ModuleConnectors {
       bookingId,
     );
     return await this.queryBus.execute(getContractByBookingIdQuery);
+  }
+
+  async getBookingPrice(bookingId: string): Promise<number> {
+    const getBookingPriceQuery = new GetBookingPriceQuery(bookingId);
+    return await this.queryBus.execute(getBookingPriceQuery);
   }
 
   async getInvoiceByBookingId(bookingId: string): Promise<InvoicePrimitives> {
