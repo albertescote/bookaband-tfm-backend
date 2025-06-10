@@ -15,6 +15,12 @@ interface GetDocumentResponse {
   DocContent: string;
 }
 
+export enum DocumentStatus {
+  Signed = "Signed",
+  Rejected = "Rejected",
+  Unsigned = "Unsigned",
+}
+
 @Injectable()
 export class VidsignerApiWrapper {
   private readonly passwordGrantType = "password";

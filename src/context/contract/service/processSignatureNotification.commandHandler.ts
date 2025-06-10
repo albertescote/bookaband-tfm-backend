@@ -1,7 +1,10 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ContractRepository } from "../infrastructure/contract.repository";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
-import { VidsignerApiWrapper } from "../infrastructure/vidsignerApiWrapper";
+import {
+  DocumentStatus,
+  VidsignerApiWrapper,
+} from "../infrastructure/vidsignerApiWrapper";
 import { EXTERNAL_URL } from "../../../config";
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { ProcessSignatureNotificationCommand } from "./processSignatureNotification.command";
@@ -29,7 +32,7 @@ export class ProcessSignatureNotificationCommandHandler
 
     let modified = false;
     Signers.forEach((signer) => {
-      if (signer.SignatureStatus === "Signed") {
+      if (signer.SignatureStatus === DocumentStatus.Signed) {
         if (contract.toPrimitives().userName === signer.SignerName) {
           if (!contract.isUserSigned()) {
             contract.setUserSigned();
@@ -39,7 +42,7 @@ export class ProcessSignatureNotificationCommandHandler
           contract.setBandSigned();
           modified = true;
         }
-      } else if (signer.SignatureStatus === "Rejected") {
+      } else if (signer.SignatureStatus === DocumentStatus.Rejected) {
         contract.failedSignature();
       }
     });
@@ -51,9 +54,9 @@ export class ProcessSignatureNotificationCommandHandler
 
       contract.updateFileUrl(`${EXTERNAL_URL}/files/${fileName}`);
 
-      if (DocStatus === "Signed") {
+      if (DocStatus === DocumentStatus.Signed) {
         await this.eventBus.publish(
-          new ContractSignedEvent(contract.getBookingId().toPrimitive()),
+          new ContractSignedEvent(contract.getId().toPrimitive()),
         );
       }
     }

@@ -9,6 +9,7 @@ import { GetBookingByIdQueryHandler } from "./service/getBookingById.queryHandle
 import { GetBookingByContractIdQueryHandler } from "./service/getBookingByContractId.queryHandler";
 import { GetBookingPriceQueryHandler } from "./service/getBookingPrice.queryHandler";
 import { UpdateBookingStatusOnContractSignedEventHandler } from "./service/updateBookingStatusOnContractSigned.eventHandler";
+import { UpdateBookingStatusOnInvoicePaidEventHandler } from "./service/updateBookingStatusOnInvoicePaid.eventHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -22,6 +23,7 @@ import { UpdateBookingStatusOnContractSignedEventHandler } from "./service/updat
     GetBookingByContractIdQueryHandler,
     GetBookingPriceQueryHandler,
     UpdateBookingStatusOnContractSignedEventHandler,
+    UpdateBookingStatusOnInvoicePaidEventHandler,
   ],
   exports: [
     BookingService,
@@ -30,6 +32,7 @@ import { UpdateBookingStatusOnContractSignedEventHandler } from "./service/updat
     GetBookingByContractIdQueryHandler,
     GetBookingPriceQueryHandler,
     UpdateBookingStatusOnContractSignedEventHandler,
+    UpdateBookingStatusOnInvoicePaidEventHandler,
   ],
 })
 export class BookingModule {}

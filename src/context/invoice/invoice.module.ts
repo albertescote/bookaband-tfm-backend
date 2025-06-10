@@ -11,6 +11,8 @@ import { ExplorerService } from "@nestjs/cqrs/dist/services/explorer.service";
 import { ModuleRef } from "@nestjs/core";
 import { EventBus } from "../shared/eventBus/domain/eventBus";
 import EventsBusEventRegisterer from "../shared/eventBus/infrastructure/eventsBusEventRegisterer";
+import { GenerateInvoiceOnContractSignedEventHandler } from "./service/generateInvoiceOnContractSigned.eventHandler";
+import { PayInvoiceCommandHandler } from "./service/payInvoice.commandHandler";
 
 @Module({
   imports: [
@@ -27,8 +29,15 @@ import EventsBusEventRegisterer from "../shared/eventBus/infrastructure/eventsBu
     PrismaService,
     GetInvoiceByBookingIdQueryHandler,
     ExplorerService,
+    GenerateInvoiceOnContractSignedEventHandler,
+    PayInvoiceCommandHandler,
   ],
-  exports: [InvoiceService, GetInvoiceByBookingIdQueryHandler],
+  exports: [
+    InvoiceService,
+    GetInvoiceByBookingIdQueryHandler,
+    GenerateInvoiceOnContractSignedEventHandler,
+    PayInvoiceCommandHandler,
+  ],
 })
 export class InvoiceModule implements OnModuleInit, OnModuleDestroy {
   constructor(
