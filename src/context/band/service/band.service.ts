@@ -20,6 +20,8 @@ import { BandNotUpdatedException } from "../exceptions/bandNotUpdatedException";
 import { InvalidEventTypeIdException } from "../exceptions/invalidEventTypeIdException";
 import { InvalidMusicalStyleIdException } from "../exceptions/invalidMusicalStyleIdException";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
+import { UserNotFoundException } from "../exceptions/userNotFoundException";
+import { MissingUserInfoToCreateBandException } from "../exceptions/missingUserInfoToCreateBandException";
 
 export interface UpsertBandRequest {
   name: string;
@@ -70,6 +72,16 @@ export class BandService {
       createBandRequest.eventTypeIds,
       createBandRequest.musicalStyleIds,
     );
+
+    const user = await this.moduleConnectors.obtainUserInformation(
+      userAuthInfo.id,
+    );
+    if (!user) {
+      throw new UserNotFoundException(userAuthInfo.id);
+    }
+    if (!user.hasAllInfo()) {
+      throw new MissingUserInfoToCreateBandException();
+    }
 
     const band = Band.create(
       createBandRequest.name,

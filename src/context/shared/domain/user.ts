@@ -129,4 +129,8 @@ export default class User {
   getEmail() {
     return this.email;
   }
+
+  hasAllInfo() {
+    return this.phoneNumber && this.nationalId;
+  }
 }

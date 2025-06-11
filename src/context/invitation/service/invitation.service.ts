@@ -16,6 +16,8 @@ import { AlreadyMemberOfThisBandException } from "../exception/alreadyMemberOfTh
 import { Role } from "../../shared/domain/role";
 import { UserInvitation } from "../domain/userInvitation";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
+import { MissingUserInfoToJoinBandException } from "../exception/missingUserInfoToJoinBandException";
+import { UserNotFoundException } from "../exception/userNotFoundException";
 
 @Injectable()
 export class InvitationService {
@@ -88,6 +90,16 @@ export class InvitationService {
 
     if (!invitation.isPending()) {
       throw new InvitationAlreadyProcessedException();
+    }
+
+    const user = await this.moduleConnectors.obtainUserInformation(
+      userAuthInfo.id,
+    );
+    if (!user) {
+      throw new UserNotFoundException(userAuthInfo.id);
+    }
+    if (!user.hasAllInfo()) {
+      throw new MissingUserInfoToJoinBandException();
     }
 
     invitation.accept();
