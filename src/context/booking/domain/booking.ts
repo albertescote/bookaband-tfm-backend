@@ -153,4 +153,8 @@ export class Booking {
   invoicePaid() {
     this.status = BookingStatus.PAID;
   }
+
+  getStatus(): BookingStatus {
+    return this.status;
+  }
 }

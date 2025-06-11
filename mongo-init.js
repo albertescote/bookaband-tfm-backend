@@ -1,6 +1,7 @@
 db.entity.drop();
 db.createCollection("event_types");
 db.createCollection("musical_styles");
+db.createCollection("notifications");
 
 db.event_types.createIndex(
   { id: 1 },
@@ -10,6 +11,13 @@ db.event_types.createIndex(
 );
 
 db.musical_styles.createIndex(
+  { id: 1 },
+  {
+    unique: true,
+  },
+);
+
+db.notifications.createIndex(
   { id: 1 },
   {
     unique: true,

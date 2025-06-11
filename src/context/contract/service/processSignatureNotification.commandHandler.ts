@@ -10,6 +10,9 @@ import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { ProcessSignatureNotificationCommand } from "./processSignatureNotification.command";
 import { EventBus } from "../../shared/eventBus/domain/eventBus";
 import { ContractSignedEvent } from "../../shared/eventBus/domain/contractSigned.event";
+import { UserSignedContractEvent } from "../../shared/eventBus/domain/userSignedContract.event";
+import { BandSignedContractEvent } from "../../shared/eventBus/domain/bandSignedContract.event";
+import { BaseEvent } from "../../shared/eventBus/domain/baseEvent";
 
 @Injectable()
 @CommandHandler(ProcessSignatureNotificationCommand)
@@ -29,6 +32,7 @@ export class ProcessSignatureNotificationCommandHandler
     if (!contract) {
       return;
     }
+    const eventsToPublish: BaseEvent[] = [];
 
     let modified = false;
     Signers.forEach((signer) => {
@@ -37,10 +41,18 @@ export class ProcessSignatureNotificationCommandHandler
           if (!contract.isUserSigned()) {
             contract.setUserSigned();
             modified = true;
+            eventsToPublish.push(
+              new UserSignedContractEvent(
+                contract.getBookingId().toPrimitive(),
+              ),
+            );
           }
         } else if (!contract.isBandSigned()) {
           contract.setBandSigned();
           modified = true;
+          eventsToPublish.push(
+            new BandSignedContractEvent(contract.getBookingId().toPrimitive()),
+          );
         }
       } else if (signer.SignatureStatus === DocumentStatus.Rejected) {
         contract.failedSignature();
@@ -55,9 +67,12 @@ export class ProcessSignatureNotificationCommandHandler
       contract.updateFileUrl(`${EXTERNAL_URL}/files/${fileName}`);
 
       if (DocStatus === DocumentStatus.Signed) {
-        await this.eventBus.publish(
+        eventsToPublish.push(
           new ContractSignedEvent(contract.getId().toPrimitive()),
         );
+      }
+      for (const eventToPublish of eventsToPublish) {
+        await this.eventBus.publish(eventToPublish);
       }
     }
 

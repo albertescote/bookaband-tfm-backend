@@ -1,4 +1,4 @@
-import { InvitationStatus } from "../../../context/invitation/domain/invitation";
+import { InvitationStatus } from "../../../context/shared/domain/invitationStatus";
 
 export interface InvitationResponseDto {
   id: string;

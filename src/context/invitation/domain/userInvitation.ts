@@ -1,4 +1,4 @@
-import { InvitationStatus } from "./invitation";
+import { InvitationStatus } from "../../shared/domain/invitationStatus";
 
 export interface UserInvitation {
   id: string;

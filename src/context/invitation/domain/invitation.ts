@@ -1,12 +1,7 @@
 import BandId from "../../shared/domain/bandId";
 import UserId from "../../shared/domain/userId";
 import InvitationId from "./invitationId";
-
-export enum InvitationStatus {
-  PENDING = "PENDING",
-  ACCEPTED = "ACCEPTED",
-  DECLINED = "DECLINED",
-}
+import { InvitationStatus } from "../../shared/domain/invitationStatus";
 
 export interface InvitationPrimitives {
   id: string;

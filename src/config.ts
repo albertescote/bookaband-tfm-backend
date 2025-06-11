@@ -29,6 +29,7 @@ const RESEND_API_KEY = checkStrVar(
 enum MONGODB_COLLECTIONS {
   EVENT_TYPES = "event_types",
   MUSICAL_STYLES = "musical_styles",
+  NOTIFICATIONS = "notifications",
 }
 
 const REDIS = {

@@ -1,7 +1,7 @@
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import { Booking, BookingPrimitives } from "../domain/booking";
 import { BookingRepository } from "../infrastructure/booking.repository";
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import UserId from "../../shared/domain/userId";
 import BookingId from "../../shared/domain/bookingId";
 import { Role } from "../../shared/domain/role";
@@ -20,6 +20,8 @@ import { InvoiceNotFoundForBookingIdException } from "../exceptions/invoiceNotFo
 import ContractId from "../../shared/domain/contractId";
 import { MissingUserInfoToCreateBookingException } from "../exceptions/missingUserInfoToCreateBookingException";
 import { UserNotFoundException } from "../exceptions/userNotFoundException";
+import { EventBus } from "../../shared/eventBus/domain/eventBus";
+import { BookingStatusChangedEvent } from "../../shared/eventBus/domain/bookingStatusChanged.event";
 
 export interface CreateBookingRequest {
   bandId: string;
@@ -66,6 +68,7 @@ export class BookingService {
   constructor(
     private bookingRepository: BookingRepository,
     private moduleConnectors: ModuleConnectors,
+    @Inject("EventBus") private eventBus: EventBus,
   ) {}
 
   @RoleAuth([Role.Client])
@@ -106,6 +109,14 @@ export class BookingService {
       userAuthInfo.id,
       newBooking.getId().toPrimitive(),
     );
+
+    await this.eventBus.publish(
+      new BookingStatusChangedEvent(
+        newBooking.getId().toPrimitive(),
+        newBooking.getStatus(),
+      ),
+    );
+
     return storedBooking.toPrimitives();
   }
 
@@ -191,6 +202,13 @@ export class BookingService {
       userAuthInfo,
     );
 
+    await this.eventBus.publish(
+      new BookingStatusChangedEvent(
+        booking.getId().toPrimitive(),
+        booking.getStatus(),
+      ),
+    );
+
     return booking.toPrimitives();
   }
 
@@ -217,6 +235,13 @@ export class BookingService {
     booking.decline();
     await this.bookingRepository.save(booking);
 
+    await this.eventBus.publish(
+      new BookingStatusChangedEvent(
+        booking.getId().toPrimitive(),
+        booking.getStatus(),
+      ),
+    );
+
     return booking.toPrimitives();
   }
 
@@ -234,6 +259,13 @@ export class BookingService {
     }
     booking.cancel();
     await this.bookingRepository.save(booking);
+
+    await this.eventBus.publish(
+      new BookingStatusChangedEvent(
+        booking.getId().toPrimitive(),
+        booking.getStatus(),
+      ),
+    );
 
     return booking.toPrimitives();
   }

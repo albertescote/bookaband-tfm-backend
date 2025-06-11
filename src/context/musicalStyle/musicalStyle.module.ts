@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { MusicalStyleController } from "../../app/api/musicalStyle/musicalStyle.controller";
 import { MusicalStyleService } from "./service/musicalStyle.service";
 import { MusicalStyleRepository } from "./infrastructure/musicalStyle.repository";
 import MongoCollectionService from "../shared/infrastructure/db/mongoCollection.service";
@@ -16,7 +15,6 @@ const mongoClient = {
 };
 
 @Module({
-  controllers: [MusicalStyleController],
   providers: [
     mongoClient,
     MongoService,

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InvitationRepository } from "../infrastructure/invitation.repository";
 import Invitation, { InvitationPrimitives } from "../domain/invitation";
 import InvitationId from "../domain/invitationId";
@@ -18,12 +18,16 @@ import { UserInvitation } from "../domain/userInvitation";
 import { RoleAuth } from "../../shared/decorator/roleAuthorization.decorator";
 import { MissingUserInfoToJoinBandException } from "../exception/missingUserInfoToJoinBandException";
 import { UserNotFoundException } from "../exception/userNotFoundException";
+import { EventBus } from "../../shared/eventBus/domain/eventBus";
+import { InvitationSentEvent } from "../../shared/eventBus/domain/invitationSent.event";
+import { InvitationAcceptedEvent } from "../../shared/eventBus/domain/invitationAccepted.event";
 
 @Injectable()
 export class InvitationService {
   constructor(
     private readonly invitationRepository: InvitationRepository,
-    private moduleConnectors: ModuleConnectors,
+    private readonly moduleConnectors: ModuleConnectors,
+    @Inject("EventBus") private readonly eventBus: EventBus,
   ) {}
 
   @RoleAuth([Role.Musician])
@@ -68,7 +72,17 @@ export class InvitationService {
       new UserId(user.getId().toPrimitive()),
     );
     const storedInvitation = await this.invitationRepository.save(invitation);
-    return storedInvitation.toPrimitives();
+
+    const invitationPrimitives = storedInvitation.toPrimitives();
+    await this.eventBus.publish(
+      new InvitationSentEvent(
+        invitationPrimitives.bandId,
+        invitationPrimitives.userId,
+        invitationPrimitives.createdAt,
+      ),
+    );
+
+    return invitationPrimitives;
   }
 
   @RoleAuth([Role.Musician])
@@ -111,6 +125,14 @@ export class InvitationService {
       invitationPrimitives.userId,
     );
 
+    await this.eventBus.publish(
+      new InvitationAcceptedEvent(
+        invitationPrimitives.bandId,
+        invitationPrimitives.userId,
+        user.getFullName(),
+      ),
+    );
+
     return invitationPrimitives;
   }
 
@@ -138,7 +160,24 @@ export class InvitationService {
     invitation.decline();
     await this.invitationRepository.save(invitation);
 
-    return invitation.toPrimitives();
+    const invitationPrimitives = invitation.toPrimitives();
+
+    const user = await this.moduleConnectors.obtainUserInformation(
+      userAuthInfo.id,
+    );
+    if (!user) {
+      throw new UserNotFoundException(userAuthInfo.id);
+    }
+
+    await this.eventBus.publish(
+      new InvitationAcceptedEvent(
+        invitationPrimitives.bandId,
+        invitationPrimitives.userId,
+        user.getFullName(),
+      ),
+    );
+
+    return invitationPrimitives;
   }
 
   @RoleAuth([Role.Musician])

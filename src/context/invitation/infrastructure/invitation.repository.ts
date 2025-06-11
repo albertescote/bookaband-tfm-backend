@@ -1,10 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
-import Invitation, { InvitationStatus } from "../domain/invitation";
+import Invitation from "../domain/invitation";
 import InvitationId from "../domain/invitationId";
 import BandId from "../../shared/domain/bandId";
 import UserId from "../../shared/domain/userId";
 import { UserInvitation } from "../domain/userInvitation";
+import { InvitationStatus } from "../../shared/domain/invitationStatus";
 
 @Injectable()
 export class InvitationRepository {
