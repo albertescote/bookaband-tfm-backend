@@ -18,6 +18,8 @@ import { NotAbleToCreateBookingException } from "../exceptions/notAbleToCreateBo
 import { ContractNotFoundForBookingIdException } from "../exceptions/contractNotFoundForBookingIdException";
 import { InvoiceNotFoundForBookingIdException } from "../exceptions/invoiceNotFoundForBookingIdException";
 import ContractId from "../../shared/domain/contractId";
+import { MissingUserInfoToCreateBookingException } from "../exceptions/missingUserInfoToCreateBookingException";
+import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export interface CreateBookingRequest {
   bandId: string;
@@ -71,6 +73,15 @@ export class BookingService {
     userAuthInfo: UserAuthInfo,
     request: CreateBookingRequest,
   ): Promise<BookingPrimitives> {
+    const user = await this.moduleConnectors.obtainUserInformation(
+      userAuthInfo.id,
+    );
+    if (!user) {
+      throw new UserNotFoundException(userAuthInfo.id);
+    }
+    if (!user.hasAllInfo()) {
+      throw new MissingUserInfoToCreateBookingException();
+    }
     const newBooking = Booking.create(
       new BandId(request.bandId),
       new UserId(userAuthInfo.id),
