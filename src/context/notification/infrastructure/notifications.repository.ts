@@ -19,6 +19,12 @@ export class NotificationRepository {
       MONGODB_COLLECTIONS.NOTIFICATIONS,
       {
         id: primitives.id,
+        bandId: primitives.bandId,
+        userId: primitives.userId,
+        isRead: primitives.isRead,
+        createdAt: primitives.createdAt,
+        invitationMetadata: primitives.invitationMetadata,
+        bookingMetadata: primitives.bookingMetadata,
       },
     );
 
@@ -40,6 +46,7 @@ export class NotificationRepository {
       bandId: result.bandId,
       userId: result.userId,
       isRead: result.isRead,
+      createdAt: result.createdAt,
       invitationMetadata: result.invitationMetadata,
       bookingMetadata: result.bookingMetadata,
     });
@@ -57,6 +64,7 @@ export class NotificationRepository {
         bandId: doc.bandId,
         userId: doc.userId,
         isRead: doc.isRead,
+        createdAt: doc.createdAt,
         invitationMetadata: doc.invitationMetadata,
         bookingMetadata: doc.bookingMetadata,
       }),
@@ -66,7 +74,7 @@ export class NotificationRepository {
   async getAllFromUser(userId: UserId): Promise<Notification[]> {
     const result = await this.mongoCollectionService.findMany(
       MONGODB_COLLECTIONS.NOTIFICATIONS,
-      { id: userId.toPrimitive() },
+      { userId: userId.toPrimitive() },
     );
 
     if (!result) {
@@ -79,6 +87,7 @@ export class NotificationRepository {
         bandId: doc.bandId,
         userId: doc.userId,
         isRead: doc.isRead,
+        createdAt: doc.createdAt,
         invitationMetadata: doc.invitationMetadata,
         bookingMetadata: doc.bookingMetadata,
       }),
@@ -88,7 +97,7 @@ export class NotificationRepository {
   async getAllFromBandId(bandId: BandId): Promise<Notification[]> {
     const result = await this.mongoCollectionService.findMany(
       MONGODB_COLLECTIONS.NOTIFICATIONS,
-      { id: bandId.toPrimitive() },
+      { bandId: bandId.toPrimitive() },
     );
 
     if (!result) {
@@ -101,6 +110,7 @@ export class NotificationRepository {
         bandId: doc.bandId,
         userId: doc.userId,
         isRead: doc.isRead,
+        createdAt: doc.createdAt,
         invitationMetadata: doc.invitationMetadata,
         bookingMetadata: doc.bookingMetadata,
       }),

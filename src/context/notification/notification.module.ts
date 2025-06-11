@@ -5,7 +5,6 @@ import MongoService from "../shared/infrastructure/db/mongo.service";
 import { MongoClient } from "mongodb";
 import { BUS_TYPE, MONGO_DB_URL } from "../../config";
 import { NotificationRepository } from "./infrastructure/notifications.repository";
-import { GetAllNotificationsFromBandQueryHandler } from "./service/getAllNotificationsFromBand.queryHandler";
 import { CqrsModule } from "@nestjs/cqrs";
 import { EventBusModule } from "../shared/eventBus/eventBus.module";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
@@ -42,7 +41,6 @@ const mongoClient = {
     MongoCollectionService,
     NotificationRepository,
     GetAllNotificationsFromUserQueryHandler,
-    GetAllNotificationsFromBandQueryHandler,
     CreateBookingNotificationOnBookingStatusChangedEventHandler,
     CreateBookingNotificationOnUserSignedChangedEventHandler,
     CreateBookingNotificationOnBandSignedChangedEventHandler,
@@ -53,7 +51,6 @@ const mongoClient = {
   ],
   exports: [
     GetAllNotificationsFromUserQueryHandler,
-    GetAllNotificationsFromBandQueryHandler,
     CreateBookingNotificationOnBookingStatusChangedEventHandler,
     CreateBookingNotificationOnUserSignedChangedEventHandler,
     CreateBookingNotificationOnBandSignedChangedEventHandler,

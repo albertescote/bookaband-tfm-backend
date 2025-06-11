@@ -22,7 +22,7 @@ export class CreateInvitationNotificationOnInvitationDeclinedEventHandler
       new BandId(bandId),
       new UserId(userId),
       {
-        status: InvitationStatus.ACCEPTED,
+        status: InvitationStatus.DECLINED,
         userName,
       },
     );

@@ -20,6 +20,7 @@ export interface NotificationPrimitives {
   bandId: string;
   userId: string;
   isRead: boolean;
+  createdAt: string;
   invitationMetadata?: InvitationMetadata;
   bookingMetadata?: BookingMetadata;
 }
@@ -30,6 +31,7 @@ export class Notification {
     private readonly bandId: BandId,
     private readonly userId: UserId,
     private readonly isRead: boolean,
+    private readonly createdAt: Date,
     private readonly invitationMetadata?: InvitationMetadata,
     private readonly bookingMetadata?: BookingMetadata,
   ) {}
@@ -42,6 +44,7 @@ export class Notification {
       new BandId(primitives.bandId),
       new UserId(primitives.userId),
       primitives.isRead,
+      new Date(primitives.createdAt),
       primitives.invitationMetadata,
       primitives.bookingMetadata,
     );
@@ -57,6 +60,7 @@ export class Notification {
       bandId,
       userId,
       false,
+      new Date(),
       invitationMetadata,
     );
   }
@@ -71,6 +75,7 @@ export class Notification {
       bandId,
       userId,
       false,
+      new Date(),
       undefined,
       bookingMetadata,
     );
@@ -82,6 +87,7 @@ export class Notification {
       bandId: this.bandId.toPrimitive(),
       userId: this.userId.toPrimitive(),
       isRead: this.isRead,
+      createdAt: this.createdAt.toISOString(),
       invitationMetadata: this.invitationMetadata,
       bookingMetadata: this.bookingMetadata,
     };

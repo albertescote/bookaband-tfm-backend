@@ -12,6 +12,7 @@ import { RemoveMemberCommandHandler } from "./service/removeMember.commandHandle
 import { GetFeaturedBandsQueryHandler } from "./service/getFeaturedBands.queryHandler";
 import { GetFilteredBandsQueryHandler } from "./service/getFilteredBands.queryHandler";
 import { GetBandProfileQueryHandler } from "./service/getBandProfile.queryHandler";
+import { GetUserBandsQueryHandler } from "./service/getUserBands.queryHandler";
 
 @Module({
   imports: [CqrsModule],
@@ -25,6 +26,7 @@ import { GetBandProfileQueryHandler } from "./service/getBandProfile.queryHandle
     GetFilteredBandsQueryHandler,
     GetFeaturedBandsQueryHandler,
     GetBandProfileQueryHandler,
+    GetUserBandsQueryHandler,
     BandRepository,
     ModuleConnectors,
     PrismaService,
@@ -39,6 +41,7 @@ import { GetBandProfileQueryHandler } from "./service/getBandProfile.queryHandle
     GetFilteredBandsQueryHandler,
     GetFeaturedBandsQueryHandler,
     GetBandProfileQueryHandler,
+    GetUserBandsQueryHandler,
   ],
 })
 export class BandModule {}
