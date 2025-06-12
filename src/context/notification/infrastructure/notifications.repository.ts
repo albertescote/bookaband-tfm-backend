@@ -21,7 +21,8 @@ export class NotificationRepository {
         id: primitives.id,
         bandId: primitives.bandId,
         userId: primitives.userId,
-        isRead: primitives.isRead,
+        isReadFromBand: primitives.isReadFromBand,
+        isReadFromUser: primitives.isReadFromBand,
         createdAt: primitives.createdAt,
         invitationMetadata: primitives.invitationMetadata,
         bookingMetadata: primitives.bookingMetadata,
@@ -45,7 +46,8 @@ export class NotificationRepository {
       id: result.id,
       bandId: result.bandId,
       userId: result.userId,
-      isRead: result.isRead,
+      isReadFromBand: result.isReadFromBand,
+      isReadFromUser: result.isReadFromUser,
       createdAt: result.createdAt,
       invitationMetadata: result.invitationMetadata,
       bookingMetadata: result.bookingMetadata,
@@ -63,7 +65,8 @@ export class NotificationRepository {
         id: doc.id,
         bandId: doc.bandId,
         userId: doc.userId,
-        isRead: doc.isRead,
+        isReadFromBand: doc.isReadFromBand,
+        isReadFromUser: doc.isReadFromUser,
         createdAt: doc.createdAt,
         invitationMetadata: doc.invitationMetadata,
         bookingMetadata: doc.bookingMetadata,
@@ -86,7 +89,8 @@ export class NotificationRepository {
         id: doc.id,
         bandId: doc.bandId,
         userId: doc.userId,
-        isRead: doc.isRead,
+        isReadFromBand: doc.isReadFromBand,
+        isReadFromUser: doc.isReadFromUser,
         createdAt: doc.createdAt,
         invitationMetadata: doc.invitationMetadata,
         bookingMetadata: doc.bookingMetadata,
@@ -109,7 +113,8 @@ export class NotificationRepository {
         id: doc.id,
         bandId: doc.bandId,
         userId: doc.userId,
-        isRead: doc.isRead,
+        isReadFromBand: doc.isReadFromBand,
+        isReadFromUser: doc.isReadFromUser,
         createdAt: doc.createdAt,
         invitationMetadata: doc.invitationMetadata,
         bookingMetadata: doc.bookingMetadata,
@@ -117,18 +122,18 @@ export class NotificationRepository {
     );
   }
 
-  async update(style: Notification): Promise<Notification> {
-    const primitives = style.toPrimitives();
+  async update(notification: Notification): Promise<Notification> {
+    const primitives = notification.toPrimitives();
 
     await this.mongoCollectionService.updateOne(
       MONGODB_COLLECTIONS.NOTIFICATIONS,
       { id: primitives.id },
       {
-        $set: {},
+        $set: primitives,
       },
     );
 
-    return style;
+    return notification;
   }
 
   async delete(id: NotificationId): Promise<void> {

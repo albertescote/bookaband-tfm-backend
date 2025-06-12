@@ -21,6 +21,7 @@ import { UserNotFoundException } from "../exception/userNotFoundException";
 import { EventBus } from "../../shared/eventBus/domain/eventBus";
 import { InvitationSentEvent } from "../../shared/eventBus/domain/invitationSent.event";
 import { InvitationAcceptedEvent } from "../../shared/eventBus/domain/invitationAccepted.event";
+import { InvitationDeclinedEvent } from "../../shared/eventBus/domain/invitationDeclined.event";
 
 @Injectable()
 export class InvitationService {
@@ -78,6 +79,7 @@ export class InvitationService {
       new InvitationSentEvent(
         invitationPrimitives.bandId,
         invitationPrimitives.userId,
+        user.getFullName(),
         invitationPrimitives.createdAt,
       ),
     );
@@ -170,7 +172,7 @@ export class InvitationService {
     }
 
     await this.eventBus.publish(
-      new InvitationAcceptedEvent(
+      new InvitationDeclinedEvent(
         invitationPrimitives.bandId,
         invitationPrimitives.userId,
         user.getFullName(),

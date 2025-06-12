@@ -18,6 +18,7 @@ import { CreateBookingNotificationOnBookingStatusChangedEventHandler } from "./s
 import { CreateInvitationNotificationOnInvitationSentEventHandler } from "./service/createInvitationNotificationOnInvitationSent.eventHandler";
 import { CreateInvitationNotificationOnInvitationDeclinedEventHandler } from "./service/createInvitationNotificationOnInvitationDeclined.eventHandler";
 import { CreateInvitationNotificationOnInvitationAcceptedEventHandler } from "./service/createInvitationNotificationOnInvitationAccepted.eventHandler";
+import { ReadNotificationCommandHandler } from "./service/readNotification.commandHandler";
 
 const mongoClient = {
   provide: MongoClient,
@@ -48,6 +49,7 @@ const mongoClient = {
     CreateInvitationNotificationOnInvitationAcceptedEventHandler,
     CreateInvitationNotificationOnInvitationDeclinedEventHandler,
     ExplorerService,
+    ReadNotificationCommandHandler,
   ],
   exports: [
     GetAllNotificationsFromUserQueryHandler,
@@ -57,6 +59,7 @@ const mongoClient = {
     CreateInvitationNotificationOnInvitationSentEventHandler,
     CreateInvitationNotificationOnInvitationAcceptedEventHandler,
     CreateInvitationNotificationOnInvitationDeclinedEventHandler,
+    ReadNotificationCommandHandler,
   ],
 })
 export class NotificationModule implements OnModuleInit, OnModuleDestroy {

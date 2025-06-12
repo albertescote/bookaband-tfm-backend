@@ -1,13 +1,13 @@
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 
-export class GetAllNotificationsFromUserQuery {
+export class ReadNotificationCommand {
   constructor(
     private _authorized: UserAuthInfo,
-    private _bandId: string,
+    private _notificationId: string,
   ) {}
 
-  get bandId(): string {
-    return this._bandId;
+  get notificationId(): string {
+    return this._notificationId;
   }
 
   get authorized(): UserAuthInfo {

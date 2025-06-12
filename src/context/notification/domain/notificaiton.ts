@@ -5,8 +5,8 @@ import { InvitationStatus } from "../../shared/domain/invitationStatus";
 
 interface InvitationMetadata {
   status: InvitationStatus;
-  bandName?: string;
-  userName?: string;
+  bandName: string;
+  userName: string;
   createdAt?: Date;
 }
 
@@ -19,7 +19,8 @@ export interface NotificationPrimitives {
   id: string;
   bandId: string;
   userId: string;
-  isRead: boolean;
+  isReadFromBand: boolean;
+  isReadFromUser: boolean;
   createdAt: string;
   invitationMetadata?: InvitationMetadata;
   bookingMetadata?: BookingMetadata;
@@ -30,7 +31,8 @@ export class Notification {
     private readonly id: NotificationId,
     private readonly bandId: BandId,
     private readonly userId: UserId,
-    private readonly isRead: boolean,
+    private isReadFromBand: boolean,
+    private isReadFromUser: boolean,
     private readonly createdAt: Date,
     private readonly invitationMetadata?: InvitationMetadata,
     private readonly bookingMetadata?: BookingMetadata,
@@ -43,7 +45,8 @@ export class Notification {
       new NotificationId(primitives.id),
       new BandId(primitives.bandId),
       new UserId(primitives.userId),
-      primitives.isRead,
+      primitives.isReadFromBand,
+      primitives.isReadFromUser,
       new Date(primitives.createdAt),
       primitives.invitationMetadata,
       primitives.bookingMetadata,
@@ -60,6 +63,7 @@ export class Notification {
       bandId,
       userId,
       false,
+      false,
       new Date(),
       invitationMetadata,
     );
@@ -75,6 +79,7 @@ export class Notification {
       bandId,
       userId,
       false,
+      false,
       new Date(),
       undefined,
       bookingMetadata,
@@ -86,7 +91,8 @@ export class Notification {
       id: this.id.toPrimitive(),
       bandId: this.bandId.toPrimitive(),
       userId: this.userId.toPrimitive(),
-      isRead: this.isRead,
+      isReadFromBand: this.isReadFromBand,
+      isReadFromUser: this.isReadFromUser,
       createdAt: this.createdAt.toISOString(),
       invitationMetadata: this.invitationMetadata,
       bookingMetadata: this.bookingMetadata,
@@ -95,5 +101,13 @@ export class Notification {
 
   public getId(): NotificationId {
     return this.id;
+  }
+
+  markAsReadFromUser() {
+    this.isReadFromUser = true;
+  }
+
+  markAsReadFromBand() {
+    this.isReadFromBand = true;
   }
 }

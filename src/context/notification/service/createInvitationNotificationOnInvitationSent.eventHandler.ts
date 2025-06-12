@@ -21,7 +21,7 @@ export class CreateInvitationNotificationOnInvitationSentEventHandler
   ) {}
 
   async handle(event: InvitationSentEvent): Promise<void> {
-    const { bandId, userId, createdAt } = event;
+    const { bandId, userId, userName, createdAt } = event;
 
     const band = await this.moduleConnectors.getBandById(bandId);
     if (!band) {
@@ -32,6 +32,7 @@ export class CreateInvitationNotificationOnInvitationSentEventHandler
       new BandId(bandId),
       new UserId(userId),
       {
+        userName,
         bandName: band.name,
         status: InvitationStatus.PENDING,
         createdAt,
