@@ -35,10 +35,7 @@ export class UpdateBookingStatusOnInvoicePaidEventHandler
     }
 
     await this.eventBus.publish(
-      new BookingStatusChangedEvent(
-        updated.getId().toPrimitive(),
-        updated.getStatus(),
-      ),
+      new BookingStatusChangedEvent(updated.getId().toPrimitive()),
     );
   }
 }

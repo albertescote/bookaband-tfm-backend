@@ -44,6 +44,9 @@ export class ProcessSignatureNotificationCommandHandler
             eventsToPublish.push(
               new UserSignedContractEvent(
                 contract.getBookingId().toPrimitive(),
+                contract.toPrimitives().userName,
+                contract.toPrimitives().bandName,
+                contract.toPrimitives().eventName,
               ),
             );
           }
@@ -51,7 +54,12 @@ export class ProcessSignatureNotificationCommandHandler
           contract.setBandSigned();
           modified = true;
           eventsToPublish.push(
-            new BandSignedContractEvent(contract.getBookingId().toPrimitive()),
+            new BandSignedContractEvent(
+              contract.getBookingId().toPrimitive(),
+              contract.toPrimitives().userName,
+              contract.toPrimitives().bandName,
+              contract.toPrimitives().eventName,
+            ),
           );
         }
       } else if (signer.SignatureStatus === DocumentStatus.Rejected) {

@@ -361,6 +361,8 @@ export class ContractRepository {
           createdAt: contract.createdAt,
           updatedAt: contract.updatedAt,
           vidsignerDocGui: contract.vidsignerDocGui,
+          eventName: contract.booking.name,
+          bandName: contract.booking.band.name,
           userName:
             contract.booking.user.firstName +
             " " +

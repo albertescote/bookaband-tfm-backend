@@ -7,6 +7,8 @@ import { Notification } from "../domain/notificaiton";
 import BandId from "../../shared/domain/bandId";
 import UserId from "../../shared/domain/userId";
 import { BookingNotFoundException } from "../exceptions/bookingNotFoundException";
+import { UserNotFoundException } from "../exceptions/userNotFoundException";
+import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 
 @Injectable()
 @EventsHandler(BookingStatusChangedEvent)
@@ -19,17 +21,33 @@ export class CreateBookingNotificationOnBookingStatusChangedEventHandler
   ) {}
 
   async handle(event: BookingStatusChangedEvent): Promise<void> {
-    const { bookingId, status } = event;
+    const { bookingId } = event;
     const booking = await this.moduleConnectors.getBookingById(bookingId);
     if (!booking) {
       throw new BookingNotFoundException(bookingId);
     }
+    const user = await this.moduleConnectors.obtainUserInformation(
+      booking.userId,
+    );
+    if (!user) {
+      throw new UserNotFoundException(booking.userId);
+    }
+    const userName = user.getFullName();
+    const band = await this.moduleConnectors.getBandById(booking.bandId);
+    if (!band) {
+      throw new BandNotFoundException(booking.bandId);
+    }
+    const bandName = band.name;
+
     const notification = Notification.createBookingNotification(
       new BandId(booking.bandId),
       new UserId(booking.userId),
       {
         bookingId,
-        translationKey: status.toLowerCase(),
+        bandName,
+        userName,
+        eventName: booking.name,
+        status: booking.status.toLowerCase(),
       },
     );
 

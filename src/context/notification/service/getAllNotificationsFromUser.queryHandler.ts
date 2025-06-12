@@ -24,7 +24,10 @@ interface NotificationsResponse {
   };
   bookingMetadata?: {
     bookingId: string;
-    translationKey: string;
+    status: string;
+    eventName: string;
+    userName: string;
+    bandName: string;
   };
 }
 
@@ -47,7 +50,7 @@ export class GetAllNotificationsFromUserQueryHandler
     const notifications: Notification[] =
       await this.notificationRepository.getAllFromUser(userId);
 
-    if (authorized.role === Role.Musician) {
+    if (authorized.role === Role.Musician && bandId) {
       const band = await this.moduleConnectors.getBandById(bandId);
       if (!band) {
         throw new BandNotFoundException(bandId);

@@ -111,10 +111,7 @@ export class BookingService {
     );
 
     await this.eventBus.publish(
-      new BookingStatusChangedEvent(
-        newBooking.getId().toPrimitive(),
-        newBooking.getStatus(),
-      ),
+      new BookingStatusChangedEvent(newBooking.getId().toPrimitive()),
     );
 
     return storedBooking.toPrimitives();
@@ -203,10 +200,7 @@ export class BookingService {
     );
 
     await this.eventBus.publish(
-      new BookingStatusChangedEvent(
-        booking.getId().toPrimitive(),
-        booking.getStatus(),
-      ),
+      new BookingStatusChangedEvent(booking.getId().toPrimitive()),
     );
 
     return booking.toPrimitives();
@@ -236,10 +230,7 @@ export class BookingService {
     await this.bookingRepository.save(booking);
 
     await this.eventBus.publish(
-      new BookingStatusChangedEvent(
-        booking.getId().toPrimitive(),
-        booking.getStatus(),
-      ),
+      new BookingStatusChangedEvent(booking.getId().toPrimitive()),
     );
 
     return booking.toPrimitives();
@@ -261,10 +252,7 @@ export class BookingService {
     await this.bookingRepository.save(booking);
 
     await this.eventBus.publish(
-      new BookingStatusChangedEvent(
-        booking.getId().toPrimitive(),
-        booking.getStatus(),
-      ),
+      new BookingStatusChangedEvent(booking.getId().toPrimitive()),
     );
 
     return booking.toPrimitives();

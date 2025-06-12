@@ -21,7 +21,7 @@ export class CreateBookingNotificationOnBandSignedChangedEventHandler
   ) {}
 
   async handle(event: BandSignedContractEvent): Promise<void> {
-    const { bookingId } = event;
+    const { bookingId, bandName, userName, eventName } = event;
     const booking = await this.moduleConnectors.getBookingById(bookingId);
     if (!booking) {
       throw new BookingNotFoundException(bookingId);
@@ -31,7 +31,10 @@ export class CreateBookingNotificationOnBandSignedChangedEventHandler
       new UserId(booking.userId),
       {
         bookingId,
-        translationKey: this.bandSignedTranslationKey,
+        bandName,
+        userName,
+        eventName,
+        status: this.bandSignedTranslationKey,
       },
     );
 
