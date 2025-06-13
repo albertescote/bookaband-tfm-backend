@@ -132,7 +132,7 @@ export class ContractService {
       request.bookingId,
     );
     if (!booking) {
-      throw new BookingNotFoundException(booking.id);
+      throw new BookingNotFoundException(request.bookingId);
     }
     const bandMembers = await this.moduleConnectors.obtainBandMembers(
       booking.bandId,
