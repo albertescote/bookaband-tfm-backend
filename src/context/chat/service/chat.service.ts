@@ -61,10 +61,10 @@ export class ChatService {
     const chatHistory = await this.chatRepository.getChatViewById(
       new ChatId(chatId),
     );
-    const isBandMember = await this.checkIfBandMember(
-      authorized,
-      chatHistory.band.id,
-    );
+    const isBandMember =
+      authorized.role === Role.Musician
+        ? await this.checkIfBandMember(authorized, chatHistory.band.id)
+        : false;
     const chat = Chat.fromPrimitives({
       id: chatHistory.id,
       userId: chatHistory.user.id,
