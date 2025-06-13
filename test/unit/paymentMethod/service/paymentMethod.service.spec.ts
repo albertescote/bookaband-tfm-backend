@@ -78,7 +78,10 @@ describe("PaymentMethodService", () => {
 
       const result = await service.create(mockUser, createRequest);
 
-      expect(result).toEqual(mockPaymentMethod.toPrimitives());
+      expect(result).toEqual({
+        ...mockPaymentMethod.toPrimitives(),
+        createdAt: expect.any(Date),
+      });
       expect(repository.create).toHaveBeenCalledWith(expect.any(PaymentMethod));
     });
 
@@ -135,7 +138,12 @@ describe("PaymentMethodService", () => {
 
       const result = await service.findByUserId(mockUser, userId);
 
-      expect(result).toEqual([mockPaymentMethod.toPrimitives()]);
+      expect(result).toEqual([
+        {
+          ...mockPaymentMethod.toPrimitives(),
+          createdAt: expect.any(Date),
+        },
+      ]);
       expect(repository.findByUserId).toHaveBeenCalledWith(new UserId(userId));
     });
 
