@@ -50,6 +50,8 @@ export default class User {
       role,
       false,
       new Date(),
+      undefined,
+      undefined,
       encryptedPassword,
       imageUrl,
       bio,
