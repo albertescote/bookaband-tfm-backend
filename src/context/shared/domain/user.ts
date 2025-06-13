@@ -116,23 +116,23 @@ export default class User {
     return !!this.password;
   }
 
-  getFullName() {
+  getFullName(): string {
     return this.firstName + " " + this.familyName;
   }
 
-  getNationalId() {
+  getNationalId(): string {
     return this.nationalId;
   }
 
-  getPhoneNumber() {
+  getPhoneNumber(): string {
     return this.phoneNumber;
   }
 
-  getEmail() {
+  getEmail(): string {
     return this.email;
   }
 
-  hasAllInfo() {
-    return this.phoneNumber && this.nationalId;
+  hasAllInfo(): boolean {
+    return !!this.phoneNumber && !!this.nationalId;
   }
 }
