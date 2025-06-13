@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UserService } from "../../../../src/context/user/service/user.service";
 import { UserRepository } from "../../../../src/context/user/infrastructure/user.repository";
-import { PasswordService } from "../../../../src/context/shared/utils/password.service";
+import { PasswordService } from "../../../../src/context/shared/infrastructure/password.service";
 import { ModuleConnectors } from "../../../../src/context/shared/infrastructure/moduleConnectors";
 import { Role } from "../../../../src/context/shared/domain/role";
 import { Languages } from "../../../../src/context/shared/domain/languages";

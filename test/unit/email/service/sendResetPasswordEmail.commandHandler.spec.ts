@@ -85,7 +85,7 @@ describe("SendResetPasswordEmailCommandHandler", () => {
       await handler.execute(command);
 
       expect(ResetPasswordSession.create).toHaveBeenCalledWith(
-        expect.any(Object), // UserId
+        expect.any(Object),
         mockLanguage,
       );
       expect(resetPasswordRepository.save).toHaveBeenCalledWith(

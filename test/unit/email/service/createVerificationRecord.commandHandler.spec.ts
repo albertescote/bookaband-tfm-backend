@@ -57,7 +57,7 @@ describe("CreateVerificationRecordCommandHandler", () => {
       await handler.execute(command);
 
       expect(EmailVerification.create).toHaveBeenCalledWith(
-        expect.any(Object), // UserId
+        expect.any(Object),
         mockLanguage,
         mockEmail,
       );
@@ -88,7 +88,7 @@ describe("CreateVerificationRecordCommandHandler", () => {
       await handler.execute(command);
 
       expect(EmailVerification.create).toHaveBeenCalledWith(
-        expect.any(Object), // UserId
+        expect.any(Object),
         mockLanguage,
         mockEmail,
       );

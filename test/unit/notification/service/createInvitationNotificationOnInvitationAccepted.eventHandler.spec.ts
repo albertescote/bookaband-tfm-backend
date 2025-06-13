@@ -98,13 +98,10 @@ describe("CreateInvitationNotificationOnInvitationAcceptedEventHandler", () => {
 
   describe("handle", () => {
     it("should create a notification when band exists", async () => {
-      // Arrange
       moduleConnectors.getBandById.mockResolvedValue(mockBand);
 
-      // Act
       await handler.handle(mockEvent);
 
-      // Assert
       expect(moduleConnectors.getBandById).toHaveBeenCalledWith(bandId);
       expect(notificationRepository.create).toHaveBeenCalled();
       const createdNotification =
@@ -119,10 +116,8 @@ describe("CreateInvitationNotificationOnInvitationAcceptedEventHandler", () => {
     });
 
     it("should throw BandNotFoundException when band does not exist", async () => {
-      // Arrange
       moduleConnectors.getBandById.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(handler.handle(mockEvent)).rejects.toThrow(
         new BandNotFoundException(bandId),
       );

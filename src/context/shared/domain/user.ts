@@ -71,11 +71,11 @@ export default class User {
       role,
       user.emailVerified,
       new Date(user.joinedDate),
-      user.phoneNumber,
-      user.nationalId,
-      user.password,
-      user.imageUrl,
-      user.bio,
+      user.phoneNumber ?? undefined,
+      user.nationalId ?? undefined,
+      user.password ?? undefined,
+      user.imageUrl ?? undefined,
+      user.bio ?? undefined,
     );
   }
 

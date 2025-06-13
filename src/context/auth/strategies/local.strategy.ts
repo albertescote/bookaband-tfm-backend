@@ -5,7 +5,7 @@ import { UserInfoDtoPrimitives } from "../domain/userInfoDto";
 import { InvalidEmailException } from "../exceptions/invalidEmailException";
 import { InvalidPasswordException } from "../exceptions/invalidPasswordException";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
-import { PasswordService } from "../../shared/utils/password.service";
+import { PasswordService } from "../../shared/infrastructure/password.service";
 import { EmailNotVerifiedException } from "../exceptions/emailNotVerifiedException";
 import { InvalidAuthenticationMethodException } from "../exceptions/invalidAuthenticationMethodException";
 

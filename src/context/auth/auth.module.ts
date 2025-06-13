@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { PasswordService } from "../shared/utils/password.service";
+import { PasswordService } from "../shared/infrastructure/password.service";
 import { ModuleConnectors } from "../shared/infrastructure/moduleConnectors";
 import { LoginService } from "./service/login.service";
 import { LocalStrategy } from "./strategies/local.strategy";

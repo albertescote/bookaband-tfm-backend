@@ -171,7 +171,7 @@ describe("GetBandProfileQueryHandler", () => {
       const { members, events, ...expectedProfile } = mockBandProfile;
       expect(result).toEqual({
         ...expectedProfile,
-        events: [mockBandProfile.events[0]], // Only the public event
+        events: [mockBandProfile.events[0]],
       });
       expect(mockBandRepository.getBandProfileById).toHaveBeenCalled();
     });

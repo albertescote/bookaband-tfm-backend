@@ -49,8 +49,8 @@ export class NotificationRepository {
       isReadFromBand: result.isReadFromBand,
       isReadFromUser: result.isReadFromUser,
       createdAt: result.createdAt,
-      invitationMetadata: result.invitationMetadata,
-      bookingMetadata: result.bookingMetadata,
+      invitationMetadata: result.invitationMetadata ?? undefined,
+      bookingMetadata: result.bookingMetadata ?? undefined,
     });
   }
 
@@ -68,8 +68,8 @@ export class NotificationRepository {
         isReadFromBand: doc.isReadFromBand,
         isReadFromUser: doc.isReadFromUser,
         createdAt: doc.createdAt,
-        invitationMetadata: doc.invitationMetadata,
-        bookingMetadata: doc.bookingMetadata,
+        invitationMetadata: doc.invitationMetadata ?? undefined,
+        bookingMetadata: doc.bookingMetadata ?? undefined,
       }),
     );
   }
@@ -92,8 +92,8 @@ export class NotificationRepository {
         isReadFromBand: doc.isReadFromBand,
         isReadFromUser: doc.isReadFromUser,
         createdAt: doc.createdAt,
-        invitationMetadata: doc.invitationMetadata,
-        bookingMetadata: doc.bookingMetadata,
+        invitationMetadata: doc.invitationMetadata ?? undefined,
+        bookingMetadata: doc.bookingMetadata ?? undefined,
       }),
     );
   }
@@ -116,8 +116,8 @@ export class NotificationRepository {
         isReadFromBand: doc.isReadFromBand,
         isReadFromUser: doc.isReadFromUser,
         createdAt: doc.createdAt,
-        invitationMetadata: doc.invitationMetadata,
-        bookingMetadata: doc.bookingMetadata,
+        invitationMetadata: doc.invitationMetadata ?? undefined,
+        bookingMetadata: doc.bookingMetadata ?? undefined,
       }),
     );
   }

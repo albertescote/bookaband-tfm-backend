@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import User from "../../shared/domain/user";
 import UserId from "../../shared/domain/userId";
 import { UserRepository } from "../infrastructure/user.repository";
-import { PasswordService } from "../../shared/utils/password.service";
+import { PasswordService } from "../../shared/infrastructure/password.service";
 import { Role } from "../../shared/domain/role";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import { UserNotFoundException } from "../exception/userNotFoundException";
