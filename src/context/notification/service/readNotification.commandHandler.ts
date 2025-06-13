@@ -6,7 +6,6 @@ import { ReadNotificationCommand } from "./readNotification.command";
 import { UserAuthInfo } from "../../shared/domain/userAuthInfo";
 import NotificationId from "../domain/notificationId";
 import { NotificationNotFoundException } from "../exceptions/notificationNotFoundException";
-import { NotOwnerOfTheRequestedNotificationException } from "../exceptions/notOwnerOfTheRequestedNotificationException";
 import { BandNotFoundException } from "../exceptions/bandNotFoundException";
 import { NotAMemberOfTheRequestedBandException } from "../exceptions/notAMemberOfTheRequestedBandException";
 import { NotificationPrimitives } from "../domain/notificaiton";
@@ -32,7 +31,6 @@ export class ReadNotificationCommandHandler
 
     const notificationPrimitives = notification.toPrimitives();
     if (authorized.id === notificationPrimitives.userId) {
-      this.validateUserOwnership(notificationPrimitives, authorized);
       notification.markAsReadFromUser();
     } else {
       await this.validateBandMembership(notificationPrimitives, authorized);
@@ -40,17 +38,6 @@ export class ReadNotificationCommandHandler
     }
 
     await this.notificationRepository.update(notification);
-  }
-
-  private validateUserOwnership(
-    notificationPrimitives: NotificationPrimitives,
-    authorized: UserAuthInfo,
-  ) {
-    if (notificationPrimitives.userId !== authorized.id) {
-      throw new NotOwnerOfTheRequestedNotificationException(
-        notificationPrimitives.id,
-      );
-    }
   }
 
   private async validateBandMembership(

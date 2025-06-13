@@ -12,8 +12,8 @@ import { ModuleRef } from "@nestjs/core";
 import { ExplorerService } from "@nestjs/cqrs/dist/services/explorer.service";
 import { EventBus } from "../shared/eventBus/domain/eventBus";
 import EventsBusEventRegisterer from "../shared/eventBus/infrastructure/eventsBusEventRegisterer";
-import { CreateBookingNotificationOnBandSignedChangedEventHandler } from "./service/createBookingNotificationOnBandSignedChanged.eventHandler";
-import { CreateBookingNotificationOnUserSignedChangedEventHandler } from "./service/createBookingNotificationOnUserSignedChanged.eventHandler";
+import { CreateBookingNotificationOnBandSignedEventHandler } from "./service/createBookingNotificationOnBandSigned.eventHandler";
+import { CreateBookingNotificationOnUserSignedEventHandler } from "./service/createBookingNotificationOnUserSigned.eventHandler";
 import { CreateBookingNotificationOnBookingStatusChangedEventHandler } from "./service/createBookingNotificationOnBookingStatusChanged.eventHandler";
 import { CreateInvitationNotificationOnInvitationSentEventHandler } from "./service/createInvitationNotificationOnInvitationSent.eventHandler";
 import { CreateInvitationNotificationOnInvitationDeclinedEventHandler } from "./service/createInvitationNotificationOnInvitationDeclined.eventHandler";
@@ -43,8 +43,8 @@ const mongoClient = {
     NotificationRepository,
     GetAllNotificationsFromUserQueryHandler,
     CreateBookingNotificationOnBookingStatusChangedEventHandler,
-    CreateBookingNotificationOnUserSignedChangedEventHandler,
-    CreateBookingNotificationOnBandSignedChangedEventHandler,
+    CreateBookingNotificationOnUserSignedEventHandler,
+    CreateBookingNotificationOnBandSignedEventHandler,
     CreateInvitationNotificationOnInvitationSentEventHandler,
     CreateInvitationNotificationOnInvitationAcceptedEventHandler,
     CreateInvitationNotificationOnInvitationDeclinedEventHandler,
@@ -54,8 +54,8 @@ const mongoClient = {
   exports: [
     GetAllNotificationsFromUserQueryHandler,
     CreateBookingNotificationOnBookingStatusChangedEventHandler,
-    CreateBookingNotificationOnUserSignedChangedEventHandler,
-    CreateBookingNotificationOnBandSignedChangedEventHandler,
+    CreateBookingNotificationOnUserSignedEventHandler,
+    CreateBookingNotificationOnBandSignedEventHandler,
     CreateInvitationNotificationOnInvitationSentEventHandler,
     CreateInvitationNotificationOnInvitationAcceptedEventHandler,
     CreateInvitationNotificationOnInvitationDeclinedEventHandler,

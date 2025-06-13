@@ -6,22 +6,22 @@ import { Notification } from "../domain/notificaiton";
 import BandId from "../../shared/domain/bandId";
 import UserId from "../../shared/domain/userId";
 import { BookingNotFoundException } from "../exceptions/bookingNotFoundException";
-import { BandSignedContractEvent } from "../../shared/eventBus/domain/bandSignedContract.event";
+import { UserSignedContractEvent } from "../../shared/eventBus/domain/userSignedContract.event";
 
 @Injectable()
-@EventsHandler(BandSignedContractEvent)
-export class CreateBookingNotificationOnBandSignedChangedEventHandler
-  implements IEventHandler<BandSignedContractEvent>
+@EventsHandler(UserSignedContractEvent)
+export class CreateBookingNotificationOnUserSignedEventHandler
+  implements IEventHandler<UserSignedContractEvent>
 {
-  private readonly bandSignedTranslationKey = "bandSigned";
+  private readonly userSignedTranslationKey = "userSigned";
 
   constructor(
     private notificationRepository: NotificationRepository,
     private moduleConnectors: ModuleConnectors,
   ) {}
 
-  async handle(event: BandSignedContractEvent): Promise<void> {
-    const { bookingId, bandName, userName, eventName } = event;
+  async handle(event: UserSignedContractEvent): Promise<void> {
+    const { bookingId, userName, bandName, eventName } = event;
     const booking = await this.moduleConnectors.getBookingById(bookingId);
     if (!booking) {
       throw new BookingNotFoundException(bookingId);
@@ -34,7 +34,7 @@ export class CreateBookingNotificationOnBandSignedChangedEventHandler
         bandName,
         userName,
         eventName,
-        status: this.bandSignedTranslationKey,
+        status: this.userSignedTranslationKey,
       },
     );
 
