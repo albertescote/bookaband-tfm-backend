@@ -11,7 +11,7 @@ export const RoleAuth = (authorizedRoles: Role[]) => {
   ) {
     const decoratedMethod = descriptor.value;
 
-    descriptor.value = function (...args) {
+    descriptor.value = async function (...args) {
       const authInfo = args[0] as UserAuthInfo;
 
       const role = getRoleFromAuthInfo(authInfo);
