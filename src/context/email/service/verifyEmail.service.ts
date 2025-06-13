@@ -43,10 +43,11 @@ export class VerifyEmailService {
     }
 
     emailVerification.verifyEmail();
-    await this.emailVerificationRepository.updateVerificationRecord(
-      emailVerification,
-    );
-    if (!emailVerification) {
+    const updated =
+      await this.emailVerificationRepository.updateVerificationRecord(
+        emailVerification,
+      );
+    if (!updated) {
       throw new NotAbleToExecuteEmailVerificationDbTransactionException(
         "update verification record",
       );
