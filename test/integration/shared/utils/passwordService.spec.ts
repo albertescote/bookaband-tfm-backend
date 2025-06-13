@@ -1,4 +1,4 @@
-import { PasswordService } from "../../../src/context/shared/utils/password.service";
+import { PasswordService } from "../../../../src/context/shared/utils/password.service";
 
 describe("PasswordService should", () => {
   const passwordService = new PasswordService();
