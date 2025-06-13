@@ -7,4 +7,4 @@ export class CreateMusicalStyleRequestDto {
   @IsNotEmpty()
   @IsString()
   icon: string;
-} 
+}

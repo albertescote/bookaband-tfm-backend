@@ -22,7 +22,7 @@ describe("GetBandMembersQueryHandler", () => {
   const mockBandPrimitives: BandPrimitives = {
     id: mockBandId,
     name: "Test Band",
-    members: mockMemberIds.map(id => ({ id, role: BandRole.MEMBER })),
+    members: mockMemberIds.map((id) => ({ id, role: BandRole.MEMBER })),
     musicalStyleIds: [],
     eventTypeIds: [],
     reviewCount: 0,

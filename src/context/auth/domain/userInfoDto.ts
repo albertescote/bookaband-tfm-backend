@@ -1,6 +1,6 @@
-import UserId from '../../shared/domain/userId';
-import { Role } from '../../shared/domain/role';
-import { InvalidRoleException } from '../../shared/exceptions/invalidRoleException';
+import UserId from "../../shared/domain/userId";
+import { Role } from "../../shared/domain/role";
+import { InvalidRoleException } from "../../shared/exceptions/invalidRoleException";
 
 export interface UserInfoDtoPrimitives {
   id: string;

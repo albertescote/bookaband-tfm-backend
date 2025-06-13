@@ -63,4 +63,4 @@ export class MusicalStyleController {
   async delete(@Param("id") id: string): Promise<void> {
     await this.service.delete(id);
   }
-} 
+}

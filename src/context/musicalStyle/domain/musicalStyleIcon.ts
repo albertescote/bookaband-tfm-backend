@@ -4,4 +4,4 @@ export class MusicalStyleIcon {
   toPrimitives(): string {
     return this.value;
   }
-} 
+}

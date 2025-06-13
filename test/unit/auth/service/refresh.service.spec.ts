@@ -8,7 +8,11 @@ import { NotAbleToExecuteRefreshTokenDbTransactionException } from "../../../../
 import { TokenPayload } from "../../../../src/context/auth/domain/tokenPayload";
 import UserId from "../../../../src/context/shared/domain/userId";
 import { Role } from "../../../../src/context/shared/domain/role";
-import { ACCESS_TOKEN_EXPIRES_IN_SECONDS, TOKEN_ISSUER, TOKEN_TYPE } from "../../../../src/context/auth/config";
+import {
+  ACCESS_TOKEN_EXPIRES_IN_SECONDS,
+  TOKEN_ISSUER,
+  TOKEN_TYPE,
+} from "../../../../src/context/auth/config";
 
 describe("RefreshTokenService", () => {
   let service: RefreshTokenService;
@@ -60,8 +64,13 @@ describe("RefreshTokenService", () => {
 
   describe("refreshToken", () => {
     it("should return new access token when refresh token is valid", async () => {
-      const mockStoredRefreshToken = RefreshToken.create(mockRefreshToken, new UserId(mockUserId));
-      mockRefreshTokensRepository.findRefreshToken.mockResolvedValue(mockStoredRefreshToken);
+      const mockStoredRefreshToken = RefreshToken.create(
+        mockRefreshToken,
+        new UserId(mockUserId),
+      );
+      mockRefreshTokensRepository.findRefreshToken.mockResolvedValue(
+        mockStoredRefreshToken,
+      );
 
       const result = await service.refreshToken(mockRefreshToken);
 
@@ -70,7 +79,9 @@ describe("RefreshTokenService", () => {
         token_type: TOKEN_TYPE,
         expires_in: ACCESS_TOKEN_EXPIRES_IN_SECONDS,
       });
-      expect(mockTokenService.verifyToken).toHaveBeenCalledWith(mockRefreshToken);
+      expect(mockTokenService.verifyToken).toHaveBeenCalledWith(
+        mockRefreshToken,
+      );
       expect(mockTokenService.signToken).toHaveBeenCalledWith(
         mockTokenPayload,
         TOKEN_ISSUER,
@@ -89,7 +100,10 @@ describe("RefreshTokenService", () => {
 
   describe("createRefreshToken", () => {
     it("should create and return a new refresh token", async () => {
-      const result = await service.createRefreshToken(mockTokenPayload, mockUserId);
+      const result = await service.createRefreshToken(
+        mockTokenPayload,
+        mockUserId,
+      );
 
       expect(result).toBe(mockAccessToken);
       expect(mockTokenService.signToken).toHaveBeenCalledWith(
@@ -103,13 +117,20 @@ describe("RefreshTokenService", () => {
 
   describe("logout", () => {
     it("should delete refresh token when it exists", async () => {
-      const mockStoredRefreshToken = RefreshToken.create(mockRefreshToken, new UserId(mockUserId));
-      mockRefreshTokensRepository.findRefreshToken.mockResolvedValue(mockStoredRefreshToken);
+      const mockStoredRefreshToken = RefreshToken.create(
+        mockRefreshToken,
+        new UserId(mockUserId),
+      );
+      mockRefreshTokensRepository.findRefreshToken.mockResolvedValue(
+        mockStoredRefreshToken,
+      );
       mockRefreshTokensRepository.deleteRefreshToken.mockResolvedValue(true);
 
       await service.logout(mockRefreshToken);
 
-      expect(mockRefreshTokensRepository.deleteRefreshToken).toHaveBeenCalledWith(mockRefreshToken);
+      expect(
+        mockRefreshTokensRepository.deleteRefreshToken,
+      ).toHaveBeenCalledWith(mockRefreshToken);
     });
 
     it("should throw RefreshTokenNotFoundException when refresh token is not found", async () => {
@@ -121,8 +142,13 @@ describe("RefreshTokenService", () => {
     });
 
     it("should throw NotAbleToExecuteRefreshTokenDbTransactionException when deletion fails", async () => {
-      const mockStoredRefreshToken = RefreshToken.create(mockRefreshToken, new UserId(mockUserId));
-      mockRefreshTokensRepository.findRefreshToken.mockResolvedValue(mockStoredRefreshToken);
+      const mockStoredRefreshToken = RefreshToken.create(
+        mockRefreshToken,
+        new UserId(mockUserId),
+      );
+      mockRefreshTokensRepository.findRefreshToken.mockResolvedValue(
+        mockStoredRefreshToken,
+      );
       mockRefreshTokensRepository.deleteRefreshToken.mockResolvedValue(false);
 
       await expect(service.logout(mockRefreshToken)).rejects.toThrow(
@@ -130,4 +156,4 @@ describe("RefreshTokenService", () => {
       );
     });
   });
-}); 
+});

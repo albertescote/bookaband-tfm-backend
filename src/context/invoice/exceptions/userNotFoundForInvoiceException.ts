@@ -4,4 +4,4 @@ export class UserNotFoundForInvoiceException extends InternalServerErrorExceptio
   constructor(id: string) {
     super(`User not found for this invoice: ${id}`);
   }
-} 
+}

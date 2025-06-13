@@ -4,4 +4,4 @@ export class RemoveMemberCommand {
     public readonly userId: string,
     public readonly memberToRemoveId: string,
   ) {}
-} 
+}

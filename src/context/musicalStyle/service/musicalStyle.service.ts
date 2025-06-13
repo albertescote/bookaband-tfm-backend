@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { MusicalStyle, MusicalStylePrimitives } from "../../shared/domain/musicalStyle";
+import {
+  MusicalStyle,
+  MusicalStylePrimitives,
+} from "../../shared/domain/musicalStyle";
 import { MusicalStyleRepository } from "../infrastructure/musicalStyle.repository";
 import MusicalStyleId from "../domain/musicalStyleId";
 
@@ -31,7 +34,9 @@ export class MusicalStyleService {
   }
 
   async getById(id: string): Promise<MusicalStylePrimitives> {
-    const musicalStyleFound = await this.repository.getById(new MusicalStyleId(id));
+    const musicalStyleFound = await this.repository.getById(
+      new MusicalStyleId(id),
+    );
     return musicalStyleFound.toPrimitives();
   }
 
@@ -54,4 +59,4 @@ export class MusicalStyleService {
   async delete(id: string): Promise<void> {
     await this.repository.delete(new MusicalStyleId(id));
   }
-} 
+}

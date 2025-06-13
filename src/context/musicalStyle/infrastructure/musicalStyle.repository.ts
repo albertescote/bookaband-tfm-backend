@@ -80,4 +80,4 @@ export class MusicalStyleRepository {
       { id: id.toPrimitive() },
     );
   }
-} 
+}

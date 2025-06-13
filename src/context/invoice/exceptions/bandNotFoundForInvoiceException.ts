@@ -4,4 +4,4 @@ export class BandNotFoundForInvoiceException extends InternalServerErrorExceptio
   constructor(invoiceId: string) {
     super(`Band not found for invoice: ${invoiceId}`);
   }
-} 
+}

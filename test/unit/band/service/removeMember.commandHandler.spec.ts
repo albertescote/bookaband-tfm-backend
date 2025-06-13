@@ -88,7 +88,9 @@ describe("RemoveMemberCommandHandler", () => {
       ],
     }).compile();
 
-    handler = module.get<RemoveMemberCommandHandler>(RemoveMemberCommandHandler);
+    handler = module.get<RemoveMemberCommandHandler>(
+      RemoveMemberCommandHandler,
+    );
   });
 
   afterEach(() => {
@@ -164,7 +166,9 @@ describe("RemoveMemberCommandHandler", () => {
       );
 
       await expect(handler.execute(command)).rejects.toThrow(
-        new WrongPermissionsException("remove member - only admins can remove members"),
+        new WrongPermissionsException(
+          "remove member - only admins can remove members",
+        ),
       );
 
       expect(mockBandRepository.getBandById).toHaveBeenCalledWith(
@@ -185,7 +189,9 @@ describe("RemoveMemberCommandHandler", () => {
       );
 
       await expect(handler.execute(command)).rejects.toThrow(
-        new WrongPermissionsException("remove member - member to remove not found"),
+        new WrongPermissionsException(
+          "remove member - member to remove not found",
+        ),
       );
 
       expect(mockBandRepository.getBandById).toHaveBeenCalledWith(
@@ -209,7 +215,9 @@ describe("RemoveMemberCommandHandler", () => {
       );
 
       await expect(handler.execute(command)).rejects.toThrow(
-        new WrongPermissionsException("remove member - cannot remove the last admin"),
+        new WrongPermissionsException(
+          "remove member - cannot remove the last admin",
+        ),
       );
 
       expect(mockBandRepository.getBandById).toHaveBeenCalledWith(
@@ -240,4 +248,3 @@ describe("RemoveMemberCommandHandler", () => {
     });
   });
 });
- 

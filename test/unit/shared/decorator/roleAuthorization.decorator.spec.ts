@@ -107,4 +107,4 @@ describe("RoleAuth Decorator", () => {
       }).rejects.toThrow(InvalidRoleException);
     });
   });
-}); 
+});

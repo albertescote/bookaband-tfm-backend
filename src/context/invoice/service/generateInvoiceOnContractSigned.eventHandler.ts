@@ -83,7 +83,6 @@ export class GenerateInvoiceOnContractSignedEventHandler
     const page = pdfDoc.addPage([595.28, 841.89]); // A4 size
     const { height } = page.getSize();
 
-    // Add title
     page.drawText("Invoice", {
       x: 50,
       y: height - 50,
@@ -91,7 +90,6 @@ export class GenerateInvoiceOnContractSignedEventHandler
       color: rgb(0, 0, 0),
     });
 
-    // Add invoice details
     page.drawText(`Invoice Number: ${booking.id}`, {
       x: 50,
       y: height - 100,
@@ -106,7 +104,6 @@ export class GenerateInvoiceOnContractSignedEventHandler
       color: rgb(0, 0, 0),
     });
 
-    // Add event details
     page.drawText("Event Details:", {
       x: 50,
       y: height - 160,
@@ -145,7 +142,6 @@ export class GenerateInvoiceOnContractSignedEventHandler
       },
     );
 
-    // Add band details
     page.drawText("Band Information:", {
       x: 50,
       y: height - 280,
@@ -160,7 +156,6 @@ export class GenerateInvoiceOnContractSignedEventHandler
       color: rgb(0, 0, 0),
     });
 
-    // Add client details
     page.drawText("Client Information:", {
       x: 50,
       y: height - 340,
@@ -182,7 +177,6 @@ export class GenerateInvoiceOnContractSignedEventHandler
       color: rgb(0, 0, 0),
     });
 
-    // Add payment details
     page.drawText("Payment Details:", {
       x: 50,
       y: height - 420,
@@ -204,7 +198,6 @@ export class GenerateInvoiceOnContractSignedEventHandler
       color: rgb(0, 0, 0),
     });
 
-    // Add payment instructions
     page.drawText("Payment Instructions:", {
       x: 50,
       y: height - 500,

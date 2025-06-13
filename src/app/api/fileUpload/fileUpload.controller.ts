@@ -26,20 +26,16 @@ if (!existsSync(uploadsDir)) {
 }
 
 const allowedMimeTypes = [
-  // Images
   "image/jpeg",
   "image/png",
   "image/gif",
   "image/webp",
-  // Documents
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  // Audio
   "audio/mpeg",
   "audio/wav",
   "audio/ogg",
-  // Video
   "video/mp4",
   "video/webm",
   "video/quicktime",

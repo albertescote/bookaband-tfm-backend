@@ -48,12 +48,15 @@ describe("MusicalStyleRepository Integration Tests", () => {
   });
 
   afterEach(async () => {
-    await mongoCollectionService.deleteMany(MONGODB_COLLECTIONS.MUSICAL_STYLES, {
-      $or: [
-        { id: testMusicalStyle.toPrimitives().id },
-        { "label.en": "Test Style" },
-      ],
-    });
+    await mongoCollectionService.deleteMany(
+      MONGODB_COLLECTIONS.MUSICAL_STYLES,
+      {
+        $or: [
+          { id: testMusicalStyle.toPrimitives().id },
+          { "label.en": "Test Style" },
+        ],
+      },
+    );
   });
 
   afterAll(async () => {
@@ -122,4 +125,4 @@ describe("MusicalStyleRepository Integration Tests", () => {
       expect(deleted).toBeUndefined();
     });
   });
-}); 
+});

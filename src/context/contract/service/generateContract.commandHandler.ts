@@ -125,7 +125,6 @@ export class GenerateContractCommandHandler
       color: rgb(0, 0, 0),
     });
 
-    // Add booking details
     page.drawText(`Event: ${booking.name}`, {
       x: 50,
       y: height - 100,
@@ -157,7 +156,6 @@ export class GenerateContractCommandHandler
       },
     );
 
-    // Add band details
     page.drawText("Band Information:", {
       x: 50,
       y: height - 200,
@@ -172,7 +170,6 @@ export class GenerateContractCommandHandler
       color: rgb(0, 0, 0),
     });
 
-    // Add client details
     page.drawText("Client Information:", {
       x: 50,
       y: height - 260,
@@ -190,7 +187,6 @@ export class GenerateContractCommandHandler
       },
     );
 
-    // Add terms and conditions
     page.drawText("Terms and Conditions:", {
       x: 50,
       y: height - 340,
@@ -215,7 +211,6 @@ export class GenerateContractCommandHandler
       });
     });
 
-    // Add signature lines
     page.drawText("Band Representative Signature:", {
       x: 50,
       y: height - 500,

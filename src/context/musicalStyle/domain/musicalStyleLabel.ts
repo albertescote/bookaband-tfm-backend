@@ -4,4 +4,4 @@ export class MusicalStyleLabel {
   toPrimitives(): Record<string, string> {
     return this.value;
   }
-} 
+}

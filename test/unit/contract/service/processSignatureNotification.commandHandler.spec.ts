@@ -359,4 +359,3 @@ describe("ProcessSignatureNotificationCommandHandler", () => {
     expect(eventBus.publish).not.toHaveBeenCalled();
   });
 });
- 

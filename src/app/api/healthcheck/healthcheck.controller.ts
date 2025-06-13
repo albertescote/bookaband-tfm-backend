@@ -1,9 +1,9 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
+import { Controller, Get, HttpCode } from "@nestjs/common";
 
-@Controller('')
+@Controller("")
 export class HealthcheckController {
   constructor() {}
-  @Get('/')
+  @Get("/")
   @HttpCode(200)
   create(): void {
     return;

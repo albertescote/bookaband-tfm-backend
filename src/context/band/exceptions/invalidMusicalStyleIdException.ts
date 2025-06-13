@@ -4,4 +4,4 @@ export class InvalidMusicalStyleIdException extends BadRequestException {
   constructor(invalidIds: string[]) {
     super(`Invalid musical style IDs: ${invalidIds.join(", ")}`);
   }
-} 
+}

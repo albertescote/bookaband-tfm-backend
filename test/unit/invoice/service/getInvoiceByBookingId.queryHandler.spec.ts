@@ -74,4 +74,4 @@ describe("GetInvoiceByBookingIdQueryHandler", () => {
       );
     });
   });
-}); 
+});

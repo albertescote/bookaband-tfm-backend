@@ -15,7 +15,9 @@ export class MusicalStyle {
     private readonly icon: MusicalStyleIcon,
   ) {}
 
-  public static fromPrimitives(primitives: MusicalStylePrimitives): MusicalStyle {
+  public static fromPrimitives(
+    primitives: MusicalStylePrimitives,
+  ): MusicalStyle {
     return new MusicalStyle(
       new MusicalStyleId(primitives.id),
       new MusicalStyleLabel(primitives.label),
@@ -50,4 +52,4 @@ export class MusicalStyle {
   public getIcon(): MusicalStyleIcon {
     return this.icon;
   }
-} 
+}

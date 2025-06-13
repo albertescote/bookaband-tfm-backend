@@ -100,7 +100,10 @@ describe("BillingAddressService", () => {
     it("should return billing address when found and user is owner", async () => {
       repository.findById.mockResolvedValue(mockBillingAddress);
 
-      const result = await service.findById(mockUserAuthInfo, mockBillingAddressId);
+      const result = await service.findById(
+        mockUserAuthInfo,
+        mockBillingAddressId,
+      );
 
       expect(repository.findById).toHaveBeenCalledWith(
         expect.any(BillingAddressId),
@@ -136,9 +139,7 @@ describe("BillingAddressService", () => {
 
       const result = await service.findByUserId(mockUserAuthInfo, mockUserId);
 
-      expect(repository.findByUserId).toHaveBeenCalledWith(
-        expect.any(UserId),
-      );
+      expect(repository.findByUserId).toHaveBeenCalledWith(expect.any(UserId));
       expect(result).toEqual(mockBillingAddress.toPrimitives());
     });
 
@@ -235,4 +236,4 @@ describe("BillingAddressService", () => {
       ).rejects.toThrow(NotOwnerOfTheRequestedBillingAddressException);
     });
   });
-}); 
+});

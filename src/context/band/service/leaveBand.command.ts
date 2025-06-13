@@ -11,4 +11,4 @@ export class LeaveBandCommand {
   get userId(): string {
     return this._userId;
   }
-} 
+}

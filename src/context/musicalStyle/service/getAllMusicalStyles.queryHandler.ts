@@ -11,11 +11,13 @@ export class GetAllMusicalStylesQueryHandler
 {
   constructor(private musicalStyleRepository: MusicalStyleRepository) {}
 
-  async execute(query: GetAllMusicalStylesQuery): Promise<MusicalStylePrimitives[]> {
+  async execute(
+    query: GetAllMusicalStylesQuery,
+  ): Promise<MusicalStylePrimitives[]> {
     const musicalStyles = await this.musicalStyleRepository.getAll();
     if (!musicalStyles) {
       return undefined;
     }
     return musicalStyles.map((musicalStyle) => musicalStyle.toPrimitives());
   }
-} 
+}

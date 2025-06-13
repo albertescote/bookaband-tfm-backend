@@ -10,4 +10,4 @@ export default class MusicalStyleId {
   toPrimitive(): string {
     return this.value;
   }
-} 
+}
