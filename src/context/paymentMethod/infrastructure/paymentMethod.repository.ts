@@ -32,8 +32,16 @@ export class PaymentMethodRepository {
     return PaymentMethod.fromPrimitives(created);
   }
 
-  async update(method: PaymentMethod): Promise<PaymentMethod> {
+  async update(method: PaymentMethod): Promise<PaymentMethod | undefined> {
     const primitives = method.toPrimitives();
+    const existingMethod = await this.prisma.paymentMethod.findUnique({
+      where: { id: primitives.id },
+    });
+
+    if (!existingMethod) {
+      return undefined;
+    }
+
     const updated = await this.prisma.paymentMethod.update({
       where: { id: primitives.id },
       data: primitives,
@@ -42,6 +50,14 @@ export class PaymentMethodRepository {
   }
 
   async delete(id: PaymentMethodId): Promise<void> {
+    const existingMethod = await this.prisma.paymentMethod.findUnique({
+      where: { id: id.toPrimitive() },
+    });
+
+    if (!existingMethod) {
+      return;
+    }
+
     await this.prisma.paymentMethod.delete({
       where: { id: id.toPrimitive() },
     });

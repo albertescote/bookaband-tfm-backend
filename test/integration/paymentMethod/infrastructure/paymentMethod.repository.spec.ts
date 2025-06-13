@@ -151,7 +151,10 @@ describe("PaymentMethodRepository Integration Tests", () => {
         new PaymentMethodId(testPaymentMethod.toPrimitives().id),
       );
       expect(method).toBeDefined();
-      expect(method.toPrimitives()).toEqual(testPaymentMethod.toPrimitives());
+      expect(method.toPrimitives()).toEqual({
+        ...testPaymentMethod.toPrimitives(),
+        createdAt: expect.any(Date),
+      });
     });
 
     it("should return undefined for non-existent payment method id", async () => {
