@@ -55,9 +55,13 @@ describe("JoinBandCommandHandler", () => {
       otherRequirements: "No other requirements",
     },
     performanceArea: {
-      regions: ["Catalonia"],
-      travelPreferences: "Local",
-      restrictions: "None",
+      regions: ["Catalonia", "Valencia", "Balearic Islands"],
+      gasPriceCalculation: {
+        fuelConsumption: 12.5,
+        useDynamicPricing: false,
+        pricePerLiter: 1.85,
+      },
+      otherComments: "No outdoor events during winter",
     },
     socialLinks: [],
     media: [],

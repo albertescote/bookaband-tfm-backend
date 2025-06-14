@@ -122,4 +122,9 @@ db.musical_styles.insertMany([
     label: { en: "Country", es: "Country", ca: "Country" },
     icon: "🤠",
   },
+  {
+    id: "2fcd0868-8a53-42e6-ae0e-7db6a5f2f0d6",
+    label: { en: "Other", es: "Otros", ca: "Altres" },
+    icon: "➕",
+  },
 ]);

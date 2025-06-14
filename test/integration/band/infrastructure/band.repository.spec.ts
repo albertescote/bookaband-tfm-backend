@@ -86,9 +86,13 @@ describe("BandRepository Integration Tests", () => {
     await prismaService.performanceArea.create({
       data: {
         id: testPerformanceAreaId,
-        regions: ["Catalonia", "Valencia", "Balearic Islands"],
-        travelPreferences: "Prefer venues within 200km radius",
-        restrictions: "No outdoor events during winter",
+        regions: ["Barcelona", "Girona", "Tarragona"],
+        gasPriceCalculation: {
+          fuelConsumption: 9.5,
+          useDynamicPricing: false,
+          pricePerLiter: 1.88,
+        },
+        otherComments: "Prefer venues with good acoustics",
       },
     });
   });
@@ -121,6 +125,18 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -133,14 +149,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
-        },
-        0,
-        [],
-        [],
       );
 
       const createdBand = await repository.addBand(band);
@@ -175,9 +183,13 @@ describe("BandRepository Integration Tests", () => {
           otherRequirements: "Power outlets and extension cords",
         },
         performanceArea: {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
         },
         reviewCount: 0,
         media: [],
@@ -219,6 +231,18 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -231,14 +255,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
-        },
-        0,
-        [],
-        [],
       );
       await repository.addBand(band);
 
@@ -274,9 +290,13 @@ describe("BandRepository Integration Tests", () => {
           otherRequirements: "Power outlets and extension cords",
         },
         performanceArea: {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
         },
         reviewCount: 0,
         media: [],
@@ -313,6 +333,18 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -325,14 +357,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
-        },
-        0,
-        [],
-        [],
       );
       await repository.addBand(band);
 
@@ -352,6 +376,16 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
+          gasPriceCalculation: {
+            fuelConsumption: 7,
+            useDynamicPricing: true,
+          },
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -364,14 +398,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
-          travelPreferences: "Prefer venues within 150km radius",
-          restrictions: "No outdoor events during summer",
-        },
-        0,
-        [],
-        [],
       );
 
       const result = await repository.updateBand(updatedBand);
@@ -407,8 +433,10 @@ describe("BandRepository Integration Tests", () => {
         },
         performanceArea: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
-          travelPreferences: "Prefer venues within 150km radius",
-          restrictions: "No outdoor events during summer",
+          gasPriceCalculation: {
+            fuelConsumption: 7,
+            useDynamicPricing: true,
+          },
         },
         reviewCount: 0,
         media: [],
@@ -445,6 +473,18 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -457,14 +497,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
-        },
-        0,
-        [],
-        [],
       );
       await repository.addBand(band);
 
@@ -504,6 +536,18 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -516,14 +560,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
-        },
-        0,
-        [],
-        [],
       );
       await repository.addBand(band);
 
@@ -566,6 +602,18 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -578,14 +626,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
-        },
-        0,
-        [],
-        [],
       );
       await repository.addBand(band);
 
@@ -620,9 +660,13 @@ describe("BandRepository Integration Tests", () => {
           otherRequirements: "Power outlets and extension cords",
         },
         performanceArea: {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
         },
         followers: 0,
         following: 0,
@@ -671,6 +715,18 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -683,14 +739,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
-        },
-        0,
-        [],
-        [],
       );
       await repository.addBand(band);
 
@@ -731,9 +779,13 @@ describe("BandRepository Integration Tests", () => {
         },
         performanceArea: {
           id: expect.any(String),
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
         },
       });
     });
@@ -767,6 +819,18 @@ describe("BandRepository Integration Tests", () => {
         true,
         weeklyAvailability,
         {
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
+        },
+        0,
+        [],
+        [],
+        {
           accommodation: "Hotel room for each band member",
           catering: "Full board meals",
           beverages: "Water, soft drinks, and alcoholic beverages",
@@ -779,14 +843,6 @@ describe("BandRepository Integration Tests", () => {
           lighting: "Basic stage lighting",
           otherRequirements: "Power outlets and extension cords",
         },
-        {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
-        },
-        0,
-        [],
-        [],
       );
       await repository.addBand(band);
 

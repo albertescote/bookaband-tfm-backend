@@ -31,9 +31,9 @@ export interface UpsertBandRequest {
   bandSize: string;
   eventTypeIds: string[];
   weeklyAvailability: WeeklyAvailability;
-  hospitalityRider: HospitalityRider;
-  technicalRider: TechnicalRider;
   performanceArea: PerformanceArea;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
   media?: { url: string; type: string }[];
   socialLinks?: { platform: string; url: string }[];
   bio?: string;
@@ -97,9 +97,9 @@ export class BandService {
       createBandRequest.bandSize,
       createBandRequest.eventTypeIds,
       createBandRequest.weeklyAvailability,
+      createBandRequest.performanceArea,
       createBandRequest.hospitalityRider,
       createBandRequest.technicalRider,
-      createBandRequest.performanceArea,
       createBandRequest.media,
       createBandRequest.socialLinks,
       createBandRequest.imageUrl,

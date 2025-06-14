@@ -28,10 +28,16 @@ export interface TechnicalRider {
   otherRequirements?: string;
 }
 
+export interface GasPriceCalculation {
+  fuelConsumption: number;
+  useDynamicPricing: boolean;
+  pricePerLiter?: number;
+}
+
 export interface PerformanceArea {
   regions: string[];
-  travelPreferences: string;
-  restrictions?: string;
+  gasPriceCalculation?: GasPriceCalculation;
+  otherComments?: string;
 }
 
 export interface Media {
@@ -62,11 +68,11 @@ export interface BandPrimitives {
   featured: boolean;
   visible: boolean;
   weeklyAvailability: WeeklyAvailability;
-  hospitalityRider: HospitalityRider;
-  technicalRider: TechnicalRider;
   performanceArea: PerformanceArea;
   media: Media[];
   socialLinks: SocialLink[];
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
   rating?: number;
   imageUrl?: string;
   bio?: string;
@@ -96,12 +102,12 @@ export default class Band {
       saturday: true,
       sunday: true,
     },
-    private hospitalityRider: HospitalityRider | undefined,
-    private technicalRider: TechnicalRider | undefined,
     private performanceArea: PerformanceArea | undefined,
     private reviewCount: number = 0,
     private media: Media[],
     private socialLinks: SocialLink[],
+    private hospitalityRider?: HospitalityRider | undefined,
+    private technicalRider?: TechnicalRider | undefined,
     private imageUrl?: string | undefined,
     private rating?: number | undefined,
     private bio?: string | undefined,
@@ -116,9 +122,9 @@ export default class Band {
     bandSize: string,
     eventTypeIds: string[],
     weeklyAvailability: WeeklyAvailability,
-    hospitalityRider: HospitalityRider,
-    technicalRider: TechnicalRider,
     performanceArea: PerformanceArea,
+    hospitalityRider?: HospitalityRider,
+    technicalRider?: TechnicalRider,
     media?: Media[],
     socialLinks?: SocialLink[],
     imageUrl?: string,
@@ -139,12 +145,12 @@ export default class Band {
       false,
       true,
       weeklyAvailability,
-      hospitalityRider,
-      technicalRider,
       performanceArea,
       0,
       media ?? [],
       socialLinks ?? [],
+      hospitalityRider,
+      technicalRider,
       imageUrl,
       undefined,
       bio,
@@ -170,12 +176,12 @@ export default class Band {
       primitives.featured,
       primitives.visible,
       primitives.weeklyAvailability,
-      primitives.hospitalityRider,
-      primitives.technicalRider,
       primitives.performanceArea,
       primitives.reviewCount,
       primitives.media,
       primitives.socialLinks,
+      primitives.hospitalityRider,
+      primitives.technicalRider,
       primitives.imageUrl,
       primitives.rating,
       primitives.bio,

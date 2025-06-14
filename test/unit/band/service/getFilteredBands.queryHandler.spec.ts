@@ -57,9 +57,13 @@ describe("GetFilteredBandsQueryHandler", () => {
         otherRequirements: "No other requirements",
       },
       performanceArea: {
-        regions: ["Catalonia"],
-        travelPreferences: "Local",
-        restrictions: "None",
+        regions: ["Catalonia", "Valencia", "Balearic Islands"],
+        gasPriceCalculation: {
+          fuelConsumption: 12.5,
+          useDynamicPricing: true,
+          pricePerLiter: 1.85,
+        },
+        otherComments: "No outdoor events during winter",
       },
       bio: "A great test band 1",
       price: 1000,
@@ -105,9 +109,13 @@ describe("GetFilteredBandsQueryHandler", () => {
         otherRequirements: "No other requirements",
       },
       performanceArea: {
-        regions: ["Madrid"],
-        travelPreferences: "Local",
-        restrictions: "None",
+        regions: ["Catalonia", "Valencia", "Balearic Islands"],
+        gasPriceCalculation: {
+          fuelConsumption: 12.5,
+          useDynamicPricing: true,
+          pricePerLiter: 1.85,
+        },
+        otherComments: "No outdoor events during winter",
       },
       bio: "A great test band 2",
       price: 2000,

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import PrismaService from "../../shared/infrastructure/db/prisma.service";
-import Band, { WeeklyAvailability } from "../domain/band";
+import Band, { GasPriceCalculation, WeeklyAvailability } from "../domain/band";
 import BandId from "../../shared/domain/bandId";
 import { BandProfile } from "../domain/bandProfile";
 import { BandRole } from "../domain/bandRole";
@@ -70,9 +70,12 @@ export class BandRepository {
             ? {
                 create: {
                   regions: primitives.performanceArea.regions,
-                  travelPreferences:
-                    primitives.performanceArea.travelPreferences,
-                  restrictions: primitives.performanceArea.restrictions,
+                  gasPriceCalculation:
+                    (primitives.performanceArea
+                      .gasPriceCalculation as unknown as Prisma.JsonValue) ??
+                    undefined,
+                  otherComments:
+                    primitives.performanceArea.otherComments ?? undefined,
                 },
               }
             : undefined,
@@ -179,8 +182,11 @@ export class BandRepository {
       performanceArea: band.performanceArea
         ? {
             regions: band.performanceArea.regions,
-            travelPreferences: band.performanceArea.travelPreferences,
-            restrictions: band.performanceArea.restrictions,
+            gasPriceCalculation:
+              (band.performanceArea
+                .gasPriceCalculation as unknown as GasPriceCalculation) ??
+              undefined,
+            otherComments: band.performanceArea.otherComments ?? undefined,
           }
         : undefined,
       media: band.media.map((m) => ({
@@ -264,15 +270,15 @@ export class BandRepository {
                 upsert: {
                   create: {
                     regions: primitives.performanceArea.regions,
-                    travelPreferences:
-                      primitives.performanceArea.travelPreferences,
-                    restrictions: primitives.performanceArea.restrictions,
+                    gasPriceCalculation: primitives.performanceArea
+                      .gasPriceCalculation as unknown as Prisma.JsonValue,
+                    otherComments: primitives.performanceArea.otherComments,
                   },
                   update: {
                     regions: primitives.performanceArea.regions,
-                    travelPreferences:
-                      primitives.performanceArea.travelPreferences,
-                    restrictions: primitives.performanceArea.restrictions,
+                    gasPriceCalculation: primitives.performanceArea
+                      .gasPriceCalculation as unknown as Prisma.JsonValue,
+                    otherComments: primitives.performanceArea.otherComments,
                   },
                 },
               }
@@ -426,8 +432,11 @@ export class BandRepository {
       performanceArea: band.performanceArea
         ? {
             regions: band.performanceArea.regions,
-            travelPreferences: band.performanceArea.travelPreferences,
-            restrictions: band.performanceArea.restrictions,
+            gasPriceCalculation:
+              (band.performanceArea
+                .gasPriceCalculation as unknown as GasPriceCalculation) ??
+              undefined,
+            otherComments: band.performanceArea.otherComments ?? undefined,
           }
         : undefined,
       reviews: band.artistReview.map((review) => ({
@@ -535,9 +544,17 @@ export class BandRepository {
       price: band.price,
       imageUrl: band.imageUrl || undefined,
       rating: this.calculateAverageRating(band.artistReview) || undefined,
-      hospitalityRider: band.hospitalityRider,
-      technicalRider: band.technicalRider,
-      performanceArea: band.performanceArea,
+      hospitalityRider: band.hospitalityRider ?? undefined,
+      technicalRider: band.technicalRider ?? undefined,
+      performanceArea: {
+        id: band.performanceArea.id,
+        regions: band.performanceArea.regions,
+        gasPriceCalculation:
+          (band.performanceArea
+            .gasPriceCalculation as unknown as GasPriceCalculation) ??
+          undefined,
+        otherComments: band.performanceArea.otherComments ?? undefined,
+      },
     }));
 
     return {

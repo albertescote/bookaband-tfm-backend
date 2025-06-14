@@ -56,9 +56,13 @@ describe("CreateInvitationNotificationOnInvitationSentEventHandler", () => {
       lighting: "Test",
     },
     performanceArea: {
-      regions: ["Spain"],
-      travelPreferences: "travel preferences description",
-      restrictions: "none",
+      regions: ["Catalonia", "Valencia", "Balearic Islands"],
+      gasPriceCalculation: {
+        fuelConsumption: 12.5,
+        useDynamicPricing: false,
+        pricePerLiter: 1.85,
+      },
+      otherComments: "No outdoor events during winter",
     },
     rating: 0,
     media: [],

@@ -36,7 +36,7 @@ describe("GenerateInvoiceOnContractSignedEventHandler", () => {
     bandId: bandId,
     status: BookingStatus.ACCEPTED,
     initDate: new Date(),
-    endDate: new Date(Date.now() + 86400000), // tomorrow
+    endDate: new Date(Date.now() + 86400000),
     name: "Test Event",
     country: "Test Country",
     city: "Test City",

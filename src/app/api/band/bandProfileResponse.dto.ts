@@ -53,8 +53,8 @@ export interface BandProfileResponseDto {
   reviewCount: number;
   createdDate: Date;
   weeklyAvailability: WeeklyAvailability;
-  hospitalityRider: HospitalityRider;
-  technicalRider: TechnicalRider;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
   performanceArea: PerformanceArea;
   media: Media[];
   socialLinks: SocialLinks[];

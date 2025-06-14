@@ -55,8 +55,12 @@ interface TechnicalRider {
 
 interface PerformanceArea {
   regions: string[];
-  travelPreferences: string;
-  restrictions?: string;
+  gasPriceCalculation?: {
+    fuelConsumption: number;
+    useDynamicPricing: boolean;
+    pricePerLiter?: number;
+  };
+  otherComments?: string;
 }
 
 export interface BandProfile {
@@ -71,8 +75,8 @@ export interface BandProfile {
   reviewCount: number;
   createdDate: Date;
   weeklyAvailability: WeeklyAvailability;
-  hospitalityRider: HospitalityRider;
-  technicalRider: TechnicalRider;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
   performanceArea: PerformanceArea;
   followers: number;
   following: number;

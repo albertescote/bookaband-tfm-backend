@@ -58,8 +58,12 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Catalonia", "Valencia", "Balearic Islands"],
-          travelPreferences: "Prefer venues within 200km radius",
-          restrictions: "No outdoor events during winter",
+          gasPriceCalculation: {
+            fuelConsumption: 12.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.85,
+          },
+          otherComments: "No outdoor events during winter",
         },
       },
       members: {
@@ -126,8 +130,12 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
-          travelPreferences: "Prefer venues within 150km radius",
-          restrictions: "No outdoor events during summer",
+          gasPriceCalculation: {
+            fuelConsumption: 10.8,
+            useDynamicPricing: false,
+            pricePerLiter: 1.82,
+          },
+          otherComments: "No outdoor events during summer",
         },
       },
       members: {
@@ -194,8 +202,12 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Valencia", "Murcia", "Alicante"],
-          travelPreferences: "Prefer venues within 100km radius",
-          restrictions: "No indoor venues without proper ventilation",
+          gasPriceCalculation: {
+            fuelConsumption: 11.2,
+            useDynamicPricing: false,
+            pricePerLiter: 1.8,
+          },
+          otherComments: "No indoor venues without proper ventilation",
         },
       },
       members: {
@@ -261,9 +273,13 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Barcelona", "Tarragona", "Girona"],
-          travelPreferences: "Prefer venues within 100km radius",
-          restrictions: "No outdoor events during winter",
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
         },
       },
       members: {
@@ -330,8 +346,12 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
-          travelPreferences: "Prefer venues within 150km radius",
-          restrictions: "No outdoor events during summer",
+          gasPriceCalculation: {
+            fuelConsumption: 10.8,
+            useDynamicPricing: false,
+            pricePerLiter: 1.82,
+          },
+          otherComments: "No outdoor events during summer",
         },
       },
       members: {
@@ -397,9 +417,13 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Barcelona", "Tarragona", "Girona"],
-          travelPreferences: "Prefer venues within 100km radius",
-          restrictions: "No outdoor events during winter",
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
         },
       },
       members: {
@@ -465,9 +489,13 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Barcelona", "Tarragona", "Girona"],
-          travelPreferences: "Prefer venues within 100km radius",
-          restrictions: "No outdoor events during winter",
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
         },
       },
       members: {
@@ -534,8 +562,12 @@ export async function seedBands() {
       performanceArea: {
         create: {
           regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
-          travelPreferences: "Prefer venues within 150km radius",
-          restrictions: "No outdoor events during summer",
+          gasPriceCalculation: {
+            fuelConsumption: 10.8,
+            useDynamicPricing: false,
+            pricePerLiter: 1.82,
+          },
+          otherComments: "No outdoor events during summer",
         },
       },
       members: {
@@ -601,9 +633,13 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Barcelona", "Tarragona", "Girona"],
-          travelPreferences: "Prefer venues within 100km radius",
-          restrictions: "No outdoor events during winter",
+          regions: ["Barcelona", "Girona", "Tarragona"],
+          gasPriceCalculation: {
+            fuelConsumption: 9.5,
+            useDynamicPricing: false,
+            pricePerLiter: 1.88,
+          },
+          otherComments: "Prefer venues with good acoustics",
         },
       },
       members: {

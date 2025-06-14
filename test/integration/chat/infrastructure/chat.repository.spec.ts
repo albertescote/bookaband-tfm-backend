@@ -66,8 +66,13 @@ describe("ChatRepository Integration Tests", () => {
     await prismaService.performanceArea.create({
       data: {
         id: performanceAreaId,
-        regions: ["Test Region"],
-        travelPreferences: "Test Travel Preferences",
+        regions: ["Barcelona", "Girona", "Tarragona"],
+        gasPriceCalculation: {
+          fuelConsumption: 9.5,
+          useDynamicPricing: false,
+          pricePerLiter: 1.88,
+        },
+        otherComments: "Prefer venues with good acoustics",
       },
     });
 

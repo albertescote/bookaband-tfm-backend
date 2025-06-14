@@ -61,9 +61,13 @@ describe("GetBandProfileQueryHandler", () => {
       otherRequirements: "Stage risers",
     },
     performanceArea: {
-      regions: ["Barcelona", "Madrid"],
-      travelPreferences: "Within 100km",
-      restrictions: "No outdoor venues",
+      regions: ["Catalonia", "Valencia", "Balearic Islands"],
+      gasPriceCalculation: {
+        fuelConsumption: 12.5,
+        useDynamicPricing: false,
+        pricePerLiter: 1.85,
+      },
+      otherComments: "No outdoor events during winter",
     },
     followers: 100,
     following: 50,

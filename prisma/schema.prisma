@@ -96,20 +96,20 @@ model band {
   weeklyAvailability Json
   media              media[]
   socialLink         socialLink[]
-  technicalRiderId   String       @unique
-  hospitalityRiderId String       @unique
+  technicalRiderId   String?      @unique
+  hospitalityRiderId String?      @unique
   performanceAreaId  String       @unique
   bio                String?
   imageUrl           String?
 
   members          bandMember[]
-  chats            chat[]           @relation("BandChats")
+  chats            chat[]            @relation("BandChats")
   invitations      invitation[]
   artistReview     artistReview[]
   bookings         booking[]
-  technicalRider   technicalRider   @relation(fields: [technicalRiderId], references: [id])
-  hospitalityRider hospitalityRider @relation(fields: [hospitalityRiderId], references: [id])
-  performanceArea  performanceArea  @relation(fields: [performanceAreaId], references: [id])
+  performanceArea  performanceArea   @relation(fields: [performanceAreaId], references: [id])
+  technicalRider   technicalRider?   @relation(fields: [technicalRiderId], references: [id])
+  hospitalityRider hospitalityRider? @relation(fields: [hospitalityRiderId], references: [id])
 }
 
 model media {
@@ -164,10 +164,10 @@ model hospitalityRider {
 }
 
 model performanceArea {
-  id                String   @id @default(uuid())
-  regions           String[]
-  travelPreferences String
-  restrictions      String?
+  id                  String   @id @default(uuid())
+  regions             String[]
+  gasPriceCalculation Json?
+  otherComments       String?
 
   band band? @relation
 }

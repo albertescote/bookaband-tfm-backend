@@ -130,9 +130,13 @@ describe("CreateBookingNotificationOnBookingStatusChangedEventHandler", () => {
           otherRequirements: "No other requirements",
         },
         performanceArea: {
-          regions: ["Region 1"],
-          travelPreferences: "Standard travel preferences",
-          restrictions: "No restrictions",
+          regions: ["Catalonia", "Valencia", "Balearic Islands"],
+          gasPriceCalculation: {
+            fuelConsumption: 12.5,
+            useDynamicPricing: true,
+            pricePerLiter: 1.85,
+          },
+          otherComments: "No outdoor events during winter",
         },
         media: [],
         socialLinks: [],

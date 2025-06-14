@@ -101,9 +101,13 @@ describe("BandController", () => {
           lighting: "Test",
         },
         performanceArea: {
-          regions: ["Spain"],
-          travelPreferences: "travel preferences description",
-          restrictions: "none",
+          regions: ["Catalonia", "Valencia", "Balearic Islands"],
+          gasPriceCalculation: {
+            fuelConsumption: 12.5,
+            useDynamicPricing: true,
+            pricePerLiter: 1.85,
+          },
+          otherComments: "No outdoor events during winter",
         },
       };
 
@@ -216,9 +220,13 @@ describe("BandController", () => {
           lighting: "Test",
         },
         performanceArea: {
-          regions: ["Spain"],
-          travelPreferences: "travel preferences description",
-          restrictions: "none",
+          regions: ["Catalonia", "Valencia", "Balearic Islands"],
+          gasPriceCalculation: {
+            fuelConsumption: 12.5,
+            useDynamicPricing: true,
+            pricePerLiter: 1.85,
+          },
+          otherComments: "No outdoor events during winter",
         },
         media: [],
         socialLinks: [],
@@ -294,9 +302,13 @@ describe("BandController", () => {
           lighting: "Test",
         },
         performanceArea: {
-          regions: ["Spain"],
-          travelPreferences: "travel preferences description",
-          restrictions: "none",
+          regions: ["Catalonia", "Valencia", "Balearic Islands"],
+          gasPriceCalculation: {
+            fuelConsumption: 12.5,
+            useDynamicPricing: true,
+            pricePerLiter: 1.85,
+          },
+          otherComments: "No outdoor events during winter",
         },
       };
 

@@ -17,8 +17,8 @@ export interface BandCatalogItem {
   eventTypeIds: string[];
   reviewCount: number;
   weeklyAvailability: WeeklyAvailability;
-  hospitalityRider: HospitalityRider;
-  technicalRider: TechnicalRider;
+  hospitalityRider?: HospitalityRider;
+  technicalRider?: TechnicalRider;
   performanceArea: PerformanceArea;
   bio?: string;
   price?: number;

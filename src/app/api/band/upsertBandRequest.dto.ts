@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   Min,
@@ -86,19 +87,34 @@ class TechnicalRiderDto {
   otherRequirements?: string;
 }
 
+class GasPriceCalculationDto {
+  @IsNotEmpty()
+  @IsNumber()
+  fuelConsumption: number;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  useDynamicPricing: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  pricePerLiter?: number;
+}
+
 class PerformanceAreaDto {
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
   regions: string[];
 
-  @IsNotEmpty()
-  @IsString()
-  travelPreferences: string;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => GasPriceCalculationDto)
+  gasPriceCalculation?: GasPriceCalculationDto;
 
   @IsOptional()
   @IsString()
-  restrictions?: string;
+  otherComments?: string;
 }
 
 class MediaDto {
@@ -166,15 +182,15 @@ export class UpsertBandRequestDto {
   @Type(() => WeeklyAvailabilityDto)
   weeklyAvailability: WeeklyAvailability;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => HospitalityRiderDto)
-  hospitalityRider: HospitalityRider;
+  hospitalityRider?: HospitalityRider;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => TechnicalRiderDto)
-  technicalRider: TechnicalRider;
+  technicalRider?: TechnicalRider;
 
   @IsNotEmpty()
   @ValidateNested()

@@ -100,7 +100,10 @@ describe("PaymentMethodService", () => {
 
       const result = await service.findById(mockUser, paymentMethodId);
 
-      expect(result).toEqual(mockPaymentMethod.toPrimitives());
+      expect(result).toEqual({
+        ...mockPaymentMethod.toPrimitives(),
+        createdAt: expect.any(Date),
+      });
       expect(repository.findById).toHaveBeenCalledWith(
         new PaymentMethodId(paymentMethodId),
       );
