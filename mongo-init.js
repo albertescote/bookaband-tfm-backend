@@ -1,4 +1,3 @@
-db.entity.drop();
 db.createCollection("event_types");
 db.createCollection("musical_styles");
 db.createCollection("notifications");
