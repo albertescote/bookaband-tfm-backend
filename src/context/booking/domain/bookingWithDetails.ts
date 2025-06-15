@@ -10,6 +10,7 @@ export interface BookingWithDetailsPrimitives {
   status: BookingStatus;
   initDate: Date;
   endDate: Date;
+  cost: number;
   name: string;
   userName: string;
   bandName: string;
@@ -33,6 +34,7 @@ export class BookingWithDetails {
     private status: BookingStatus,
     private initDate: Date,
     private endDate: Date,
+    private cost: number,
     private name: string,
     private userName: string,
     private bandName: string,
@@ -58,6 +60,7 @@ export class BookingWithDetails {
       primitives.status,
       primitives.initDate,
       primitives.endDate,
+      primitives.cost,
       primitives.name,
       primitives.userName,
       primitives.bandName,
@@ -83,6 +86,7 @@ export class BookingWithDetails {
       initDate: this.initDate,
       endDate: this.endDate,
       name: this.name,
+      cost: this.cost,
       userName: this.userName,
       bandName: this.bandName,
       country: this.country,

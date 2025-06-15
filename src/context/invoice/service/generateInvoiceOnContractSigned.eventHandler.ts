@@ -47,7 +47,7 @@ export class GenerateInvoiceOnContractSignedEventHandler
       booking,
       band.name,
       user,
-      band.price,
+      booking.cost,
     );
     const fileName = `invoice-${booking.id}-${Date.now()}.pdf`;
 

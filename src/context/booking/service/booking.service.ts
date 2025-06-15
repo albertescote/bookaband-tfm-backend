@@ -27,6 +27,7 @@ export interface CreateBookingRequest {
   bandId: string;
   initDate: string;
   endDate: string;
+  cost: number;
   name: string;
   country: string;
   city: string;
@@ -90,6 +91,7 @@ export class BookingService {
       new UserId(userAuthInfo.id),
       new Date(request.initDate),
       new Date(request.endDate),
+      request.cost,
       request.name,
       request.country,
       request.city,

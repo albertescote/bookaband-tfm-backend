@@ -10,6 +10,7 @@ export interface BookingPrimitives {
   status: BookingStatus;
   initDate: Date;
   endDate: Date;
+  cost: number;
   name: string;
   country: string;
   city: string;
@@ -29,6 +30,7 @@ export class Booking {
     private status: BookingStatus,
     private initDate: Date,
     private endDate: Date,
+    private cost: number,
     private name: string,
     private country: string,
     private city: string,
@@ -48,6 +50,7 @@ export class Booking {
       primitives.status,
       primitives.initDate,
       primitives.endDate,
+      primitives.cost,
       primitives.name,
       primitives.country,
       primitives.city,
@@ -65,6 +68,7 @@ export class Booking {
     userId: UserId,
     initDate: Date,
     endDate: Date,
+    cost: number,
     name: string,
     country: string,
     city: string,
@@ -82,6 +86,7 @@ export class Booking {
       BookingStatus.PENDING,
       initDate,
       endDate,
+      cost,
       name,
       country,
       city,
@@ -102,6 +107,7 @@ export class Booking {
       status: this.status,
       initDate: this.initDate,
       endDate: this.endDate,
+      cost: this.cost,
       name: this.name,
       country: this.country,
       city: this.city,

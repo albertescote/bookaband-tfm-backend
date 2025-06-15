@@ -20,6 +20,7 @@ export async function seedBookings() {
       addressLine1: "Alexanderplatz 1",
       addressLine2: "Floor 8",
       isPublic: true,
+      cost: 4500,
     },
   });
 
@@ -39,6 +40,7 @@ export async function seedBookings() {
       postalCode: "50125",
       addressLine1: "Via Benedetto da Maiano 11",
       isPublic: false,
+      cost: 4500,
     },
   });
 
@@ -58,6 +60,7 @@ export async function seedBookings() {
       postalCode: "50125",
       addressLine1: "Via Benedetto da Maiano 11",
       isPublic: true,
+      cost: 4500,
     },
   });
 
@@ -77,6 +80,7 @@ export async function seedBookings() {
       postalCode: "50125",
       addressLine1: "Via Benedetto da Maiano 11",
       isPublic: false,
+      cost: 4500,
     },
   });
 
@@ -96,6 +100,7 @@ export async function seedBookings() {
       postalCode: "50125",
       addressLine1: "Via Benedetto da Maiano 11",
       isPublic: true,
+      cost: 4500,
     },
   });
 
@@ -115,6 +120,7 @@ export async function seedBookings() {
       postalCode: "50125",
       addressLine1: "Via Benedetto da Maiano 11",
       isPublic: true,
+      cost: 4500,
     },
   });
 
@@ -134,6 +140,7 @@ export async function seedBookings() {
       postalCode: "06000",
       addressLine1: "Promenade des Anglais",
       isPublic: true,
+      cost: 6000,
     },
   });
 
@@ -154,6 +161,7 @@ export async function seedBookings() {
       addressLine1: "Calle de Serrano 45",
       addressLine2: "Penthouse",
       isPublic: false,
+      cost: 5400,
     },
   });
 
@@ -173,6 +181,7 @@ export async function seedBookings() {
       postalCode: "1200-123",
       addressLine1: "Avenida da Liberdade",
       isPublic: true,
+      cost: 3600,
     },
   });
 
@@ -192,6 +201,7 @@ export async function seedBookings() {
       postalCode: "1071 DJ",
       addressLine1: "Museumplein 6",
       isPublic: true,
+      cost: 3600,
     },
   });
 }

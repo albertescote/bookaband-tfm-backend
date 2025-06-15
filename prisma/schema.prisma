@@ -218,6 +218,7 @@ model booking {
   name         String
   initDate     DateTime
   endDate      DateTime
+  cost         Int
   country      String
   city         String
   venue        String

@@ -7,6 +7,7 @@ export interface BookingResponseDto {
   status: BookingStatus;
   initDate: Date;
   endDate: Date;
+  cost: number;
   name: string;
   country: string;
   city: string;

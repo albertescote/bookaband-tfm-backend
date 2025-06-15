@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -25,12 +26,17 @@ export class CreateBookingRequestDto {
   name: string;
 
   @IsNotEmpty()
+  @IsNumber()
+  cost: number;
+
+  @IsNotEmpty()
   @IsString()
   country: string;
 
   @IsNotEmpty()
   @IsString()
   city: string;
+
   @IsNotEmpty()
   @IsString()
   venue: string;
