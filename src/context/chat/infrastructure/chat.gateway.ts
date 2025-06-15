@@ -84,15 +84,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     let isRead = false;
 
+    const newMessageId = MessageId.generate().toPrimitive();
     if (recipientSocketId) {
       isRead = true;
-      this.server.to(recipientSocketId).emit("message", data);
+      this.server
+        .to(recipientSocketId)
+        .emit("message", { ...data, id: newMessageId });
     }
 
     await this.chatRepository.addMessage(
       new ChatId(data.chatId),
       Message.createNewTextMessage({
-        id: MessageId.generate().toPrimitive(),
+        id: newMessageId,
         senderId: data.senderId,
         recipientId: data.recipientId,
         message: data.message,
