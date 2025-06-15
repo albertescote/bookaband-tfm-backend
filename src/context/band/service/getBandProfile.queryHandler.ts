@@ -27,7 +27,11 @@ export class GetBandProfileQueryHandler
       return {
         ...bandProfileWithoutMembers,
         events: events.filter(
-          (event) => event.isPublic && event.status === BookingStatus.ACCEPTED,
+          (event) =>
+            event.isPublic &&
+            (event.status === BookingStatus.ACCEPTED ||
+              event.status === BookingStatus.SIGNED ||
+              event.status === BookingStatus.PAID),
         ),
       };
     }

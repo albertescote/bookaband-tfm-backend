@@ -397,7 +397,15 @@ export class BandRepository {
           imageUrl: m.user.imageUrl ?? undefined,
         };
       }),
-      bookingDates: band.bookings.map((b) => b.initDate.toISOString()),
+      bookingDates: band.bookings
+        .filter(
+          (booking) =>
+            booking.isPublic &&
+            (booking.status === BookingStatus.ACCEPTED ||
+              booking.status === BookingStatus.SIGNED ||
+              booking.status === BookingStatus.PAID),
+        )
+        .map((b) => b.initDate.toISOString()),
       location: band.location,
       featured: band.featured,
       bandSize: band.bandSize as BandSize,
