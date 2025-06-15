@@ -60,6 +60,7 @@ describe("BookingController", () => {
         addressLine2: "Floor 4",
         eventTypeId: "event-123",
         isPublic: true,
+        cost: 1000,
       };
 
       const expectedResponse = {

@@ -66,6 +66,7 @@ describe("GenerateContractCommandHandler", () => {
     addressLine2: "Test Address 2",
     eventTypeId: "test-event-type-id",
     isPublic: true,
+    cost: 1000,
   };
 
   const mockWeeklyAvailability: WeeklyAvailability = {

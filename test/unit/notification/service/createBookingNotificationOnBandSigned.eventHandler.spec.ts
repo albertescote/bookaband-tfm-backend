@@ -68,6 +68,7 @@ describe("CreateBookingNotificationOnBandSignedEventHandler", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "event-type-123",
         isPublic: true,
+        cost: 1000,
       };
 
       moduleConnectors.getBookingById.mockResolvedValue(mockBooking);

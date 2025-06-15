@@ -111,6 +111,7 @@ describe("ContractService", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "test-event-type",
         isPublic: true,
+        cost: 1000,
       };
       const mockBandMembers = [mockUserId];
 
@@ -163,6 +164,7 @@ describe("ContractService", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "test-event-type",
         isPublic: true,
+        cost: 1000,
       };
       const mockBandMembers = ["other-user-id"];
 
@@ -195,6 +197,7 @@ describe("ContractService", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "test-event-type",
         isPublic: true,
+        cost: 1000,
       };
       const mockBandMembers = [mockUserId];
 
@@ -329,6 +332,7 @@ describe("ContractService", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "test-event-type",
         isPublic: true,
+        cost: 1000,
       };
 
       repository.findById.mockResolvedValue(mockContract);
@@ -367,6 +371,7 @@ describe("ContractService", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "test-event-type",
         isPublic: true,
+        cost: 1000,
       };
 
       repository.findById.mockResolvedValue(mockContract);

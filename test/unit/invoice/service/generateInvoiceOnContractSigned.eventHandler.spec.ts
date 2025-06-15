@@ -46,6 +46,7 @@ describe("GenerateInvoiceOnContractSignedEventHandler", () => {
     addressLine2: "Apt 4B",
     eventTypeId: "event-type-1",
     isPublic: true,
+    cost: 1000,
   };
 
   const mockBand = {

@@ -73,6 +73,7 @@ describe("CreateBookingNotificationOnBookingStatusChangedEventHandler", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "event-type-123",
         isPublic: true,
+        cost: 1000,
       };
 
       const mockUser = new User(
@@ -195,6 +196,7 @@ describe("CreateBookingNotificationOnBookingStatusChangedEventHandler", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "event-type-123",
         isPublic: true,
+        cost: 1000,
       };
 
       moduleConnectors.getBookingById.mockResolvedValue(mockBooking);
@@ -223,6 +225,7 @@ describe("CreateBookingNotificationOnBookingStatusChangedEventHandler", () => {
         addressLine2: "Test Address 2",
         eventTypeId: "event-type-123",
         isPublic: true,
+        cost: 1000,
       };
 
       const mockUser = new User(

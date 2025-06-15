@@ -100,6 +100,7 @@ describe("InvoiceService", () => {
         addressLine2: "Test Floor 1",
         eventTypeId: "event-type-1",
         isPublic: true,
+        cost: 1000,
       };
 
       moduleConnectors.getBookingByContractId.mockResolvedValue(mockBooking);
@@ -171,6 +172,7 @@ describe("InvoiceService", () => {
         addressLine2: "Test Floor 1",
         eventTypeId: "event-type-1",
         isPublic: true,
+        cost: 1000,
       };
 
       moduleConnectors.getBookingByContractId.mockResolvedValue(mockBooking);

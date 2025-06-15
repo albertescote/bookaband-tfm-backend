@@ -55,6 +55,7 @@ describe("BookingService", () => {
     postalCode: "08001",
     addressLine1: "Passeig Marítim 1",
     isPublic: true,
+    cost: 1000,
   };
 
   const mockBooking: Booking = {
