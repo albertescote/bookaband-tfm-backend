@@ -22,6 +22,8 @@ import { MissingUserInfoToCreateBookingException } from "../exceptions/missingUs
 import { UserNotFoundException } from "../exceptions/userNotFoundException";
 import { EventBus } from "../../shared/eventBus/domain/eventBus";
 import { BookingStatusChangedEvent } from "../../shared/eventBus/domain/bookingStatusChanged.event";
+import { GasPriceCalculator } from "../infrastructure/gasPriceCalculator";
+import { IntroducedCostDoesNotMatchTheCalculatedOneException } from "../exceptions/introducedCostDoesNotMatchTheCalculatedOneException";
 
 export interface CreateBookingRequest {
   bandId: string;
@@ -69,6 +71,7 @@ export class BookingService {
   constructor(
     private bookingRepository: BookingRepository,
     private moduleConnectors: ModuleConnectors,
+    private gasPriceCalculator: GasPriceCalculator,
     @Inject("EventBus") private eventBus: EventBus,
   ) {}
 
@@ -86,6 +89,27 @@ export class BookingService {
     if (!user.hasAllInfo()) {
       throw new MissingUserInfoToCreateBookingException();
     }
+
+    const band = await this.moduleConnectors.getBandById(request.bandId);
+    if (!band) {
+      throw new BandNotFoundException(request.bandId);
+    }
+
+    const calculatedGasCost = await this.gasPriceCalculator.calculateGasCost({
+      artistLocation: band.location,
+      bookingLocation: request.city,
+      useDynamicPricing:
+        band.performanceArea.gasPriceCalculation?.useDynamicPricing ?? false,
+      fallbackPricePerLiter:
+        band.performanceArea.gasPriceCalculation?.pricePerLiter ?? 0,
+      fuelConsumption:
+        band.performanceArea.gasPriceCalculation?.fuelConsumption ?? 0,
+    });
+
+    if (calculatedGasCost.gasCost !== request.cost) {
+      throw new IntroducedCostDoesNotMatchTheCalculatedOneException();
+    }
+
     const newBooking = Booking.create(
       new BandId(request.bandId),
       new UserId(userAuthInfo.id),
