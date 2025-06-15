@@ -11,7 +11,7 @@ import { GetBookingPriceQueryHandler } from "./service/getBookingPrice.queryHand
 import { UpdateBookingStatusOnContractSignedEventHandler } from "./service/updateBookingStatusOnContractSigned.eventHandler";
 import { UpdateBookingStatusOnInvoicePaidEventHandler } from "./service/updateBookingStatusOnInvoicePaid.eventHandler";
 import { EventBusModule } from "../shared/eventBus/eventBus.module";
-import { BUS_TYPE, RESEND_API_KEY } from "../../config";
+import { BUS_TYPE, GOOGLE_MAPS_API_KEY } from "../../config";
 import { ModuleRef } from "@nestjs/core";
 import { ExplorerService } from "@nestjs/cqrs/dist/services/explorer.service";
 import { EventBus } from "../shared/eventBus/domain/eventBus";
@@ -21,7 +21,7 @@ import { GasPriceCalculator } from "./infrastructure/gasPriceCalculator";
 const GoogleMapsApiKey = {
   provide: "google-maps-api-key",
   useFactory: () => {
-    return RESEND_API_KEY;
+    return GOOGLE_MAPS_API_KEY;
   },
 };
 
@@ -34,6 +34,7 @@ const GoogleMapsApiKey = {
     }),
   ],
   providers: [
+    GoogleMapsApiKey,
     BookingService,
     BookingRepository,
     PrismaService,

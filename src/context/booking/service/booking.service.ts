@@ -106,7 +106,7 @@ export class BookingService {
         band.performanceArea.gasPriceCalculation?.fuelConsumption ?? 0,
     });
 
-    if (calculatedGasCost.gasCost !== request.cost) {
+    if (calculatedGasCost.gasCost + band.price !== request.cost) {
       throw new IntroducedCostDoesNotMatchTheCalculatedOneException();
     }
 
