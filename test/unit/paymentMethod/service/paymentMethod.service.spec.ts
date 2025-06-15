@@ -183,6 +183,7 @@ describe("PaymentMethodService", () => {
         ...mockPaymentMethod.toPrimitives(),
         isDefault: false,
         alias: "Updated Card",
+        createdAt: expect.any(Date),
       });
       expect(repository.update).toHaveBeenCalled();
     });

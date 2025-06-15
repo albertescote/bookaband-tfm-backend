@@ -57,12 +57,15 @@ export class GasPriceCalculator {
     const response = await axios.get(url);
     const data = response.data;
 
-    if (data.status !== "OK") {
+    if (
+      data.status !== "OK" ||
+      data.rows[0]?.elements[0]?.status === "NOT_FOUND"
+    ) {
       throw new GoogleMapsApiException();
     }
 
     const distanceInMeters = data.rows[0].elements[0].distance.value;
-    return distanceInMeters / 1000; // km
+    return distanceInMeters / 1000;
   }
 
   private async fetchGasPrice(): Promise<number> {

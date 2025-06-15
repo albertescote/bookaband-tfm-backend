@@ -16,6 +16,8 @@ import { BookingAlreadyProcessedException } from "../../../../src/context/bookin
 import { NotAbleToCreateBookingException } from "../../../../src/context/booking/exceptions/notAbleToCreateBookingException";
 import { MissingUserInfoToCreateBookingException } from "../../../../src/context/booking/exceptions/missingUserInfoToCreateBookingException";
 import { UserNotFoundException } from "../../../../src/context/booking/exceptions/userNotFoundException";
+import { IntroducedCostDoesNotMatchTheCalculatedOneException } from "../../../../src/context/booking/exceptions/introducedCostDoesNotMatchTheCalculatedOneException";
+import { GasPriceCalculator } from "../../../../src/context/booking/infrastructure/gasPriceCalculator";
 import UserId from "../../../../src/context/shared/domain/userId";
 import BandId from "../../../../src/context/shared/domain/bandId";
 import BookingId from "../../../../src/context/shared/domain/bookingId";
@@ -26,6 +28,7 @@ describe("BookingService", () => {
   let bookingRepository: jest.Mocked<BookingRepository>;
   let moduleConnectors: jest.Mocked<ModuleConnectors>;
   let eventBus: jest.Mocked<EventBus>;
+  let gasPriceCalculator: jest.Mocked<GasPriceCalculator>;
 
   const mockClientUserId = UserId.generate().toPrimitive();
   const mockMusicianUserId = UserId.generate().toPrimitive();
@@ -56,6 +59,42 @@ describe("BookingService", () => {
     addressLine1: "Passeig Marítim 1",
     isPublic: true,
     cost: 1000,
+  };
+
+  const mockBand = {
+    id: mockBandId,
+    name: "Test Band",
+    location: "Madrid",
+    members: [],
+    musicalStyleIds: [],
+    reviewCount: 0,
+    followers: 0,
+    following: 0,
+    createdAt: new Date(),
+    price: 1000,
+    bandSize: "BAND",
+    featured: false,
+    visible: true,
+    eventTypeIds: [],
+    weeklyAvailability: {
+      monday: true,
+      tuesday: true,
+      wednesday: true,
+      thursday: true,
+      friday: true,
+      saturday: true,
+      sunday: true,
+    },
+    media: [],
+    socialLinks: [],
+    performanceArea: {
+      regions: ["Madrid", "Barcelona"],
+      gasPriceCalculation: {
+        useDynamicPricing: true,
+        pricePerLiter: 1.85,
+        fuelConsumption: 12.5,
+      },
+    },
   };
 
   const mockBooking: Booking = {
@@ -127,12 +166,19 @@ describe("BookingService", () => {
             obtainBandMembers: jest.fn(),
             addBookingToChat: jest.fn(),
             generateContract: jest.fn(),
+            getBandById: jest.fn(),
           },
         },
         {
           provide: "EventBus",
           useValue: {
             publish: jest.fn(),
+          },
+        },
+        {
+          provide: GasPriceCalculator,
+          useValue: {
+            calculateGasCost: jest.fn(),
           },
         },
       ],
@@ -142,6 +188,7 @@ describe("BookingService", () => {
     bookingRepository = module.get(BookingRepository);
     moduleConnectors = module.get(ModuleConnectors);
     eventBus = module.get("EventBus");
+    gasPriceCalculator = module.get(GasPriceCalculator);
 
     jest.clearAllMocks();
 
@@ -202,6 +249,12 @@ describe("BookingService", () => {
           nationalId: "12345678X",
         }),
       );
+      moduleConnectors.getBandById.mockResolvedValue(mockBand);
+      gasPriceCalculator.calculateGasCost.mockResolvedValue({
+        distance: 500,
+        pricePerLiter: 1.85,
+        gasCost: 1000,
+      });
       bookingRepository.save.mockResolvedValue(mockBooking);
 
       const result = await service.create(
@@ -212,6 +265,17 @@ describe("BookingService", () => {
       expect(moduleConnectors.obtainUserInformation).toHaveBeenCalledWith(
         mockClientUserId,
       );
+      expect(moduleConnectors.getBandById).toHaveBeenCalledWith(mockBandId);
+      expect(gasPriceCalculator.calculateGasCost).toHaveBeenCalledWith({
+        artistLocation: mockBand.location,
+        bookingLocation: mockCreateBookingRequest.city,
+        useDynamicPricing:
+          mockBand.performanceArea.gasPriceCalculation.useDynamicPricing,
+        fallbackPricePerLiter:
+          mockBand.performanceArea.gasPriceCalculation.pricePerLiter,
+        fuelConsumption:
+          mockBand.performanceArea.gasPriceCalculation.fuelConsumption,
+      });
       expect(bookingRepository.save).toHaveBeenCalled();
       expect(moduleConnectors.addBookingToChat).toHaveBeenCalledWith(
         mockBandId,
@@ -222,6 +286,64 @@ describe("BookingService", () => {
         expect.any(BookingStatusChangedEvent),
       );
       expect(result).toEqual(mockBooking.toPrimitives());
+    });
+
+    it("should throw IntroducedCostDoesNotMatchTheCalculatedOneException when cost doesn't match", async () => {
+      moduleConnectors.obtainUserInformation.mockResolvedValue(
+        User.fromPrimitives({
+          id: mockClientUserAuthInfo.id,
+          firstName: "John",
+          familyName: "Doe",
+          email: mockClientUserAuthInfo.email,
+          role: mockClientUserAuthInfo.role,
+          emailVerified: true,
+          joinedDate: new Date().toDateString(),
+          phoneNumber: "+34123456789",
+          nationalId: "12345678X",
+        }),
+      );
+      moduleConnectors.getBandById.mockResolvedValue(mockBand);
+      gasPriceCalculator.calculateGasCost.mockResolvedValue({
+        distance: 500,
+        pricePerLiter: 1.85,
+        gasCost: 1500,
+      });
+
+      await expect(
+        service.create(mockClientUserAuthInfo, mockCreateBookingRequest),
+      ).rejects.toThrow(IntroducedCostDoesNotMatchTheCalculatedOneException);
+    });
+
+    it("should throw IntroducedCostDoesNotMatchTheCalculatedOneException when band has no gas price calculation", async () => {
+      moduleConnectors.obtainUserInformation.mockResolvedValue(
+        User.fromPrimitives({
+          id: mockClientUserAuthInfo.id,
+          firstName: "John",
+          familyName: "Doe",
+          email: mockClientUserAuthInfo.email,
+          role: mockClientUserAuthInfo.role,
+          emailVerified: true,
+          joinedDate: new Date().toDateString(),
+          phoneNumber: "+34123456789",
+          nationalId: "12345678X",
+        }),
+      );
+      moduleConnectors.getBandById.mockResolvedValue({
+        ...mockBand,
+        performanceArea: {
+          regions: ["Madrid", "Barcelona"],
+          gasPriceCalculation: null,
+        },
+      });
+      gasPriceCalculator.calculateGasCost.mockResolvedValue({
+        distance: 0,
+        pricePerLiter: 0,
+        gasCost: 0,
+      });
+
+      await expect(
+        service.create(mockClientUserAuthInfo, mockCreateBookingRequest),
+      ).rejects.toThrow(IntroducedCostDoesNotMatchTheCalculatedOneException);
     });
 
     it("should throw UserNotFoundException when user is not found", async () => {
@@ -264,11 +386,31 @@ describe("BookingService", () => {
           nationalId: "12345678X",
         }),
       );
+      moduleConnectors.getBandById.mockResolvedValue(mockBand);
+      gasPriceCalculator.calculateGasCost.mockResolvedValue({
+        distance: 500,
+        pricePerLiter: 1.85,
+        gasCost: 1000,
+      });
       bookingRepository.save.mockResolvedValue(null);
 
       await expect(
         service.create(mockClientUserAuthInfo, mockCreateBookingRequest),
       ).rejects.toThrow(NotAbleToCreateBookingException);
+      expect(moduleConnectors.obtainUserInformation).toHaveBeenCalledWith(
+        mockClientUserId,
+      );
+      expect(moduleConnectors.getBandById).toHaveBeenCalledWith(mockBandId);
+      expect(gasPriceCalculator.calculateGasCost).toHaveBeenCalledWith({
+        artistLocation: mockBand.location,
+        bookingLocation: mockCreateBookingRequest.city,
+        useDynamicPricing:
+          mockBand.performanceArea.gasPriceCalculation.useDynamicPricing,
+        fallbackPricePerLiter:
+          mockBand.performanceArea.gasPriceCalculation.pricePerLiter,
+        fuelConsumption:
+          mockBand.performanceArea.gasPriceCalculation.fuelConsumption,
+      });
     });
   });
 
