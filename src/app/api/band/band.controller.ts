@@ -25,14 +25,13 @@ import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { LeaveBandCommand } from "../../../context/band/service/leaveBand.command";
 import { RemoveMemberCommand } from "../../../context/band/service/removeMember.command";
 import { ParseIntPipeCustom } from "../../pipes/parse-int.pipe";
-import { ValidateLocationPipe } from "../../pipes/validate-location.pipe";
 import { ValidateDatePipe } from "../../pipes/validate-date.pipe";
 import { FilteredBandsResponseDto } from "./filteredBandsResponse.dto";
 import { FeaturedBandsResponseDto } from "./featuredBandsResponse.dto";
 import { GetFilteredBandsQuery } from "../../../context/band/service/getFilteredBands.query";
 import { GetFeaturedBandsQuery } from "../../../context/band/service/getFeaturedBands.query";
 import { GetBandProfileQuery } from "../../../context/band/service/getBandProfile.query";
-import { ValidateArtistNamePipe } from "../../pipes/validate-artist-name.pipe";
+import { ValidateTextPipe } from "../../pipes/validate-text.pipe";
 
 @Controller("bands")
 export class BandController {
@@ -68,13 +67,13 @@ export class BandController {
     @Request() req: { user: UserAuthInfo },
     @Query("page", ParseIntPipeCustom) page = 1,
     @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
-    @Query("location", new ValidateLocationPipe())
+    @Query("location", new ValidateTextPipe())
     location?: string,
-    @Query("artistName", new ValidateArtistNamePipe())
+    @Query("artistName", new ValidateTextPipe())
     artistName?: string,
     @Query("date", new ValidateDatePipe())
     date?: string,
-    @Query("timezone")
+    @Query("timezone", new ValidateTextPipe())
     timeZone?: string,
   ): Promise<FilteredBandsResponseDto> {
     const query = new GetFilteredBandsQuery(req.user.id, page, pageSize, {

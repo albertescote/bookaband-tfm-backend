@@ -1,16 +1,18 @@
 import { BadRequestException, Injectable, PipeTransform } from "@nestjs/common";
 
 @Injectable()
-export class ValidateArtistNamePipe implements PipeTransform<string, string> {
+export class ValidateTextPipe implements PipeTransform<string, string> {
   transform(value: string): string {
     if (typeof value !== "string") return undefined;
 
-    const trimmed = value.trim();
+    const decoded = decodeURIComponent(value);
+
+    const trimmed = decoded.trim();
     if (!trimmed) return undefined;
 
-    const searchRegex = /^[a-zA-Z0-9\s\-.,()&!'+#@\/:"]+$/;
+    const artistNameRegex = /^[\p{L}\p{N}\s\-.,()&!'+#@\/:"]+$/u;
 
-    if (!searchRegex.test(trimmed)) {
+    if (!artistNameRegex.test(trimmed)) {
       throw new BadRequestException("Invalid search query format.");
     }
 

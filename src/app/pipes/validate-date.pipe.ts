@@ -5,7 +5,9 @@ export class ValidateDatePipe implements PipeTransform<string, string> {
   transform(value: string): string {
     if (typeof value !== "string") return undefined;
 
-    const trimmed = value.trim();
+    const decoded = decodeURIComponent(value);
+
+    const trimmed = decoded.trim();
     if (!trimmed) return undefined;
 
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
