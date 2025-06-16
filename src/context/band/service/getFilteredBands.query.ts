@@ -7,6 +7,7 @@ export class GetFilteredBandsQuery {
       location: string;
       searchQuery: string;
       date: string;
+      timeZone: string;
     },
   ) {}
 
@@ -22,7 +23,12 @@ export class GetFilteredBandsQuery {
     return this._pageSize;
   }
 
-  get filters(): { location: string; searchQuery: string; date: string } {
+  get filters(): {
+    location: string;
+    searchQuery: string;
+    date: string;
+    timeZone: string;
+  } {
     return this._filters;
   }
 }

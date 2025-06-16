@@ -10,6 +10,8 @@ import { Prisma } from "@prisma/client";
 import { BandCatalogItem } from "../domain/bandCatalogItem";
 import { FeaturedBand } from "../service/getFeaturedBands.queryHandler";
 import { BookingStatus } from "../../shared/domain/bookingStatus";
+import { format, toZonedTime } from "date-fns-tz";
+import TimeZone from "../domain/timeZone";
 
 export interface UserBand {
   id: string;
@@ -484,8 +486,28 @@ export class BandRepository {
   async getFilteredBandCatalogItems(
     page: number,
     pageSize: number,
-    filters?: { date?: string; location?: string; searchQuery?: string },
+    filters?: {
+      date?: string;
+      timeZone?: TimeZone;
+      location?: string;
+      searchQuery?: string;
+    },
   ): Promise<{ bandCatalogItems: BandCatalogItem[]; total: number }> {
+    let utcStart: Date | undefined;
+    let utcEnd: Date | undefined;
+    let dayOfWeek: string | undefined;
+    if (filters?.date) {
+      utcStart = toZonedTime(
+        `${filters?.date}T00:00:00`,
+        filters.timeZone ? filters.timeZone.getValue() : "Europe/Madrid",
+      );
+      utcEnd = toZonedTime(
+        `${filters?.date}T23:59:59`,
+        filters.timeZone ? filters.timeZone.getValue() : "Europe/Madrid",
+      );
+      const localDate = toZonedTime(filters.date, filters.timeZone.getValue());
+      dayOfWeek = format(localDate, "EEEE").toLowerCase();
+    }
     const whereClause: any = {
       visible: true,
       ...(filters?.location && {
@@ -500,12 +522,41 @@ export class BandRepository {
           mode: "insensitive",
         },
       }),
+      ...(filters?.date && {
+        bookings: {
+          none: {
+            AND: [
+              {
+                initDate: {
+                  gte: utcStart,
+                  lte: utcEnd,
+                },
+              },
+              {
+                status: {
+                  in: [
+                    BookingStatus.ACCEPTED,
+                    BookingStatus.SIGNED,
+                    BookingStatus.PAID,
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      }),
+      ...(dayOfWeek && {
+        weeklyAvailability: {
+          path: [dayOfWeek],
+          equals: true,
+        },
+      }),
     };
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
-    const allBands = await this.prismaService.band.findMany({
+    const filteredBands = await this.prismaService.band.findMany({
       where: whereClause,
       include: {
         artistReview: true,
@@ -519,17 +570,6 @@ export class BandRepository {
       },
     });
 
-    const filteredBands = filters?.date
-      ? allBands.filter(
-          (band) =>
-            !band.bookings.some(
-              (b) =>
-                b.status === "ACCEPTED" &&
-                b.initDate.toISOString().split("T")[0] === filters.date,
-            ),
-        )
-      : allBands;
-
     const total = filteredBands.length;
 
     const pagedBands = filteredBands.slice(skip, skip + take);
@@ -538,9 +578,7 @@ export class BandRepository {
       id: band.id,
       name: band.name,
       musicalStyleIds: band.musicalStyleIds,
-      bookingDates: band.bookings
-        .filter((b) => b.status === "ACCEPTED")
-        .map((b) => b.initDate.toISOString()),
+      bookingDates: band.bookings.map((b) => b.initDate.toISOString()),
       weeklyAvailability:
         band.weeklyAvailability as unknown as WeeklyAvailability,
       location: band.location,

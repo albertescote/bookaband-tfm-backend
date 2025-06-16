@@ -7,7 +7,9 @@ export class SanitizeTextPipe
   transform(value?: string): string | undefined {
     if (typeof value !== "string") return undefined;
 
-    const trimmed = value.trim();
+    const urlDecoded = decodeURIComponent(value);
+
+    const trimmed = urlDecoded.trim();
     if (!trimmed) return undefined;
 
     return trimmed

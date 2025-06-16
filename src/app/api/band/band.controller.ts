@@ -75,11 +75,14 @@ export class BandController {
     searchQuery?: string,
     @Query("date", new SanitizeTextPipe(), new ValidateDatePipe())
     date?: string,
+    @Query("timezone", new SanitizeTextPipe())
+    timeZone?: string,
   ): Promise<FilteredBandsResponseDto> {
     const query = new GetFilteredBandsQuery(req.user.id, page, pageSize, {
       location,
       searchQuery,
       date,
+      timeZone,
     });
     return this.queryBus.execute(query);
   }
