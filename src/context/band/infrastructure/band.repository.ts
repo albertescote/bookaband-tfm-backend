@@ -10,8 +10,7 @@ import { Prisma } from "@prisma/client";
 import { BandCatalogItem } from "../domain/bandCatalogItem";
 import { FeaturedBand } from "../service/getFeaturedBands.queryHandler";
 import { BookingStatus } from "../../shared/domain/bookingStatus";
-import { format, toZonedTime } from "date-fns-tz";
-import TimeZone from "../domain/timeZone";
+import { LocationRegionChecker } from "./locationRegionChecker";
 
 export interface UserBand {
   id: string;
@@ -21,7 +20,10 @@ export interface UserBand {
 
 @Injectable()
 export class BandRepository {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private locationRegionChecker: LocationRegionChecker,
+  ) {}
 
   async addBand(band: Band): Promise<Band> {
     const primitives = band.toPrimitives();
@@ -486,35 +488,17 @@ export class BandRepository {
     page: number,
     pageSize: number,
     filters?: {
-      date?: string;
-      timeZone?: TimeZone;
-      location?: string;
       artistName?: string;
+      date?: {
+        utcStart: Date;
+        utcEnd: Date;
+        dayOfWeek: string;
+      };
+      location?: string;
     },
   ): Promise<{ bandCatalogItems: BandCatalogItem[]; total: number }> {
-    let utcStart: Date | undefined;
-    let utcEnd: Date | undefined;
-    let dayOfWeek: string | undefined;
-    if (filters?.date) {
-      utcStart = toZonedTime(
-        `${filters?.date}T00:00:00`,
-        filters.timeZone ? filters.timeZone.getValue() : "Europe/Madrid",
-      );
-      utcEnd = toZonedTime(
-        `${filters?.date}T23:59:59`,
-        filters.timeZone ? filters.timeZone.getValue() : "Europe/Madrid",
-      );
-      const localDate = toZonedTime(filters.date, filters.timeZone.getValue());
-      dayOfWeek = format(localDate, "EEEE").toLowerCase();
-    }
     const whereClause: any = {
       visible: true,
-      ...(filters?.location && {
-        location: {
-          contains: filters.location,
-          mode: "insensitive",
-        },
-      }),
       ...(filters?.artistName && {
         name: {
           contains: filters.artistName,
@@ -527,8 +511,8 @@ export class BandRepository {
             AND: [
               {
                 initDate: {
-                  gte: utcStart,
-                  lte: utcEnd,
+                  gte: filters.date.utcStart,
+                  lte: filters.date.utcEnd,
                 },
               },
               {
@@ -544,16 +528,13 @@ export class BandRepository {
           },
         },
       }),
-      ...(dayOfWeek && {
+      ...(filters?.date && {
         weeklyAvailability: {
-          path: [dayOfWeek],
+          path: [filters.date.dayOfWeek],
           equals: true,
         },
       }),
     };
-
-    const skip = (page - 1) * pageSize;
-    const take = pageSize;
 
     const filteredBands = await this.prismaService.band.findMany({
       where: whereClause,
@@ -569,11 +550,16 @@ export class BandRepository {
       },
     });
 
-    const total = filteredBands.length;
+    const filteredByLocation = filters.location
+      ? await this.filterByLocation(filteredBands, filters.location)
+      : filteredBands;
 
-    const pagedBands = filteredBands.slice(skip, skip + take);
+    const total = filteredByLocation.length;
+    const skip = (page - 1) * pageSize;
 
-    const mappedBands: BandCatalogItem[] = pagedBands.map((band) => ({
+    const pagedBands = filteredByLocation.slice(skip, skip + pageSize);
+
+    const bands = pagedBands.map((band) => ({
       id: band.id,
       name: band.name,
       musicalStyleIds: band.musicalStyleIds,
@@ -602,10 +588,7 @@ export class BandRepository {
       },
     }));
 
-    return {
-      bandCatalogItems: mappedBands,
-      total,
-    };
+    return { bandCatalogItems: bands, total };
   }
 
   async getFeaturedBands(
@@ -652,5 +635,22 @@ export class BandRepository {
     if (reviews.length === 0) return null;
     const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
     return sum / reviews.length;
+  }
+
+  private async filterByLocation(
+    items: any[],
+    location: string,
+  ): Promise<any[]> {
+    const checks = await Promise.all(
+      items.map(async (item) => {
+        const isMatch = await this.locationRegionChecker.isLocationInRegions(
+          location,
+          item.performanceArea.regions,
+        );
+        return isMatch ? item : null;
+      }),
+    );
+
+    return checks.filter((item): item is BandCatalogItem => item !== null);
   }
 }

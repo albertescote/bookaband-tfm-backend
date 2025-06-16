@@ -13,10 +13,20 @@ import { GetFeaturedBandsQueryHandler } from "./service/getFeaturedBands.queryHa
 import { GetFilteredBandsQueryHandler } from "./service/getFilteredBands.queryHandler";
 import { GetBandProfileQueryHandler } from "./service/getBandProfile.queryHandler";
 import { GetUserBandsQueryHandler } from "./service/getUserBands.queryHandler";
+import { GOOGLE_MAPS_API_KEY } from "../../config";
+import { LocationRegionChecker } from "./infrastructure/locationRegionChecker";
+
+const GoogleMapsApiKey = {
+  provide: "google-maps-api-key",
+  useFactory: () => {
+    return GOOGLE_MAPS_API_KEY;
+  },
+};
 
 @Module({
   imports: [CqrsModule],
   providers: [
+    GoogleMapsApiKey,
     BandService,
     GetBandMembersQueryHandler,
     GetBandInfoQueryHandler,
@@ -30,6 +40,7 @@ import { GetUserBandsQueryHandler } from "./service/getUserBands.queryHandler";
     BandRepository,
     ModuleConnectors,
     PrismaService,
+    LocationRegionChecker,
   ],
   exports: [
     BandService,
