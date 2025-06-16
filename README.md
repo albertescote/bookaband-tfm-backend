@@ -1,57 +1,42 @@
 # BookaBand Backend
 
-Backend service for the BookaBand platform, a marketplace connecting bands with event organizers.
+This repository contains the backend service for BookaBand, a web platform that streamlines the process of hiring musicians and bands for all types of events. The system acts as a central meeting point between artists and clients, supporting the entire booking workflow—from discovery and communication to contracting, payment, and logistical coordination.
 
-## Features
+## Project Context
 
-- Band management and discovery
-- Location-based band filtering using Google Places API
-- Event booking and management
-- User authentication and authorization
-- Band reviews and ratings
-- Technical and hospitality rider management
+This backend system is developed as part of a Master's Thesis for the **Master in Software Engineering and Computer Systems at UNIR (Universidad Internacional de La Rioja)**. The project demonstrates applied knowledge in backend development, web service architecture, secure API design, and real-world platform engineering.
+
+## Key Features
+
+- **Musician and Band Profile Management**: Artists can create and manage professional profiles with media, descriptions, and availability.
+- **Advanced Search and Filtering**: Clients can discover bands using filters such as artistName, location, and availability, with support for location-based queries via the Google Places API.
+- **Event Booking System**: Complete support for booking flow, including date selection, contract terms, and pricing negotiation.
+- **Contract Management with Digital Signature**: Contracts between clients and musicians are generated and signed digitally for legal validity and convenience.
+- **User Authentication and Authorization**: Secure access control using JWT and role-based permissions. Google federated authentication also supported.
+- **Review and Rating System**: Clients can leave feedback and ratings for bands after events.
+- **Rider Management**: Bands can define and update their technical and hospitality requirements for each event.
+- **Real-Time Chat**: Integrated messaging system to enable direct communication between clients and artists during the negotiation and planning phase.
+- **Notification System**: Email or in-app notifications are used to keep users informed about booking updates, messages, contract changes, and more.
 
 ## Tech Stack
 
 - NestJS
 - Prisma
 - PostgreSQL
-- Google Maps Places API
-- JWT Authentication
+- MongoDB
+- Redis
 
 ## Prerequisites
 
-- Node.js (v16 or higher)
-- PostgreSQL
+- Node.js (v22 or higher)
 - Google Maps API Key
+- Google OAuth Client Credentials
+- Resend API Key
+- VIDSigner Credentials
 
 ## Environment Variables
 
-Create a `.env` file in the root directory with the following variables:
-
-```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/bookaband?schema=public"
-
-# JWT
-JWT_SECRET="your-jwt-secret"
-
-# Google Maps
-GOOGLE_MAPS_API_KEY="your-google-maps-api-key"
-
-# Email
-EMAIL_HOST="smtp.example.com"
-EMAIL_PORT=587
-EMAIL_USER="your-email@example.com"
-EMAIL_PASSWORD="your-email-password"
-EMAIL_FROM="noreply@example.com"
-
-# AWS
-AWS_ACCESS_KEY_ID="your-aws-access-key"
-AWS_SECRET_ACCESS_KEY="your-aws-secret-key"
-AWS_REGION="your-aws-region"
-AWS_BUCKET_NAME="your-bucket-name"
-```
+Create a `.env` file in the root directory with the variables that appear in .env.example.
 
 ## Installation
 
@@ -66,51 +51,37 @@ cd bookaband-tfm-backend
 npm install
 ```
 
-3. Set up the database:
+3. Start the databases: PostgreSQL, MongoDB & Redis
 ```bash
-npx prisma migrate dev
+docker-compose up -d
 ```
 
-4. Start the development server:
+4. Set up the PostgreSQL
 ```bash
-npm run start:dev
+# Prisma
+npm run db-generate-modules
+
+npm run db-post-schema
+
+# Seed
+npm run db-primsa-seed
 ```
 
-## Location Filtering
-
-The platform uses Google Places API to provide accurate location-based band filtering. Bands can specify their performance regions using Google Place IDs, which can represent:
-
-- Countries
-- Administrative areas (states, regions)
-- Provinces
-- Cities
-
-When searching for bands by location, the system will:
-1. Convert the search location to a Google Place ID
-2. Check if the location is within any of the band's supported regions
-3. Return only bands that can perform in the requested location
-
-This ensures accurate geographical matching, taking into account administrative hierarchies (e.g., if a band supports "Catalonia", they will be found when searching for "Barcelona").
-
-## API Documentation
-
-API documentation is available at `/api` when running the server.
+4. Start the server:
+```bash
+npm run start
+```
 
 ## Testing
 
 Run the test suite:
 ```bash
-npm test
+# All tests
+npm run test
+
+# Unit tests
+npm run test:unit
+
+# Integration tests (To run integration tests, it is necessary to clean the databases. To do this, you can run db-prism-clear)
+npm run test:integration
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.

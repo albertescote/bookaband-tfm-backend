@@ -14,29 +14,7 @@ import { seedArtistReviews } from "./seedArtistReview";
 
 const prisma = new PrismaClient();
 
-async function clearDatabase() {
-  await prisma.message.deleteMany();
-  await prisma.chat.deleteMany();
-  await prisma.booking.deleteMany();
-  await prisma.paymentMethod.deleteMany();
-  await prisma.billingAddress.deleteMany();
-  await prisma.band.deleteMany();
-  await prisma.hospitalityRider.deleteMany();
-  await prisma.technicalRider.deleteMany();
-  await prisma.performanceArea.deleteMany();
-  await prisma.emailVerification.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.contract.deleteMany();
-  await prisma.invoice.deleteMany();
-  await prisma.media.deleteMany();
-  await prisma.socialLink.deleteMany();
-  await prisma.artistReview.deleteMany();
-}
-
 async function main() {
-  console.log("🧹 Clearing database...");
-  await clearDatabase();
-
   console.log("🌱 Seeding data...");
   await seedUsers();
   await seedEmailVerifications();
