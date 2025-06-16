@@ -157,7 +157,8 @@ describe("GetFilteredBandsQueryHandler", () => {
         mockPageSize,
         {
           location: "",
-          searchQuery: "",
+          timeZone: "",
+          artistName: "",
           date: "",
         },
       );
@@ -172,15 +173,16 @@ describe("GetFilteredBandsQueryHandler", () => {
         mockBandRepository.getFilteredBandCatalogItems,
       ).toHaveBeenCalledWith(mockPage, mockPageSize, {
         location: "",
-        searchQuery: "",
-        date: "",
+        artistName: "",
+        date: undefined,
       });
     });
 
     it("should return filtered bands without price when userId is not provided", async () => {
       const query = new GetFilteredBandsQuery("", mockPage, mockPageSize, {
         location: "",
-        searchQuery: "",
+        timeZone: "",
+        artistName: "",
         date: "",
       });
       const result = await handler.execute(query);
@@ -197,15 +199,16 @@ describe("GetFilteredBandsQueryHandler", () => {
         mockBandRepository.getFilteredBandCatalogItems,
       ).toHaveBeenCalledWith(mockPage, mockPageSize, {
         location: "",
-        searchQuery: "",
-        date: "",
+        artistName: "",
+        date: undefined,
       });
     });
 
     it("should return hasMore as false when all bands are returned", async () => {
       const query = new GetFilteredBandsQuery(mockUserId, 2, 2, {
         location: "",
-        searchQuery: "",
+        timeZone: "",
+        artistName: "",
         date: "",
       });
       const result = await handler.execute(query);
@@ -215,8 +218,8 @@ describe("GetFilteredBandsQueryHandler", () => {
         mockBandRepository.getFilteredBandCatalogItems,
       ).toHaveBeenCalledWith(2, 2, {
         location: "",
-        searchQuery: "",
-        date: "",
+        artistName: "",
+        date: undefined,
       });
     });
 
@@ -228,7 +231,8 @@ describe("GetFilteredBandsQueryHandler", () => {
 
       const query = new GetFilteredBandsQuery(mockUserId, 1, 10, {
         location: "",
-        searchQuery: "",
+        timeZone: "",
+        artistName: "",
         date: "",
       });
       const result = await handler.execute(query);
@@ -242,15 +246,16 @@ describe("GetFilteredBandsQueryHandler", () => {
         mockBandRepository.getFilteredBandCatalogItems,
       ).toHaveBeenCalledWith(1, 10, {
         location: "",
-        searchQuery: "",
-        date: "",
+        artistName: "",
+        date: undefined,
       });
     });
 
     it("should pass filters to repository correctly", async () => {
       const filters = {
         location: "Barcelona",
-        searchQuery: "Test",
+        timeZone: "Europe/Madrid",
+        artistName: "Test",
         date: "2024-03-20",
       };
       const query = new GetFilteredBandsQuery(
@@ -263,7 +268,15 @@ describe("GetFilteredBandsQueryHandler", () => {
 
       expect(
         mockBandRepository.getFilteredBandCatalogItems,
-      ).toHaveBeenCalledWith(mockPage, mockPageSize, filters);
+      ).toHaveBeenCalledWith(mockPage, mockPageSize, {
+        artistName: filters.artistName,
+        location: filters.location,
+        date: {
+          dayOfWeek: "wednesday",
+          utcEnd: new Date("2024-03-20T22:59:59.000Z"),
+          utcStart: new Date("2024-03-19T23:00:00.000Z"),
+        },
+      });
     });
   });
 });

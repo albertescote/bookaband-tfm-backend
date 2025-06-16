@@ -58,7 +58,7 @@ describe("BookingService", () => {
     postalCode: "08001",
     addressLine1: "Passeig Marítim 1",
     isPublic: true,
-    cost: 1000,
+    cost: 1100,
   };
 
   const mockBand = {
@@ -253,7 +253,7 @@ describe("BookingService", () => {
       gasPriceCalculator.calculateGasCost.mockResolvedValue({
         distance: 500,
         pricePerLiter: 1.85,
-        gasCost: 1000,
+        gasCost: 100,
       });
       bookingRepository.save.mockResolvedValue(mockBooking);
 
@@ -390,7 +390,7 @@ describe("BookingService", () => {
       gasPriceCalculator.calculateGasCost.mockResolvedValue({
         distance: 500,
         pricePerLiter: 1.85,
-        gasCost: 1000,
+        gasCost: 100,
       });
       bookingRepository.save.mockResolvedValue(null);
 
