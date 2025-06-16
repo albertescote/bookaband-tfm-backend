@@ -25,15 +25,14 @@ import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { LeaveBandCommand } from "../../../context/band/service/leaveBand.command";
 import { RemoveMemberCommand } from "../../../context/band/service/removeMember.command";
 import { ParseIntPipeCustom } from "../../pipes/parse-int.pipe";
-import { SanitizeTextPipe } from "../../pipes/sanitize-text.pipe";
 import { ValidateLocationPipe } from "../../pipes/validate-location.pipe";
-import { ValidateSearchQueryPipe } from "../../pipes/validate-serch-query.pipe";
 import { ValidateDatePipe } from "../../pipes/validate-date.pipe";
 import { FilteredBandsResponseDto } from "./filteredBandsResponse.dto";
 import { FeaturedBandsResponseDto } from "./featuredBandsResponse.dto";
 import { GetFilteredBandsQuery } from "../../../context/band/service/getFilteredBands.query";
 import { GetFeaturedBandsQuery } from "../../../context/band/service/getFeaturedBands.query";
 import { GetBandProfileQuery } from "../../../context/band/service/getBandProfile.query";
+import { ValidateArtistNamePipe } from "../../pipes/validate-artist-name.pipe";
 
 @Controller("bands")
 export class BandController {
@@ -69,18 +68,18 @@ export class BandController {
     @Request() req: { user: UserAuthInfo },
     @Query("page", ParseIntPipeCustom) page = 1,
     @Query("pageSize", ParseIntPipeCustom) pageSize = 10,
-    @Query("location", new SanitizeTextPipe(), new ValidateLocationPipe())
+    @Query("location", new ValidateLocationPipe())
     location?: string,
-    @Query("searchQuery", new SanitizeTextPipe(), new ValidateSearchQueryPipe())
-    searchQuery?: string,
-    @Query("date", new SanitizeTextPipe(), new ValidateDatePipe())
+    @Query("artistName", new ValidateArtistNamePipe())
+    artistName?: string,
+    @Query("date", new ValidateDatePipe())
     date?: string,
-    @Query("timezone", new SanitizeTextPipe())
+    @Query("timezone")
     timeZone?: string,
   ): Promise<FilteredBandsResponseDto> {
     const query = new GetFilteredBandsQuery(req.user.id, page, pageSize, {
       location,
-      searchQuery,
+      artistName,
       date,
       timeZone,
     });

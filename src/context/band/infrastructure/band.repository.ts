@@ -489,7 +489,7 @@ export class BandRepository {
       date?: string;
       timeZone?: TimeZone;
       location?: string;
-      searchQuery?: string;
+      artistName?: string;
     },
   ): Promise<{ bandCatalogItems: BandCatalogItem[]; total: number }> {
     let utcStart: Date | undefined;
@@ -515,9 +515,9 @@ export class BandRepository {
           mode: "insensitive",
         },
       }),
-      ...(filters?.searchQuery && {
+      ...(filters?.artistName && {
         name: {
-          contains: filters.searchQuery,
+          contains: filters.artistName,
           mode: "insensitive",
         },
       }),

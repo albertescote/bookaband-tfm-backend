@@ -5,7 +5,7 @@ export class GetFilteredBandsQuery {
     private _pageSize: number,
     private _filters: {
       location: string;
-      searchQuery: string;
+      artistName: string;
       date: string;
       timeZone: string;
     },
@@ -25,7 +25,7 @@ export class GetFilteredBandsQuery {
 
   get filters(): {
     location: string;
-    searchQuery: string;
+    artistName: string;
     date: string;
     timeZone: string;
   } {

@@ -15,7 +15,6 @@ import { JwtCustomGuard } from "../../../context/auth/guards/jwt-custom.guard";
 import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 
 import { InvitationStatus } from "../../../context/shared/domain/invitationStatus";
-import { SanitizeTextPipe } from "../../pipes/sanitize-text.pipe";
 import { ReadNotificationCommand } from "../../../context/notification/service/readNotification.command";
 
 interface NotificationsResponse {
@@ -50,7 +49,7 @@ export class NotificationController {
   @HttpCode(200)
   async getAllFromUser(
     @Request() req: { user: UserAuthInfo },
-    @Query("bandId", SanitizeTextPipe) bandId: string,
+    @Query("bandId") bandId: string,
   ): Promise<NotificationsResponse[]> {
     const query = new GetAllNotificationsFromUserQuery(req.user, bandId);
     return this.queryBus.execute(query);
