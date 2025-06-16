@@ -402,10 +402,9 @@ export class BandRepository {
       bookingDates: band.bookings
         .filter(
           (booking) =>
-            booking.isPublic &&
-            (booking.status === BookingStatus.ACCEPTED ||
-              booking.status === BookingStatus.SIGNED ||
-              booking.status === BookingStatus.PAID),
+            booking.status === BookingStatus.ACCEPTED ||
+            booking.status === BookingStatus.SIGNED ||
+            booking.status === BookingStatus.PAID,
         )
         .map((b) => b.initDate.toISOString()),
       location: band.location,
