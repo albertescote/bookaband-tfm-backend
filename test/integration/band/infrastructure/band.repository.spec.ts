@@ -10,6 +10,7 @@ import UserId from "../../../../src/context/shared/domain/userId";
 import BandId from "../../../../src/context/shared/domain/bandId";
 import PrismaService from "../../../../src/context/shared/infrastructure/db/prisma.service";
 import { v4 as uuidv4 } from "uuid";
+import { LocationRegionChecker } from "../../../../src/context/band/infrastructure/locationRegionChecker";
 
 describe("BandRepository Integration Tests", () => {
   let repository: BandRepository;
@@ -20,9 +21,20 @@ describe("BandRepository Integration Tests", () => {
   let testHospitalityRiderId: string;
   let testPerformanceAreaId: string;
 
+  const mockLocationRegionChecker = {
+    isLocationInRegions: jest.fn().mockResolvedValue(true),
+  };
+
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [BandRepository, PrismaService],
+      providers: [
+        BandRepository,
+        PrismaService,
+        {
+          provide: LocationRegionChecker,
+          useValue: mockLocationRegionChecker,
+        },
+      ],
     }).compile();
 
     repository = module.get<BandRepository>(BandRepository);

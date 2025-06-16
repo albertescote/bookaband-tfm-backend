@@ -550,7 +550,7 @@ export class BandRepository {
       },
     });
 
-    const filteredByLocation = filters.location
+    const filteredByLocation = filters?.location
       ? await this.filterByLocation(filteredBands, filters.location)
       : filteredBands;
 

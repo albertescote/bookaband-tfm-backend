@@ -122,6 +122,7 @@ describe("InvoiceRepository Integration Tests", () => {
         name: "Test Booking",
         initDate: new Date(),
         endDate: new Date(),
+        cost: 1000,
         country: "Test Country",
         city: "Test City",
         venue: "Test Venue",
