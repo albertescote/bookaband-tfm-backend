@@ -4,7 +4,7 @@ This repository contains the backend service for BookaBand, a web platform that 
 
 ## Project Context
 
-This backend system is developed as part of a Master's Thesis for the **Master in Software Engineering and Computer Systems at UNIR (Universidad Internacional de La Rioja)**. The project demonstrates applied knowledge in backend development, web service architecture, secure API design, and real-world platform engineering.
+This backend system is developed as part of a Master's Thesis for the *Master in Software Engineering and Computer Systems at UNIR (Universidad Internacional de La Rioja)*.
 
 ## Key Features
 
@@ -20,11 +20,24 @@ This backend system is developed as part of a Master's Thesis for the **Master i
 
 ## Tech Stack
 
-- NestJS
-- Prisma
-- PostgreSQL
-- MongoDB
-- Redis
+* **NestJS** – Progressive Node.js framework for building efficient, scalable server-side applications using TypeScript.
+* **TypeScript** – Typed JavaScript superset providing better tooling and maintainability.
+* **Prisma ORM** – Type-safe database toolkit for PostgreSQL with schema modeling and migration capabilities.
+* **PostgreSQL** – Relational database for structured and transactional data.
+* **MongoDB** – NoSQL database for unstructured data, e.g., chat messages.
+* **Redis** – In-memory store used for caching and pub/sub patterns.
+* **Passport.js** – Modular authentication middleware supporting strategies like local and JWT.
+* **JWT & JOSE** – Token-based authentication and secure identity exchange.
+* **Socket.IO** – Real-time WebSocket communication, used in features like chat or live updates.
+* **Multer** – Middleware for handling multipart/form-data (file uploads).
+* **PDF-lib** – Library to generate and edit PDF files (e.g., for contract generation).
+* **Axios** – HTTP client for external API calls.
+* **Resend** – Transactional email service for notifications.
+* **Class-validator & Class-transformer** – Declarative data validation and transformation.
+* **Date-fns-tz & Moment-Timezone** – Libraries for robust date/time and timezone handling.
+* **ioredis** – High-performance Redis client for Node.js.
+* **Jest** – JavaScript testing framework with support for unit, integration, and e2e testing.
+* **ESLint & Prettier** – Code quality enforcement and formatting.
 
 ## Prerequisites
 
