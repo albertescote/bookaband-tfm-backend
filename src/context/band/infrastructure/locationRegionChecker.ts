@@ -22,7 +22,9 @@ export class LocationRegionChecker {
     if (!componentNames.length) return false;
 
     const componentPlaceIds = await Promise.all(
-      componentNames.map((name) => this.getPlaceIdFromName(name)),
+      componentNames.map(({ name, type }) =>
+        this.getPlaceIdFromName(name, type),
+      ),
     );
 
     return componentPlaceIds.some(
@@ -32,27 +34,43 @@ export class LocationRegionChecker {
 
   private async getPlaceIdFromName(
     locationName: string,
+    expectedType?: string,
   ): Promise<string | null> {
     try {
-      const response = await axios.get(
-        "https://maps.googleapis.com/maps/api/geocode/json",
-        {
-          params: {
-            address: locationName,
-            key: this.googleMapsApiKey,
-          },
-        },
-      );
+      const searchQueries = [locationName];
 
-      const result = response.data.results?.[0];
-      return result?.place_id || null;
+      if (expectedType === "administrative_area_level_2") {
+        searchQueries.push(`${locationName} province`);
+      }
+
+      for (const query of searchQueries) {
+        const response = await axios.get(
+          "https://maps.googleapis.com/maps/api/geocode/json",
+          {
+            params: {
+              address: query,
+              key: this.googleMapsApiKey,
+            },
+          },
+        );
+
+        const result = response.data.results.find((r: any) =>
+          expectedType ? r.types.includes(expectedType) : true,
+        );
+
+        if (result) {
+          return result.place_id;
+        }
+      }
     } catch (error) {
       console.error("Error fetching place ID:", error);
       return null;
     }
   }
 
-  private async getRelevantComponentNames(placeId: string): Promise<string[]> {
+  private async getRelevantComponentNames(
+    placeId: string,
+  ): Promise<{ name: string; type: string }[]> {
     try {
       const response = await axios.get(
         "https://maps.googleapis.com/maps/api/place/details/json",
@@ -76,7 +94,10 @@ export class LocationRegionChecker {
         ),
       );
 
-      return relevantComponents.map((comp: any) => comp.long_name);
+      return relevantComponents.map((comp: any) => ({
+        name: comp.long_name,
+        type: comp.types[0],
+      }));
     } catch (error) {
       console.error("Error fetching address components:", error);
       return [];
