@@ -46,25 +46,23 @@ services:
     networks:
       - default
 
-  backend:
-    container_name: bookaband-backend
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    ports:
-      - "4000:4000"
-    env_file:
-      - ./.env.docker
-    depends_on:
-      postgres-db:
-        condition: service_healthy
-      mongo:
-        condition: service_started
-      redis:
-        condition: service_started
-    networks:
-      - default
-    restart: unless-stopped
+#  backend:
+#    container_name: bookaband-backend
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    ports:
+#      - "4000:4000"
+#    depends_on:
+#      postgres-db:
+#        condition: service_healthy
+#      mongo:
+#        condition: service_started
+#      redis:
+#        condition: service_started
+#    networks:
+#      - default
+#    restart: unless-stopped
 
 volumes:
   pgdata:
