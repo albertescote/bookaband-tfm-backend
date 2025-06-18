@@ -23,8 +23,8 @@
     "db-generate-modules": "prisma generate",
     "db-post-schema": "prisma db push",
     "db-get-schema": "prisma db pull",
-    "db-primsa-seed": "ts-node prisma/seed/seed.ts",
-    "db-primsa-clear": "ts-node prisma/seed/clear.ts"
+    "db-prisma-seed": "ts-node prisma/seed/seed.ts",
+    "db-prisma-clear": "ts-node prisma/seed/clear.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

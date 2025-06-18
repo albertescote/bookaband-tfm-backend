@@ -77,7 +77,7 @@ npm run db-generate-modules
 npm run db-post-schema
 
 # Seed
-npm run db-primsa-seed
+npm run db-prisma-seed
 ```
 
 4. Start the server:
@@ -95,6 +95,6 @@ npm run test
 # Unit tests
 npm run test:unit
 
-# Integration tests (To run integration tests, it is necessary to clean the databases. To do this, you can run db-prism-clear)
+# Integration tests (To run integration tests, it is necessary to clean the databases. To do this, you can run db-prisma-clear)
 npm run test:integration
 ```
