@@ -40,9 +40,9 @@ describe("LocationRegionChecker Integration Tests", () => {
       expect(result).toBe(false);
     });
 
-    it("should return true when location is in one of the regions", async () => {
+    it("should return true when location is in the region and they have the same name", async () => {
       const result = await checker.isLocationInRegions("Barcelona", [
-        "ChIJ5TCOcRaYpBIRCmZHTz37sEQ",
+        "ChIJZb1_yQvmpBIRsMmjIeD6AAM",
         "ChIJUQ1iQJhE9R4Rr0Wb5KQJ9Y",
       ]);
       expect(result).toBe(true);
