@@ -42,7 +42,7 @@ const REFRESH_TOKEN_EXPIRES_IN_SECONDS = checkNumVar(
   "REFRESH_TOKEN_EXPIRES_IN_SECONDS",
 );
 
-const TOKEN_ISSUER = "learning-platform-backend";
+const TOKEN_ISSUER = "bookaband-backend";
 
 export {
   AUTHORIZE_SERVICE_PRIVATE_KEY,
