@@ -249,4 +249,41 @@ describe("ArtistReviewRepository Integration Tests", () => {
       }
     });
   });
+
+  describe("getReviewByBookingId", () => {
+    it("should return an artist review when it exists", async () => {
+      const artistReview = new ArtistReview(
+        ArtistReviewId.generate(),
+        new UserId(testUserId),
+        new BandId(testBandId),
+        new BookingId(testBookingId),
+        5,
+        "Great performance!",
+        new Date(),
+      );
+
+      try {
+        await repository.create(artistReview);
+
+        const retrievedReview = await repository.getReviewByBookingId(
+          new BookingId(testBookingId),
+        );
+
+        expect(retrievedReview).toStrictEqual(artistReview);
+      } finally {
+        await prismaService.artistReview.deleteMany({
+          where: { id: artistReview.toPrimitives().id },
+        });
+      }
+    });
+
+    it("should return undefined when no review exists for the booking", async () => {
+      const nonExistentBookingId = BookingId.generate();
+
+      const result =
+        await repository.getReviewByBookingId(nonExistentBookingId);
+
+      expect(result).toBeUndefined();
+    });
+  });
 });
