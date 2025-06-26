@@ -31,6 +31,8 @@ import { FileUploadModule } from "../context/fileUpload/fileUpload.module";
 import { FileUploadController } from "./api/fileUpload/fileUpload.controller";
 import { NotificationModule } from "../context/notification/notification.module";
 import { NotificationController } from "./api/notification/notification.controller";
+import { ArtistReviewController } from "./api/artistReview/artistReview.controller";
+import { ArtistReviewModule } from "../context/artistReview/artistReview.module";
 
 @Module({
   imports: [
@@ -50,6 +52,7 @@ import { NotificationController } from "./api/notification/notification.controll
     MusicalStyleModule,
     FileUploadModule,
     NotificationModule,
+    ArtistReviewModule,
   ],
   controllers: [
     HealthcheckController,
@@ -68,6 +71,7 @@ import { NotificationController } from "./api/notification/notification.controll
     MusicalStyleController,
     FileUploadController,
     NotificationController,
+    ArtistReviewController,
   ],
 })
 export class AppModule {}

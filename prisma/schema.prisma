@@ -140,6 +140,8 @@ model artistReview {
 
   band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
   user user @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bandId])
 }
 
 model technicalRider {
