@@ -13,6 +13,7 @@ export class ArtistReviewRepository {
         data: {
           id: primitives.id,
           bandId: primitives.bandId,
+          bookingId: primitives.bookingId,
           rating: primitives.rating,
           comment: primitives.comment,
           userId: primitives.userId,

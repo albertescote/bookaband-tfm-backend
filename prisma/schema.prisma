@@ -131,17 +131,16 @@ model socialLink {
 }
 
 model artistReview {
-  id      String   @id @default(uuid())
-  bandId  String
-  rating  Int
-  comment String
-  userId  String
-  date    DateTime @default(now())
+  id        String   @id @default(uuid())
+  bandId    String
+  userId    String
+  bookingId String   @unique
+  rating    Int
+  comment   String
+  date      DateTime @default(now())
 
   band band @relation(fields: [bandId], references: [id], onDelete: Cascade)
   user user @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, bandId])
 }
 
 model technicalRider {

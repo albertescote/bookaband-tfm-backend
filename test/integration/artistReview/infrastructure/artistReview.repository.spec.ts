@@ -6,6 +6,7 @@ import PrismaService from "../../../../src/context/shared/infrastructure/db/pris
 import { ArtistReviewId } from "../../../../src/context/artistReview/domain/artistReviewId";
 import UserId from "../../../../src/context/shared/domain/userId";
 import BandId from "../../../../src/context/shared/domain/bandId";
+import BookingId from "../../../../src/context/shared/domain/bookingId";
 import { Role } from "../../../../src/context/shared/domain/role";
 import { BandSize } from "../../../../src/context/band/domain/bandSize";
 import { v4 as uuidv4 } from "uuid";
@@ -16,6 +17,7 @@ describe("ArtistReviewRepository Integration Tests", () => {
 
   const testUserId = UserId.generate().toPrimitive();
   const testBandId = BandId.generate().toPrimitive();
+  const testBookingId = BookingId.generate().toPrimitive();
   const testTechnicalRiderId = uuidv4();
   const testHospitalityRiderId = uuidv4();
   const testPerformanceAreaId = uuidv4();
@@ -29,8 +31,7 @@ describe("ArtistReviewRepository Integration Tests", () => {
       ArtistReviewRepository,
     );
     prismaService = moduleFixture.get<PrismaService>(PrismaService);
-  });
-  beforeAll(async () => {
+
     await prismaService.user.create({
       data: {
         id: testUserId,
@@ -103,11 +104,32 @@ describe("ArtistReviewRepository Integration Tests", () => {
         imageUrl: "test-image-url",
       },
     });
+
+    await prismaService.booking.create({
+      data: {
+        id: testBookingId,
+        bandId: testBandId,
+        userId: testUserId,
+        status: "PAID",
+        name: "Test Booking",
+        initDate: new Date(),
+        endDate: new Date(),
+        cost: 1000,
+        country: "Test Country",
+        city: "Test City",
+        venue: "Test Venue",
+        postalCode: "12345",
+        addressLine1: "Test Address 1",
+        addressLine2: "Test Address 2",
+        isPublic: true,
+      },
+    });
   });
 
   afterAll(async () => {
     await prismaService.user.deleteMany({ where: { id: testUserId } });
     await prismaService.band.deleteMany({ where: { id: testBandId } });
+    await prismaService.booking.deleteMany({ where: { id: testBookingId } });
     await prismaService.technicalRider.deleteMany({
       where: { id: testTechnicalRiderId },
     });
@@ -128,6 +150,7 @@ describe("ArtistReviewRepository Integration Tests", () => {
         ArtistReviewId.generate(),
         new UserId(testUserId),
         new BandId(testBandId),
+        new BookingId(testBookingId),
         5,
         "Excellent performance!",
         new Date(),
@@ -150,6 +173,7 @@ describe("ArtistReviewRepository Integration Tests", () => {
         ArtistReviewId.generate(),
         new UserId(invalidUserId),
         new BandId(testBandId),
+        new BookingId(testBookingId),
         5,
         "Test comment",
         new Date(),
@@ -171,6 +195,7 @@ describe("ArtistReviewRepository Integration Tests", () => {
         ArtistReviewId.generate(),
         new UserId(testUserId),
         new BandId(testBandId),
+        new BookingId(testBookingId),
         5,
         "Test comment",
         new Date(),
@@ -195,6 +220,7 @@ describe("ArtistReviewRepository Integration Tests", () => {
         ArtistReviewId.generate(),
         new UserId(testUserId),
         new BandId(testBandId),
+        new BookingId(testBookingId),
         5,
         "Test comment",
         new Date(),
@@ -204,6 +230,7 @@ describe("ArtistReviewRepository Integration Tests", () => {
         ArtistReviewId.generate(),
         new UserId(testUserId),
         new BandId(testBandId),
+        new BookingId(testBookingId),
         4,
         "Test comment 2",
         new Date(),

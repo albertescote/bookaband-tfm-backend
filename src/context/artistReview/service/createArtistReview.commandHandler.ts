@@ -3,6 +3,7 @@ import { ArtistReviewRepository } from "../infrastructure/artistReview.repositor
 import { CreateArtistReviewCommand } from "./createArtistReview.command";
 import UserId from "../../shared/domain/userId";
 import BandId from "../../shared/domain/bandId";
+import BookingId from "../../shared/domain/bookingId";
 import { ModuleConnectors } from "../../shared/infrastructure/moduleConnectors";
 import { BookingStatus } from "../../shared/domain/bookingStatus";
 import { UnableToCreateReviewForBookingNotPaidException } from "../exceptions/unableToCreateReviewForBookingNotPaidException";
@@ -32,6 +33,7 @@ export class CreateArtistReviewCommandHandler {
       comment,
       new UserId(authorized.id),
       new BandId(booking.bandId),
+      new BookingId(bookingId),
     );
 
     const storedReview = await this.artistReviewRepository.create(artistReview);

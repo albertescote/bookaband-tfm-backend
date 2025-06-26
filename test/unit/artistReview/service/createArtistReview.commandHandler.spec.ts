@@ -62,6 +62,7 @@ describe("CreateArtistReviewCommandHandler", () => {
       id: ArtistReviewId.generate().toPrimitive(),
       userId: mockUserId,
       bandId: mockBandId,
+      bookingId: mockBookingId,
       rating: mockRating,
       comment: mockComment,
       date: new Date(),
