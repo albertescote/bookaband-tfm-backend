@@ -1,13 +1,15 @@
-import { PrismaClient } from "@prisma/client";
 import { ArtistReview } from "../domain/artistReview";
+import PrismaService from "../../shared/infrastructure/db/prisma.service";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class ArtistReviewRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async create(artistReview: ArtistReview): Promise<ArtistReview> {
     const primitives = artistReview.toPrimitives();
     try {
-      const storedReview = await this.prisma.artistReview.create({
+      const storedReview = await this.prismaService.artistReview.create({
         data: {
           id: primitives.id,
           bandId: primitives.bandId,
