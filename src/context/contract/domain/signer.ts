@@ -54,6 +54,7 @@ export class Signer {
     phoneNumber: string,
     email: string,
     fileName: string,
+    page: number = 1,
     posY: number = 100,
     posX: number = 100,
     language: string = "es",
@@ -67,7 +68,7 @@ export class Signer {
       phoneNumber,
       email,
       {
-        Page: 1,
+        Page: page,
         PosX: posX,
         PosY: posY,
         SizeX: 60,
