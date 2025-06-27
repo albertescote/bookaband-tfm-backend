@@ -11,8 +11,14 @@ import { RoleAuthCQRS } from "../../shared/decorator/roleAuthorization.decorator
 import { Role } from "../../shared/domain/role";
 import { NotOwnerOfTheRequestedBookingException } from "../exceptions/notOwnerOfTheRequestedBookingException";
 import { UnableToStoreArtistReviewException } from "../exceptions/unableToStoreArtistReviewException";
+import { Injectable } from "@nestjs/common";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 
-export class CreateArtistReviewCommandHandler {
+@Injectable()
+@CommandHandler(CreateArtistReviewCommand)
+export class CreateArtistReviewCommandHandler
+  implements ICommandHandler<CreateArtistReviewCommand>
+{
   constructor(
     private readonly artistReviewRepository: ArtistReviewRepository,
     private readonly moduleConnectors: ModuleConnectors,

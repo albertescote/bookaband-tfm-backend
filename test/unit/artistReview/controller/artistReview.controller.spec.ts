@@ -6,10 +6,10 @@ import { CreateArtistReviewCommand } from "../../../../src/context/artistReview/
 import { UserAuthInfo } from "../../../../src/context/shared/domain/userAuthInfo";
 import UserId from "../../../../src/context/shared/domain/userId";
 import BookingId from "../../../../src/context/shared/domain/bookingId";
-import { ArtistReview } from "../../../../src/context/band/domain/bandProfile";
 import { ArtistReviewId } from "../../../../src/context/artistReview/domain/artistReviewId";
 import BandId from "../../../../src/context/shared/domain/bandId";
 import { GetReviewByBookingIdQuery } from "../../../../src/context/artistReview/service/getReviewByBookingId.query";
+import { ArtistReviewPrimitives } from "../../../../src/context/artistReview/domain/artistReview";
 
 describe("ArtistReviewController", () => {
   let controller: ArtistReviewController;
@@ -98,19 +98,17 @@ describe("ArtistReviewController", () => {
   });
   describe("getReviewByBookingId", () => {
     const mockBookingId = BookingId.generate().toPrimitive();
-    const mockArtistReview: ArtistReview = {
-      toPrimitives: jest.fn().mockReturnValue({
-        id: ArtistReviewId.generate().toPrimitive(),
-        userId: mockUserAuthInfo.id,
-        bandId: BandId.generate().toPrimitive(),
-        bookingId: mockBookingId,
-        rating: 5,
-        comment: "Great performance!",
-        date: new Date(),
-      }),
-    } as unknown as ArtistReview;
+    const mockArtistReviewPrimitives: ArtistReviewPrimitives = {
+      id: ArtistReviewId.generate().toPrimitive(),
+      userId: mockUserAuthInfo.id,
+      bandId: BandId.generate().toPrimitive(),
+      bookingId: mockBookingId,
+      rating: 5,
+      comment: "Great performance!",
+      date: new Date(),
+    };
     it("should return an artist review when it exists", async () => {
-      queryBus.execute.mockResolvedValue(mockArtistReview);
+      queryBus.execute.mockResolvedValue(mockArtistReviewPrimitives);
 
       const result = await controller.getReviewByBookingId(mockBookingId, {
         user: mockUserAuthInfo,
@@ -119,7 +117,7 @@ describe("ArtistReviewController", () => {
       expect(queryBus.execute).toHaveBeenCalledWith(
         new GetReviewByBookingIdQuery(mockBookingId, mockUserAuthInfo),
       );
-      expect(result).toBe(mockArtistReview);
+      expect(result).toBe(mockArtistReviewPrimitives);
     });
 
     it("should return null when no review exists", async () => {

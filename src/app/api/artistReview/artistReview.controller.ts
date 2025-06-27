@@ -14,7 +14,7 @@ import { UserAuthInfo } from "../../../context/shared/domain/userAuthInfo";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { CreateArtistReviewCommand } from "../../../context/artistReview/service/createArtistReview.command";
 import { CreateArtistReviewRequestDto } from "./createArtistReviewRequest.dto";
-import { ArtistReview } from "../../../context/artistReview/domain/artistReview";
+import { ArtistReviewPrimitives } from "../../../context/artistReview/domain/artistReview";
 import { GetReviewByBookingIdQuery } from "../../../context/artistReview/service/getReviewByBookingId.query";
 
 @Controller("/reviews")
@@ -46,7 +46,7 @@ export class ArtistReviewController {
   async getReviewByBookingId(
     @Param("bookingId", ParseUUIDPipe) bookingId: string,
     @Request() req: { user: UserAuthInfo },
-  ): Promise<ArtistReview | null> {
+  ): Promise<ArtistReviewPrimitives | null> {
     const query = new GetReviewByBookingIdQuery(bookingId, req.user);
     const review = await this.queryBus.execute(query);
     return review || null;

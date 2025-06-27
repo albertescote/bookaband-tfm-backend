@@ -57,7 +57,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Catalonia", "Valencia", "Balearic Islands"],
+          regions: [
+            "ChIJ8_UwhdxbpBIRUMijIeD6AAE",
+            "ChIJRchn1xjlYA0REMwh126vAgM",
+            "ChIJV2Jp3FqSlxIRFU2l-yEDh_8",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 12.5,
             useDynamicPricing: false,
@@ -129,7 +133,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
+          regions: [
+            "ChIJuTPgQHqBQQ0RgMhLvvNAAwE",
+            "ChIJ95OAA5CaNw0RpVYFgwZ7npY",
+            "ChIJK6f5rcBfZg0R0rZyF5O64Ts",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 10.8,
             useDynamicPricing: false,
@@ -201,7 +209,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Valencia", "Murcia", "Alicante"],
+          regions: [
+            "ChIJRchn1xjlYA0REMwh126vAgM",
+            "ChIJza6U13waYw0RIthUR_UzzhQ",
+            "ChIJS6udO9o1Yg0R44ELrHKofR0",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 11.2,
             useDynamicPricing: false,
@@ -273,7 +285,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Barcelona", "Girona", "Tarragona"],
+          regions: [
+            "ChIJ5TCOcRaYpBIRCmZHTz37sEQ",
+            "ChIJq_3ImCfnuhIRb2oppbZFOK8",
+            "ChIJWfHd09v8oxIRsqOHE6dpBZI",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 9.5,
             useDynamicPricing: false,
@@ -345,7 +361,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
+          regions: [
+            "ChIJuTPgQHqBQQ0RgMhLvvNAAwE",
+            "ChIJ95OAA5CaNw0RpVYFgwZ7npY",
+            "ChIJK6f5rcBfZg0R0rZyF5O64Ts",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 10.8,
             useDynamicPricing: false,
@@ -417,7 +437,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Barcelona", "Girona", "Tarragona"],
+          regions: [
+            "ChIJ5TCOcRaYpBIRCmZHTz37sEQ",
+            "ChIJq_3ImCfnuhIRb2oppbZFOK8",
+            "ChIJWfHd09v8oxIRsqOHE6dpBZI",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 9.5,
             useDynamicPricing: false,
@@ -489,7 +513,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Barcelona", "Girona", "Tarragona"],
+          regions: [
+            "ChIJ5TCOcRaYpBIRCmZHTz37sEQ",
+            "ChIJq_3ImCfnuhIRb2oppbZFOK8",
+            "ChIJWfHd09v8oxIRsqOHE6dpBZI",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 9.5,
             useDynamicPricing: false,
@@ -561,7 +589,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Madrid", "Castilla y León", "Castilla-La Mancha"],
+          regions: [
+            "ChIJuTPgQHqBQQ0RgMhLvvNAAwE",
+            "ChIJ95OAA5CaNw0RpVYFgwZ7npY",
+            "ChIJK6f5rcBfZg0R0rZyF5O64Ts",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 10.8,
             useDynamicPricing: false,
@@ -633,7 +665,11 @@ export async function seedBands() {
       },
       performanceArea: {
         create: {
-          regions: ["Barcelona", "Girona", "Tarragona"],
+          regions: [
+            "ChIJ5TCOcRaYpBIRCmZHTz37sEQ",
+            "ChIJq_3ImCfnuhIRb2oppbZFOK8",
+            "ChIJWfHd09v8oxIRsqOHE6dpBZI",
+          ],
           gasPriceCalculation: {
             fuelConsumption: 9.5,
             useDynamicPricing: false,

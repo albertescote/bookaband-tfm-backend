@@ -4,9 +4,15 @@ import { RoleAuthCQRS } from "../../shared/decorator/roleAuthorization.decorator
 import { Role } from "../../shared/domain/role";
 import { NotOwnerOfTheRequestedBookingException } from "../exceptions/notOwnerOfTheRequestedBookingException";
 import BookingId from "../../shared/domain/bookingId";
-import { ArtistReview } from "../domain/artistReview";
+import { ArtistReviewPrimitives } from "../domain/artistReview";
+import { Injectable } from "@nestjs/common";
+import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 
-export class GetReviewByBookingIdQueryHandler {
+@Injectable()
+@QueryHandler(GetReviewByBookingIdQuery)
+export class GetReviewByBookingIdQueryHandler
+  implements IQueryHandler<GetReviewByBookingIdQuery>
+{
   constructor(
     private readonly artistReviewRepository: ArtistReviewRepository,
   ) {}
@@ -14,15 +20,19 @@ export class GetReviewByBookingIdQueryHandler {
   @RoleAuthCQRS([Role.Client])
   async execute(
     query: GetReviewByBookingIdQuery,
-  ): Promise<ArtistReview | undefined> {
+  ): Promise<ArtistReviewPrimitives> {
     const { authorized, bookingId } = query;
 
     const review = await this.artistReviewRepository.getReviewByBookingId(
       new BookingId(bookingId),
     );
-    if (review && review.toPrimitives().userId !== authorized.id) {
-      throw new NotOwnerOfTheRequestedBookingException(bookingId);
+    if (review) {
+      const reviewPrimitives = review.toPrimitives();
+      if (reviewPrimitives.userId !== authorized.id) {
+        throw new NotOwnerOfTheRequestedBookingException(bookingId);
+      }
+      return reviewPrimitives;
     }
-    return review;
+    return undefined;
   }
 }

@@ -58,7 +58,7 @@ describe("GetReviewByBookingIdQueryHandler", () => {
       expect(artistReviewRepository.getReviewByBookingId).toHaveBeenCalledWith(
         new BookingId(mockBookingId),
       );
-      expect(result).toBe(mockArtistReview);
+      expect(result).toBe(mockArtistReview.toPrimitives());
     });
 
     it("should return undefined when no review exists", async () => {
