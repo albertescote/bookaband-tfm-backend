@@ -19,6 +19,10 @@ import BandId from "../../../../src/context/shared/domain/bandId";
 import UserId from "../../../../src/context/shared/domain/userId";
 
 jest.mock("pdf-lib", () => ({
+  StandardFonts: {
+    Helvetica: "Helvetica",
+    HelveticaBold: "Helvetica-Bold",
+  },
   PDFDocument: {
     create: jest.fn().mockResolvedValue({
       addPage: jest.fn().mockReturnValue({
@@ -26,6 +30,8 @@ jest.mock("pdf-lib", () => ({
         drawText: jest.fn(),
       }),
       save: jest.fn().mockResolvedValue(new Uint8Array()),
+      embedFont: jest.fn().mockResolvedValue({}),
+      getPageCount: jest.fn().mockReturnValue(1),
     }),
   },
   rgb: jest.fn(),
