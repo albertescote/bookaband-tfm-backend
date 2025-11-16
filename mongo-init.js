@@ -69,6 +69,42 @@ db.event_types.insertMany([
     },
     icon: "🏢",
   },
+  {
+    id: "826880fa-001a-446c-a99d-0414ce900156",
+    label: {
+      en: "Popular Parties",
+      es: "Fiestas Populares",
+      ca: "Festes Populars",
+    },
+    icon: "🎊",
+  },
+  {
+    id: "9aaa4e39-f561-42fc-9940-909108884f2d",
+    label: {
+      en: "Clubs & Nightlife",
+      es: "Discotecas y Vida Nocturna",
+      ca: "Discoteques i Vida Nocturna",
+    },
+    icon: "🪩",
+  },
+  {
+    id: "2c8d7d42-fc34-4aec-baa6-9ec98f5bbc69",
+    label: {
+      en: "Cultural Events",
+      es: "Eventos Culturales",
+      ca: "Esdeveniments Culturals",
+    },
+    icon: "🏛️",
+  },
+  {
+    id: "4993c013-c3f7-4643-9716-3c4ff55fcfe8",
+    label: {
+      en: "Charity Events",
+      es: "Eventos Benéficos",
+      ca: "Esdeveniments Benèfics",
+    },
+    icon: "🤝",
+  },
 ]);
 
 db.musical_styles.insertMany([
@@ -123,7 +159,52 @@ db.musical_styles.insertMany([
     icon: "🤠",
   },
   {
-    id: "2fcd0868-8a53-42e6-ae0e-7db6a5f2f0d6",
+    id: "626a0907-057a-4d99-9c3c-d6c63833522d",
+    label: { en: "Reggae", es: "Reggae", ca: "Reggae" },
+    icon: "🌴",
+  },
+  {
+    id: "eed3849b-58e0-487f-8392-edca6470555c",
+    label: { en: "Ska", es: "Ska", ca: "Ska" },
+    icon: "🎺",
+  },
+  {
+    id: "1b6a3829-7c8b-407a-916e-7e97b9da54b5",
+    label: { en: "Trap", es: "Trap", ca: "Trap" },
+    icon: "🎧",
+  },
+  {
+    id: "80eb7cbd-ac15-44b7-b940-87c9b047edcc",
+    label: { en: "Flamenco", es: "Flamenco", ca: "Flamenc" },
+    icon: "🕺",
+  },
+  {
+    id: "9d4b4b59-d86c-44e5-b6fb-c7a52dc121c3",
+    label: { en: "Latin", es: "Latina", ca: "Llatina" },
+    icon: "🎼",
+  },
+  {
+    id: "83840296-d41c-4b6b-8d00-b6d4ec4bcbe2",
+    label: { en: "Reggaeton", es: "Reggaetón", ca: "Reggaeton" },
+    icon: "🔥",
+  },
+  {
+    id: "01eca9ff-d0c7-43d3-a2e8-7e8dcd579c35",
+    label: { en: "Techno", es: "Techno", ca: "Techno" },
+    icon: "🎚️",
+  },
+  {
+    id: "78a99d86-091b-4249-8eaf-c73613650bf0",
+    label: { en: "Funk", es: "Funk", ca: "Funk" },
+    icon: "🕶️",
+  },
+  {
+    id: "dd74bac1-ff78-44e9-af2f-9bc77b33c805",
+    label: { en: "Soul", es: "Soul", ca: "Soul" },
+    icon: "🎙️",
+  },
+  {
+    id: "88120122-0787-412c-a866-39e249c1e039",
     label: { en: "Other", es: "Otros", ca: "Altres" },
     icon: "➕",
   },
