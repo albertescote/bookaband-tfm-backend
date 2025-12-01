@@ -1,14 +1,25 @@
 import axios from "axios";
-import { Inject, Injectable } from "@nestjs/common";
-import { MissingGoogleMapsApiKeyException } from "../exceptions/missingGoogleMapsApiKeyException";
+import { Injectable } from "@nestjs/common";
+
+interface NominatimResponse {
+  place_id: number;
+  osm_type: string;
+  osm_id: number;
+  display_name: string;
+  address?: {
+    country?: string;
+    state?: string;
+    county?: string;
+    province?: string;
+    region?: string;
+  };
+  type?: string;
+}
 
 @Injectable()
 export class LocationRegionChecker {
-  constructor(@Inject("google-maps-api-key") private googleMapsApiKey: string) {
-    if (!this.googleMapsApiKey) {
-      throw new MissingGoogleMapsApiKeyException();
-    }
-  }
+  private readonly nominatimBaseUrl = "https://nominatim.openstreetmap.org";
+  private readonly userAgent = "Bookaband/1.0";
 
   public async isLocationInRegions(
     locationName: string,
@@ -37,33 +48,53 @@ export class LocationRegionChecker {
     expectedType?: string,
   ): Promise<string | null> {
     try {
+      await this.respectRateLimit();
+
       const searchQueries = [locationName];
 
-      if (expectedType === "administrative_area_level_2") {
+      if (expectedType === "county") {
         searchQueries.push(`${locationName} province`);
       }
 
       for (const query of searchQueries) {
-        const response = await axios.get(
-          "https://maps.googleapis.com/maps/api/geocode/json",
+        const response = await axios.get<NominatimResponse[]>(
+          `${this.nominatimBaseUrl}/search`,
           {
             params: {
-              address: query,
-              key: this.googleMapsApiKey,
+              q: query,
+              format: "json",
+              addressdetails: 1,
+              limit: 5,
+            },
+            headers: {
+              "User-Agent": this.userAgent,
             },
           },
         );
 
-        const result = response.data.results.find((r: any) =>
-          expectedType ? r.types.includes(expectedType) : true,
-        );
+        const result = response.data.find((r: NominatimResponse) => {
+          if (!expectedType) return true;
+
+          // Map Google types to OSM types
+          const typeMapping: Record<string, string[]> = {
+            state: ["state", "province", "region"],
+            county: ["county", "province"],
+            country: ["country"],
+          };
+
+          const osmTypes = typeMapping[expectedType] || [expectedType];
+          return osmTypes.includes(r.type || "");
+        });
 
         if (result) {
-          return result.place_id;
+          // OSM place_id format: osm_type + osm_id
+          return `${result.osm_type}${result.osm_id}`;
         }
       }
+
+      return null;
     } catch (error) {
-      console.error("Error fetching place ID:", error);
+      console.error("Error fetching place ID from Nominatim:", error);
       return null;
     }
   }
@@ -72,35 +103,58 @@ export class LocationRegionChecker {
     placeId: string,
   ): Promise<{ name: string; type: string }[]> {
     try {
-      const response = await axios.get(
-        "https://maps.googleapis.com/maps/api/place/details/json",
+      await this.respectRateLimit();
+
+      // Extract osm_type and osm_id from the combined place_id
+      const osmType = placeId.charAt(0); // 'N', 'W', or 'R'
+      const osmId = placeId.slice(1);
+
+      const response = await axios.get<NominatimResponse>(
+        `${this.nominatimBaseUrl}/lookup`,
         {
           params: {
-            place_id: placeId,
-            key: this.googleMapsApiKey,
+            osm_ids: `${osmType}${osmId}`,
+            format: "json",
+            addressdetails: 1,
+          },
+          headers: {
+            "User-Agent": this.userAgent,
           },
         },
       );
 
-      const components = response.data.result?.address_components || [];
+      const result = Array.isArray(response.data)
+        ? response.data[0]
+        : response.data;
+      if (!result?.address) return [];
 
-      const relevantComponents = components.filter((comp: any) =>
-        comp.types.some((type) =>
-          [
-            "administrative_area_level_1",
-            "administrative_area_level_2",
-            "country",
-          ].includes(type),
-        ),
-      );
+      const components: { name: string; type: string }[] = [];
 
-      return relevantComponents.map((comp: any) => ({
-        name: comp.long_name,
-        type: comp.types[0],
-      }));
+      // Map OSM address components to our types
+      if (result.address.state) {
+        components.push({ name: result.address.state, type: "state" });
+      }
+
+      if (result.address.county || result.address.province) {
+        components.push({
+          name: result.address.county || result.address.province || "",
+          type: "county",
+        });
+      }
+
+      if (result.address.country) {
+        components.push({ name: result.address.country, type: "country" });
+      }
+
+      return components;
     } catch (error) {
-      console.error("Error fetching address components:", error);
+      console.error("Error fetching address components from Nominatim:", error);
       return [];
     }
+  }
+
+  // Respect Nominatim's usage policy: max 1 request per second
+  private async respectRateLimit(): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }

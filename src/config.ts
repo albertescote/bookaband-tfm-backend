@@ -25,10 +25,8 @@ const RESEND_API_KEY = checkStrVar(
   process.env.RESEND_API_KEY,
   "RESEND_API_KEY",
 );
-const GOOGLE_MAPS_API_KEY = checkStrVar(
-  process.env.GOOGLE_MAPS_API_KEY,
-  "GOOGLE_MAPS_API_KEY",
-);
+// DEPRECATED: Google Maps API is no longer used. We now use free alternatives (Nominatim + OSRM)
+const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY || "";
 
 enum MONGODB_COLLECTIONS {
   EVENT_TYPES = "event_types",
